@@ -117,8 +117,18 @@ export class AppConfigurator {
 
     ngOnInit() {
         if (isPlatformBrowser(this.platformId)) {
+            this.enableDarkMode();
             this.onPresetChange(this.layoutService.layoutConfig().preset);
         }
+    }
+    enableDarkMode() {
+        this.layoutService.layoutConfig.update((state:any)=> ({
+            ...state,
+            darkTheme: true,
+            surface: 'zinc',
+            primary: 'sky',
+            preset: 'Aura'
+        }));
     }
 
     surfaces: SurfacesType[] = [
