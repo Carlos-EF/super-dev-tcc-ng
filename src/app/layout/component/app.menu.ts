@@ -81,6 +81,11 @@ export class AppMenu {
                         routerLink: ['/pages/crud']
                     },
                     {
+                        label: 'Imóveis',
+                        icon: 'pi pi-fw pi-building',
+                        routerLink: ['/pages/imoveis']
+                    },
+                    {
                         label: 'Not Found',
                         icon: 'pi pi-fw pi-exclamation-circle',
                         routerLink: ['/pages/notfound']
