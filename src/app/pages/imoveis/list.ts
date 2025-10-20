@@ -6,10 +6,10 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-list',
   imports: [
     ButtonModule,
-    RouterLink
+    RouterLink,
   ],
   template: `
-     <div class="flex justify-content-end">
+     <div class="flex">
        <p-button
        icon="pi pi-plus"
        label="Cadastrar"

@@ -2,8 +2,12 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { InputMaskModule } from 'primeng/inputmask';
+import { ButtonModule } from 'primeng/button';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputGroupModule } from 'primeng/inputgroup';
 
-// Trocar no futuro(tirar no caso :D)
+// Trocar no futuro
 
 interface Finalidades {
   nome: string
@@ -13,13 +17,20 @@ interface TiposImoveis {
   nome: string
 }
 
+interface ValidarCondominio {
+  resposta: string
+}
+
 @Component({
   selector: 'app-create',
   imports: [
     InputTextModule,
     FormsModule,
     SelectModule,
-    
+    InputMaskModule,
+    ButtonModule,
+    InputGroupAddonModule,
+    InputGroupModule,
   ],
   template: `
   <!-- Trocar para AutoCompleteModule depois de criar os serviços :D -->
@@ -31,12 +42,12 @@ interface TiposImoveis {
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-proprietario">Proprietário:</label>
-              <input pInputText id="campo-propiretario" type="text" />
+              <input pInputText id="campo-propiretario" type="text" placeholder="Digite ou selecione o nome do proprietário." />
             </div>
 
           <div class="flex flex-col grow basis-0 gap-2">
             <label for="campo-corretor">Corretor:</label>
-            <input pInputText id="campo-corretor" type="text" />
+            <input pInputText id="campo-corretor" type="text" placeholder="Digite ou selecione o nome do corretor." />
           </div>
         </div>
       </div>
@@ -51,17 +62,17 @@ interface TiposImoveis {
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-codigo">Código:</label>
-              <input pInputText id="campo-codigo" type="text" />
+              <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do imóvel." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-finalidade">Finalidade:</label>
-             <p-select [options]="finalidades" [(ngModel)]="finalidadeSelecionada" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione a finalidade do imóvel"  />
+             <p-select [options]="finalidades" [(ngModel)]="finalidadeSelecionada" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
            </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-tipo-imovel">Tipo do Imóvel:</label>
-             <p-select [options]="tipo" [(ngModel)]="tipoSelecionado" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione o tipo do imóvel"  />
+             <p-select [options]="tipo" [(ngModel)]="tipoSelecionado" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
            </div>
         </div>
       </div>
@@ -73,50 +84,59 @@ interface TiposImoveis {
       <div class="card flex flex-col gap-4 mt-3">
         <div class="font-semibold text-xl">Localização:</div>
 
-          <div class="flex flex-wrap gap-6">
+           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cep">CEP:</label>
-              <input pInputText id="campo-cep" type="text" />
+              <!-- Melhorar posição do botão -->
+              <p-inputmask mask="99999-999" [(ngModel)]="cep" placeholder="99999-999" />
+              <p-button
+                icon="pi pi-search"/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-logradouro">Logradouro:</label>
-              <input pInputText id="campo-logradouro" type="text" />
+              <input pInputText id="campo-logradouro" type="text" placeholder="Digite o nome da rua." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-numero">Número:</label>
-              <input pInputText id="campo-numero" type="text" />
+              <input pInputText id="campo-numero" type="text" placeholder="Digite o número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-estado">Estado:</label>
-              <input pInputText id="campo-estado" type="text" />
+              <input pInputText id="campo-estado" type="text" placeholder="Digite o nome da estado." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cidade">Cidade:</label>
-              <input pInputText id="campo-cidade" type="text" />
+              <input pInputText id="campo-cidade" type="text" placeholder="Digite o nome da cidade." />
             </div>
             
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-bairro">Bairro:</label>
-              <input pInputText id="campo-bairro" type="text" />
+              <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
-              <input pInputText id="campo-pergunta-condominio" type="text" />
+              <p-select [options]="condominioValidar" 
+              [(ngModel)]="respostaCondominio" 
+              [checkmark]="true" 
+              optionLabel="resposta" 
+              optionValue="resposta" 
+              [showClear]="true" 
+              placeholder="Diga se o imóvel está em um condomínio" />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-nome-condominio">Nome Condomínio:</label>
-              <input pInputText id="campo-nome-condominio" type="text" />
+              <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-complemento">Complemento:</label>
-              <input pInputText id="campo-complemento" type="text" />
+              <input pInputText id="campo-complemento" type="text" placeholder="Ex.: Apartamento 101." />
             </div>
         </div>
       </div>
@@ -135,6 +155,12 @@ export class ImovelCreate {
 
   tipoSelecionado: TiposImoveis | undefined;
 
+  condominioValidar: ValidarCondominio[] | undefined;
+
+  respostaCondominio: ValidarCondominio | undefined;
+
+  cep: string = ''
+
   ngOnInit() {
     this.finalidades = [
       { nome: 'Venda' },
@@ -146,5 +172,10 @@ export class ImovelCreate {
       { nome: 'Apartamento' },
       { nome: 'Terreno' },
     ];
+
+    this.condominioValidar = [
+      { resposta: 'sim' },
+      { resposta: 'não' },
+    ]
   }
 }
