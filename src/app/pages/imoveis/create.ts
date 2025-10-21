@@ -6,6 +6,8 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { ButtonModule } from 'primeng/button';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
+import { StepperModule } from 'primeng/stepper';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 // Trocar no futuro
 
@@ -21,6 +23,10 @@ interface ValidarCondominio {
   resposta: string
 }
 
+interface ValidarMobilia {
+  resposta: string
+}
+
 @Component({
   selector: 'app-create',
   imports: [
@@ -31,10 +37,22 @@ interface ValidarCondominio {
     ButtonModule,
     InputGroupAddonModule,
     InputGroupModule,
+    StepperModule,
+    InputNumberModule,
   ],
   template: `
   <!-- Trocar para AutoCompleteModule depois de criar os serviços :D -->
-  <div>
+  <div class="card flex justify-center">
+    <p-stepper [value]="1" class="grow basis-0 gap-2 surface-0">
+      <p-step-list>
+        <p-step [value]="1">Dados Do Imóvel</p-step>
+        <p-step [value]="2">Valor e Características</p-step>
+        <p-step [value]="3">Fotos e Finalização</p-step>
+      </p-step-list>
+     <p-step-panels>
+       <p-step-panel [value]="1">
+          <ng-template #content let-activateCallback="activateCallback">
+            <div class="flex flex-col">
     <div>
       <div class="card flex flex-col gap-4">
         <div class="font-semibold text-xl">Responsáveis:</div>
@@ -142,6 +160,102 @@ interface ValidarCondominio {
       </div>
     </div>
   </div>
+
+  <div class="flex pt-6 justify-end">
+    <p-button label="Próximo" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(2)" />
+  </div>
+
+  </ng-template>
+    </p-step-panel>
+
+      <p-step-panel [value]="2">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="font-semibold text-xl mb-2">Valores:</div>
+
+            <div class="flex flex-wrap gap-6">
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor">Valor Solicitado:</label>
+                <p-inputnumber [(ngModel)]="valorSolicitado" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-condominio">Condomínio:</label>
+                <p-inputnumber [(ngModel)]="valorCondominio" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-iptu">IPTU:</label>
+                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+            </div>
+
+            <div class="font-semibold text-xl mt-5 mb-2">Características:</div>
+            <div class="flex flex-wrap gap-6">
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor">Quantidade de Quartos:</label>
+                <p-inputnumber [(ngModel)]="valorSolicitado" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-condominio">Sendo Suítes:</label>
+                <p-inputnumber [(ngModel)]="valorCondominio" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-iptu">Quantidade de Banheiros:</label>
+                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-iptu">Vagas de Garagem:</label>
+                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-iptu">Andares:</label>
+                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+                <label for="campo-valor-iptu">Quantidade de Salas:</label>
+                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+              </div>
+
+              <div class="flex flex-col grow basis-0 gap-2">
+             <label for="campo-finalidade">Está Mobiliado?</label>
+             <p-select 
+             [options]="mobiliaValidar" 
+             [(ngModel)]="respostaMobilia" 
+             [checkmark]="true" 
+             optionLabel="resposta" 
+             optionValue="resposta" 
+             [showClear]="true" 
+             placeholder="Selecione uma opção."
+             appendTo="body"  />
+              </div>
+            </div>
+
+              <div class="flex pt-6 justify-between">
+                <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(1)" />
+                <p-button label="Próximo" icon="pi pi-arrow-right" iconPos="right" (onClick)="activateCallback(3)" />
+               </div>
+            </ng-template>
+          </p-step-panel>
+
+          <p-step-panel [value]="3">
+            <ng-template #content let-activateCallback="activateCallback">
+              <div class="flex flex-col">
+
+                </div>
+                 <div class="flex pt-6 justify-between">
+                 <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
+                  <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="cadastrarImovel()" />
+                  </div>
+                </ng-template>
+            </p-step-panel>
+        </p-step-panels>
+    </p-stepper>
+</div>
   `,
   styles: ``
 })
@@ -159,7 +273,17 @@ export class ImovelCreate {
 
   respostaCondominio: ValidarCondominio | undefined;
 
-  cep: string = ''
+  mobiliaValidar: ValidarMobilia[] | undefined;
+
+  respostaMobilia: ValidarMobilia | undefined;
+
+  cep: string = '';
+
+  valorSolicitado?: number;
+
+  valorCondominio?: number;
+
+  valorIptu?: number;
 
   ngOnInit() {
     this.finalidades = [
@@ -174,8 +298,17 @@ export class ImovelCreate {
     ];
 
     this.condominioValidar = [
-      { resposta: 'sim' },
-      { resposta: 'não' },
+      { resposta: 'Sim' },
+      { resposta: 'Não' },
+    ];
+
+    this.mobiliaValidar = [
+      { resposta: 'Sim'},
+      { resposta: 'Não'},
     ]
+  }
+
+  cadastrarImovel() {
+
   }
 }
