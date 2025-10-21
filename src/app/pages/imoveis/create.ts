@@ -8,6 +8,10 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ToastModule } from 'primeng/toast';
+import { FileUploadModule } from 'primeng/fileupload';
+import { MessageService } from 'primeng/api';
+import { Router } from '@angular/router';
 
 // Trocar no futuro
 
@@ -39,8 +43,11 @@ interface ValidarMobilia {
     InputGroupModule,
     StepperModule,
     InputNumberModule,
+    ToastModule,
+    FileUploadModule,
   ],
   template: `
+  <p-toast/>
   <!-- Trocar para AutoCompleteModule depois de criar os serviços :D -->
   <div class="card flex justify-center">
     <p-stepper [value]="1" class="grow basis-0 gap-2 surface-0">
@@ -175,17 +182,17 @@ interface ValidarMobilia {
             <div class="flex flex-wrap gap-6">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor">Valor Solicitado:</label>
-                <p-inputnumber [(ngModel)]="valorSolicitado" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="valorSolicitado" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-condominio">Condomínio:</label>
-                <p-inputnumber [(ngModel)]="valorCondominio" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="valorCondominio" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="valorIptu" />
               </div>
             </div>
 
@@ -193,32 +200,32 @@ interface ValidarMobilia {
             <div class="flex flex-wrap gap-6">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor">Quantidade de Quartos:</label>
-                <p-inputnumber [(ngModel)]="valorSolicitado" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeQuartos" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-condominio">Sendo Suítes:</label>
-                <p-inputnumber [(ngModel)]="valorCondominio" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeSuites" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Quantidade de Banheiros:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeBanheiros" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Vagas de Garagem:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeVagas" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Andares:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeAndares" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Quantidade de Salas:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" mode="currency" currency="BRL" locale="pt-BR" />
+                <p-inputnumber [(ngModel)]="quantidadeSalas" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
@@ -242,21 +249,38 @@ interface ValidarMobilia {
             </ng-template>
           </p-step-panel>
 
-          <p-step-panel [value]="3">
-            <ng-template #content let-activateCallback="activateCallback">
-              <div class="flex flex-col">
-
+      <p-step-panel [value]="3">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="flex flex-col">
+          <div class="font-semibold text-xl mb-4">Fotos do Imóvel:</div>
+                    <p-fileupload
+                    chooseLabel="Procurar"
+                    uploadLabel="Enviar"
+                    cancelLabel="Cancelar"
+                     name="demo[]" 
+                     (onUpload)="onUpload($event)" 
+                     [multiple]="true" 
+                     accept="image/*" 
+                     maxFileSize="1000000" 
+                     mode="advanced" 
+                     url="https://www.primefaces.org/cdn/api/upload.php">
+                        <ng-template #empty>
+                            <div>Arraste e jogue suas fotos aqui.</div>
+                        </ng-template>
+                    </p-fileupload>
                 </div>
-                 <div class="flex pt-6 justify-between">
-                 <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
-                  <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="cadastrarImovel()" />
-                  </div>
-                </ng-template>
-            </p-step-panel>
-        </p-step-panels>
+
+            <div class="flex pt-6 justify-between">
+              <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
+              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="cadastrarImovel()" />
+            </div>
+          </ng-template>
+        </p-step-panel>
+      </p-step-panels>
     </p-stepper>
 </div>
-  `,
+`,
+  providers: [MessageService],
   styles: ``
 })
 export class ImovelCreate {
@@ -285,6 +309,25 @@ export class ImovelCreate {
 
   valorIptu?: number;
 
+  quantidadeQuartos?: number;
+
+  quantidadeBanheiros?: number;
+
+  quantidadeSuites?: number;
+
+  quantidadeSalas?: number;
+
+  quantidadeAndares?: number;
+
+  quantidadeVagas?: number;
+
+  uploadedFiles: any[] = [];
+
+  constructor(
+    private messageService: MessageService,
+    private router: Router
+  ) { }
+
   ngOnInit() {
     this.finalidades = [
       { nome: 'Venda' },
@@ -303,12 +346,24 @@ export class ImovelCreate {
     ];
 
     this.mobiliaValidar = [
-      { resposta: 'Sim'},
-      { resposta: 'Não'},
+      { resposta: 'Sim' },
+      { resposta: 'Não' },
     ]
   }
 
   cadastrarImovel() {
+    this.router.navigate(['/pages/imoveis'])
+  }
 
+  onUpload(event: any) {
+    for (const file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+  }
+
+  onBasicUpload() {
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
   }
 }

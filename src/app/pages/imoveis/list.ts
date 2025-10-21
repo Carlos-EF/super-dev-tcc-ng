@@ -22,5 +22,4 @@ import { ButtonModule } from 'primeng/button';
   styles: ``
 })
 export class ImovelList {
-
 }
