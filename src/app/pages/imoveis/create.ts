@@ -45,6 +45,7 @@ interface ValidarMobilia {
     InputNumberModule,
     ToastModule,
     FileUploadModule,
+    InputGroupAddonModule,
   ],
   template: `
   <p-toast/>
@@ -113,9 +114,11 @@ interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cep">CEP:</label>
               <!-- Melhorar posição do botão -->
-              <p-inputmask mask="99999-999" [(ngModel)]="cep" placeholder="99999-999" />
-              <p-button
-                icon="pi pi-search"/>
+               <div class="flex flex-row">
+                 <p-inputmask mask="99999-999" [(ngModel)]="cep" placeholder="99999-999" />
+                 <p-button
+                 icon="pi pi-search"/>
+                </div>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
@@ -174,25 +177,35 @@ interface ValidarMobilia {
 
   </ng-template>
     </p-step-panel>
-
       <p-step-panel [value]="2">
         <ng-template #content let-activateCallback="activateCallback">
           <div class="font-semibold text-xl mb-2">Valores:</div>
-
-            <div class="flex flex-wrap gap-6">
+            <div class="flex flex-wrap gap-6 w-full">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor">Valor Solicitado:</label>
-                <p-inputnumber [(ngModel)]="valorSolicitado" />
+                <p-inputnumber [(ngModel)]="valorSolicitado"
+                placeholder="Digite o valor solicitado no imóvel."
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-condominio">Condomínio:</label>
-                <p-inputnumber [(ngModel)]="valorCondominio" />
+                <p-inputnumber [(ngModel)]="valorCondominio"
+                placeholder="Digite o valor do condomínio."
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR" />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
-                <p-inputnumber [(ngModel)]="valorIptu" />
+                <p-inputnumber [(ngModel)]="valorIptu"
+                placeholder="Digite o valor do IPTU."
+                mode="currency"
+                currency="BRL"
+                locale="pt-BR" />
               </div>
             </div>
 
@@ -200,32 +213,38 @@ interface ValidarMobilia {
             <div class="flex flex-wrap gap-6">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor">Quantidade de Quartos:</label>
-                <p-inputnumber [(ngModel)]="quantidadeQuartos" />
+                <p-inputnumber [(ngModel)]="quantidadeQuartos"
+                placeholder="Digite a quantidade de quartos." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-condominio">Sendo Suítes:</label>
-                <p-inputnumber [(ngModel)]="quantidadeSuites" />
+                <p-inputnumber [(ngModel)]="quantidadeSuites"
+                placeholder="Digite a quantidade de suítes." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Quantidade de Banheiros:</label>
-                <p-inputnumber [(ngModel)]="quantidadeBanheiros" />
+                <p-inputnumber [(ngModel)]="quantidadeBanheiros"
+                placeholder="Digite a quantidade de banheiros." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Vagas de Garagem:</label>
-                <p-inputnumber [(ngModel)]="quantidadeVagas" />
+                <p-inputnumber [(ngModel)]="quantidadeVagas"
+                placeholder="Digite a quantidade de vagas de garagem." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Andares:</label>
-                <p-inputnumber [(ngModel)]="quantidadeAndares" />
+                <p-inputnumber [(ngModel)]="quantidadeAndares"
+                placeholder="Digite a quantidade de andares." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">Quantidade de Salas:</label>
-                <p-inputnumber [(ngModel)]="quantidadeSalas" />
+                <p-inputnumber [(ngModel)]="quantidadeSalas"
+                placeholder="Digite a quantidade de salas." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
@@ -265,7 +284,7 @@ interface ValidarMobilia {
                      mode="advanced" 
                      url="https://www.primefaces.org/cdn/api/upload.php">
                         <ng-template #empty>
-                            <div>Arraste e jogue suas fotos aqui.</div>
+                            <div>Arraste e jogue suas fotos do imóvel aqui.</div>
                         </ng-template>
                     </p-fileupload>
                 </div>
