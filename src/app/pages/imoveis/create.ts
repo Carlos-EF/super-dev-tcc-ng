@@ -345,7 +345,9 @@ export class ImovelCreate {
   constructor(
     private messageService: MessageService,
     private router: Router
-  ) { }
+  ) {
+    
+   }
 
   ngOnInit() {
     this.finalidades = [
@@ -379,10 +381,10 @@ export class ImovelCreate {
       this.uploadedFiles.push(file);
     }
 
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada!' });
   }
 
   onBasicUpload() {
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada com o modo basico.' });
   }
 }
