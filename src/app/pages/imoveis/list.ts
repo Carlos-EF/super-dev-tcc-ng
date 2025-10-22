@@ -5,9 +5,13 @@ import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 
 export interface ImovelResponse {
-  nome: string;
+  fotoCapa: string;
+  codigoImovel: string;
+  tipoImovel: string;
+  finalidade: string;
+  endereco: string;
   valor: number;
-  caracteristicas: string[]
+  caracteristicas: string[];
 }
 
 @Component({
@@ -34,24 +38,24 @@ export interface ImovelResponse {
       <div class="flex flex-row w-full">
       <div class="flex justify-between w-full">
         <div class="border-r-2 mt-2 mr-3 p-4 pl-2">
-          <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" width="220"/>
+          <p-image src="{{imovel.fotoCapa}}" width="220"/>
         </div>
         <div class="mt-2 mr-3 w-full">
           <div class="flex gap-2 items-center">
             <p-tag
             class="max-h-min mt-2"
-            value="Codigo Imóvel" 
+            value="{{imovel.codigoImovel}}" 
             [rounded]="true"/>
-            <h3><strong class="m-0 text-2x1">{{imovel.nome}}</strong></h3>
+            <h3><strong class="m-0 text-2x1">{{imovel.tipoImovel}} para {{imovel.finalidade.toLowerCase()}}</strong></h3>
           </div>
-        <div><h5>Localização Imóvel</h5></div>
+        <div><h5>{{imovel.endereco}}</h5></div>
         <div><h2><strong class="text-primary">R$ {{imovel.valor}}</strong></h2></div>
         <div class="flex gap-5 flex-wrap flex-row">
           @for (caracteristica of imovel.caracteristicas; track caracteristica) {
-
             <p-tag 
             value="{{caracteristica}}"
-            severity="secondary" />
+            severity="secondary"
+            class="mb-2" />
           } 
         </div>
       </div>
@@ -83,12 +87,20 @@ export class ImovelList {
   constructor() {
     this.imoveis = [
       {
-        nome: "Residencial Batatinha",
+        fotoCapa: "https://www.salles.imb.br/admin/fotos_destaque/13232908_1604013343248088_6302168264450648482_n.jpg",
+        codigoImovel: "505268",
+        endereco:"Rua dos Caçadores, 202, Velha - Blumenau",
+        tipoImovel: "Casa",
+        finalidade: "Venda",
         valor: 1200000,
         caracteristicas: ["2 quartos", "1 banheiro"]
       },
       {
-        nome: "Residencial CAP",
+        fotoCapa: "https://blog.setin.com.br/wp-content/uploads/2024/12/tipos-de-apartamentos-quais-sao.jpg",
+        codigoImovel: "505269",
+        endereco:"Rua Max Maul, 280, apartamento 202, Itoupavazinha - Blumenau",
+        tipoImovel: "Apartamento",
+        finalidade: "Locação",
         valor: 100000,
         caracteristicas: ["2 quartos", "1 suíte", "1 vaga"]
       }
