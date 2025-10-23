@@ -4,11 +4,13 @@ import { Crud } from './crud/crud';
 import { Empty } from './empty/empty';
 import { ImovelList } from './imoveis/list';
 import { ImovelCreate } from './imoveis/create';
+import { PessoasList } from './pessoas/list';
 
 export default [
     { path: 'documentation', component: Documentation },
     { path: 'crud', component: Crud },
     { path: 'imoveis', component: ImovelList},
+    { path: 'pessoas', component: PessoasList},
     { path: 'imoveis/cadastrar', component: ImovelCreate},
     { path: 'empty', component: Empty },
     { path: '**', redirectTo: '/notfound' }

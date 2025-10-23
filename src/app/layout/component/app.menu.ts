@@ -86,6 +86,11 @@ export class AppMenu {
                         routerLink: ['/pages/imoveis']
                     },
                     {
+                        label: 'Pessoas',
+                        icon: 'pi pi-fw pi-users',
+                        routerLink: ['/pages/pessoas']
+                    },
+                    {
                         label: 'Not Found',
                         icon: 'pi pi-fw pi-exclamation-circle',
                         routerLink: ['/pages/notfound']
