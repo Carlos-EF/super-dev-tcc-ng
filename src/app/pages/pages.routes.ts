@@ -5,13 +5,15 @@ import { Empty } from './empty/empty';
 import { ImovelList } from './imoveis/list';
 import { ImovelCreate } from './imoveis/create';
 import { PessoasList } from './pessoas/list';
+import { CorretorCreate } from './pessoas/corretor/create';
 
 export default [
     { path: 'documentation', component: Documentation },
     { path: 'crud', component: Crud },
     { path: 'imoveis', component: ImovelList},
-    { path: 'pessoas', component: PessoasList},
     { path: 'imoveis/cadastrar', component: ImovelCreate},
+    { path: 'pessoas', component: PessoasList},
+    { path: 'pessoas/corretor/cadastrar', component: CorretorCreate},
     { path: 'empty', component: Empty },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
