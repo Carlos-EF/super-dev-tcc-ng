@@ -212,37 +212,37 @@ interface ValidarMobilia {
             <div class="font-semibold text-xl mt-5 mb-2">Características:</div>
             <div class="flex flex-wrap gap-6">
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor">Quantidade de Quartos:</label>
+                <label for="campo-quartos">Quantidade de Quartos:</label>
                 <p-inputnumber [(ngModel)]="quantidadeQuartos"
                 placeholder="Digite a quantidade de quartos." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-condominio">Sendo Suítes:</label>
+                <label for="campo-suites">Sendo Suítes:</label>
                 <p-inputnumber [(ngModel)]="quantidadeSuites"
                 placeholder="Digite a quantidade de suítes." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-iptu">Quantidade de Banheiros:</label>
+                <label for="campo-banheiros">Quantidade de Banheiros:</label>
                 <p-inputnumber [(ngModel)]="quantidadeBanheiros"
                 placeholder="Digite a quantidade de banheiros." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-iptu">Vagas de Garagem:</label>
+                <label for="campo-vagas">Vagas de Garagem:</label>
                 <p-inputnumber [(ngModel)]="quantidadeVagas"
                 placeholder="Digite a quantidade de vagas de garagem." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-iptu">Andares:</label>
+                <label for="campo-andares">Andares:</label>
                 <p-inputnumber [(ngModel)]="quantidadeAndares"
                 placeholder="Digite a quantidade de andares." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-iptu">Quantidade de Salas:</label>
+                <label for="campo-salas">Quantidade de Salas:</label>
                 <p-inputnumber [(ngModel)]="quantidadeSalas"
                 placeholder="Digite a quantidade de salas." />
               </div>

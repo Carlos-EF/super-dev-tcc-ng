@@ -33,7 +33,8 @@ export class PessoasList {
     this.opcoesPessoas = [
       {
         label: "Cliente",
-        icon: "pi pi-user"
+        icon: "pi pi-user",
+        routerLink: "cliente/cadastrar"
       },
       {
         label: "Corretor",
