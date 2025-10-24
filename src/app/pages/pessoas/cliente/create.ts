@@ -35,7 +35,7 @@ export interface TipoCliente {
     <div class="flex flex-wrap basis-0 gap-3">
       <div class="flex flex-col grow gap-2">
         <label for="">Nome Completo:</label>
-        <input type="text" pInputText>
+        <input type="text" pInputText placeholder="Digite o nome do cliente.">
       </div>
 
       <div class="flex flex-col basis-0 gap-2">
@@ -45,7 +45,7 @@ export interface TipoCliente {
           
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Email:</label>
-        <input type="email" pInputText>
+        <input type="email" pInputText placeholder="Digite o e-mail do cliente.">
       </div>
 
       <div class="flex flex-col grow basis-0 gap-2">
@@ -55,7 +55,7 @@ export interface TipoCliente {
 
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Tipo do Cliente:</label>
-        <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." [(ngModel)]="tipoClienteSelecionado"/>
+        <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." [(ngModel)]="tipoClienteSelecionado"/>
       </div>
     </div>
   </div>
@@ -77,68 +77,79 @@ export interface TipoCliente {
   <!-- Modelo do form para prorietário/locatário -->
 
   <!-- Modelo do form para interessado -->
-  <div class="card flex flex-col grow basis-0 gap-3">
+  <div id="form-interessado" class="card flex flex-col grow basis-0 gap-3">
     <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
 
     <div class="flex flex-col gap-2">
       <label for="">O que está Procurando?</label>
       <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." [(ngModel)]="tipoClienteSelecionado"/>
     </div>
+    
+    <div class="text-xl font-bold">Valores:</div>
+    <div class="flex flex-wrap gap-2">
 
-    <div class="flex flex-col gap-2">
-      <label for="">Orçamento Mínimo:</label>
-      <p-inputnumber mode="currency" currency="BRL" locale="pt-BR" />
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento:</label>
+        <p-inputnumber mode="currency" placeholder="Orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
+
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento Mínimo:</label>
+        <p-inputnumber mode="currency" placeholder="Valor mínimo do orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
+      
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento Máximo:</label>
+        <p-inputnumber mode="currency" placeholder="Valor máximo do orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label for="">Orçamento Máximo:</label>
-      <p-inputnumber mode="currency" currency="BRL" locale="pt-BR" />
-    </div>
+  <div class="flex flex-col gap-2">
+    <div class="font-bold text-xl">Preferências:</div>
 
-       <div class="flex flex-col gap-2">
-      <div class="font-bold text-xl">Preferências:</div>
-        <div class="flex flex-wrap gap-6">
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-quartos">Quantidade de Quartos:</label>
-            <p-inputnumber
-            id="campo-quartos" 
-            placeholder="Digite a quantidade de quartos." />
-          </div>
+    <div class="flex flex-wrap gap-6">
+      <div class="flex flex-col grow basis-0 gap-2">
+        <label for="campo-quartos">Quantidade de Quartos:</label>
+          <p-inputnumber
+          id="campo-quartos" 
+          placeholder="Digite a quantidade de quartos." />
+        </div>
 
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-suites">Sendo Suítes:</label>
-            <p-inputnumber
-            id="campo-suites"
-            placeholder="Digite a quantidade de suítes." />
-          </div>
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-suites">Sendo Suítes:</label>
+          <p-inputnumber
+          id="campo-suites"
+          placeholder="Digite a quantidade de suítes." />
+        </div>
 
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-banheiro">Quantidade de Banheiros:</label>
-            <p-inputnumber
-            id="campo-banheiro" 
-            placeholder="Digite a quantidade de banheiros." />
-          </div>
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-banheiro">Quantidade de Banheiros:</label>
+          <p-inputnumber
+          id="campo-banheiro" 
+          placeholder="Digite a quantidade de banheiros." />
+        </div>
 
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-vagas">Vagas de Garagem:</label>
-            <p-inputnumber 
-            id="campo-vagas"
-            placeholder="Digite a quantidade de vagas de garagem." />
-          </div>
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-vagas">Vagas de Garagem:</label>
+          <p-inputnumber 
+          id="campo-vagas"
+          placeholder="Digite a quantidade de vagas de garagem." />
+        </div>
 
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-andares">Andares:</label>
-            <p-inputnumber 
-            id="campo-andares"
-            placeholder="Digite a quantidade de andares." />
-          </div>
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-andares">Andares:</label>
+          <p-inputnumber 
+          id="campo-andares"
+          placeholder="Digite a quantidade de andares." />
+        </div>
 
-          <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-salas">Quantidade de Salas:</label>
-            <p-inputnumber
-            id="campo-salas" 
-            placeholder="Digite a quantidade de salas." />
-          </div>
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-salas">Quantidade de Salas:</label>
+          <p-inputnumber
+          id="campo-salas" 
+          placeholder="Digite a quantidade de salas." />
+        </div>
+      </div>
     </div>
   </div>
 
@@ -180,5 +191,5 @@ export class ClienteCreate {
       {tipo: "Proprietário"},
       {tipo: "Locatário"},
     ];
-   }
+   };
 }
