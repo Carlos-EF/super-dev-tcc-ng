@@ -33,7 +33,7 @@ export interface ImovelResponse {
 
      <!-- Para fazer o modelo de listagem -->
       @for(imovel of imoveis; track imovel) {
-    <div class="bg-gray-900 border-round mt-3 pb-2 pl-2 w-full">
+    <div class="bg-surface-900 border-round mt-3 pb-2 pl-2 w-full">
 
       <div class="flex flex-row w-full">
       <div class="flex justify-between w-full">
@@ -54,7 +54,7 @@ export interface ImovelResponse {
           @for (caracteristica of imovel.caracteristicas; track caracteristica) {
             <p-tag 
             value="{{caracteristica}}"
-            severity="secondary"
+            severity="primary"
             class="mb-2" />
           } 
         </div>
