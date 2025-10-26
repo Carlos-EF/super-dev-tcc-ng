@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 
@@ -21,6 +22,7 @@ export interface ImovelResponse {
     RouterLink,
     ImageModule,
     TagModule,
+    CardModule,
   ],
   template: `
     <div class="flex justify-end">
@@ -30,16 +32,18 @@ export interface ImovelResponse {
       severity="success"
       routerLink="cadastrar"/>
     </div>
-
-     <!-- Para fazer o modelo de listagem -->
-      @for(imovel of imoveis; track imovel) {
-    <div class="bg-surface-900 border-round mt-3 pb-2 pl-2 w-full">
+    
+    <!-- Para fazer o modelo de listagem -->
+    @for(imovel of imoveis; track imovel) {
+        <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
+    <div class="bg-surface-900 mt-3 pb-2 pl-2 w-full">
 
       <div class="flex flex-row w-full">
       <div class="flex justify-between w-full">
         <div class="border-r-2 mt-2 mr-3 p-4 pl-2">
           <p-image src="{{imovel.fotoCapa}}" width="220"/>
         </div>
+
         <div class="mt-2 mr-3 w-full">
           <div class="flex gap-2 items-center">
             <p-tag
@@ -50,6 +54,7 @@ export interface ImovelResponse {
           </div>
         <div><h5>{{imovel.endereco}}</h5></div>
         <div><h2><strong class="text-primary">R$ {{imovel.valor}}</strong></h2></div>
+        
         <div class="flex gap-5 flex-wrap flex-row">
           @for (caracteristica of imovel.caracteristicas; track caracteristica) {
             <p-tag 
@@ -59,6 +64,7 @@ export interface ImovelResponse {
           } 
         </div>
       </div>
+
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
           <p-button
@@ -78,6 +84,7 @@ export interface ImovelResponse {
     </div>
   </div>
 </div>
+</p-card>
       }
   `,
   styles: ``
