@@ -39,13 +39,10 @@ interface ValidarMobilia {
     SelectModule,
     InputMaskModule,
     ButtonModule,
-    InputGroupAddonModule,
-    InputGroupModule,
     StepperModule,
     InputNumberModule,
     ToastModule,
     FileUploadModule,
-    InputGroupAddonModule,
   ],
   template: `
   <p-toast/>
