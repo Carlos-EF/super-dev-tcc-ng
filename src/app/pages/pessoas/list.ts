@@ -40,8 +40,6 @@ export interface PessoaResponse {
     [model]="opcoesPessoas" />
   </div>
 
-  <!-- Decidir se vai ser em páginas separadas ou tudo junto com filtro -->
-
   @for (pessoa of pessoas; track pessoa) {
    <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
     <div class="ng-surface-900 flex flex-col justify-between">

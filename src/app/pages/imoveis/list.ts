@@ -53,6 +53,7 @@ export interface ImovelResponse {
             <h3><strong class="m-0 text-2x1">{{imovel.tipoImovel}} para {{imovel.finalidade.toLowerCase()}}</strong></h3>
           </div>
         <div><h5>{{imovel.endereco}}</h5></div>
+        
         <div><h2><strong class="text-primary">R$ {{imovel.valor}}</strong></h2></div>
         
         <div class="flex gap-5 flex-wrap flex-row">
