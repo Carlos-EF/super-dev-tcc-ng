@@ -20,10 +20,15 @@ import { InputTextModule } from 'primeng/inputtext';
     <div class="card flex flex-col p-2 gap-3">
       <div class="flex flex-col basis-0 gap-2">
         <label for="">Nome Completo:</label>
-        <input type="text" pInputText class="p-component p-inputtext">
+        <input type="text" pInputText placeholder="Digite o nome completo do corretor.">
       </div>
-      
+
       <div class="flex flex-wrap gap-6">
+        <div class="flex flex-col basis-0 gap-2">
+          <label for="campo-codigo">Código:</label>
+          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do corretor." />
+        </div>
+
         <div class="flex flex-col basis-0 gap-2">
           <label for="">Celular:</label>
           <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
@@ -31,12 +36,12 @@ import { InputTextModule } from 'primeng/inputtext';
           
         <div class="flex flex-col basis-0 grow gap-2">
           <label for="">Email:</label>
-          <input type="email" pInputText>
+          <input type="email" pInputText placeholder="Digite o e-mail do corretor.">
         </div>
 
         <div class="flex flex-col basis-0 gap-2">
           <label for="">CRECI:</label>
-          <p-inputnumber [maxlength]="5"/>
+          <p-inputnumber [maxlength]="5" placeholder="Digite o CRECI do corretor."/>
         </div>
       </div>
     </div>
@@ -58,12 +63,12 @@ import { InputTextModule } from 'primeng/inputtext';
           
         <div class="flex flex-col grow gap-2">
           <label for="">Data de Nascimento:</label>
-          <p-date-picker dateFormat="dd/mm/yy" />
+          <p-date-picker dateFormat="dd/mm/yy" placeholder="Informe a data de nascimento do corretor."/>
         </div>
 
         <div class="flex flex-col grow gap-2">
           <label for="">Cadastrado desde:</label>
-          <p-date-picker dateFormat="dd/mm/yy" />
+          <p-date-picker dateFormat="dd/mm/yy"  placeholder="Informe quando o corretor foi cadastrado."/>
         </div>
       </div>
     </div>
@@ -84,7 +89,7 @@ export class CorretorCreate {
   constructor(
     private router: Router
   ) { }
-salvar() {
-  this.router.navigate(["/pages/pessoas"])
-}
+  salvar() {
+    this.router.navigate(["/pages/pessoas"])
+  }
 }

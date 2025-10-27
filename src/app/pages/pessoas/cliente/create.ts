@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,12 +10,17 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 
+
 export interface Opcoes {
   opcao: string
 }
 
 export interface TipoCliente {
   tipo: string
+}
+
+export interface Imoveis {
+  nome: string;
 }
 
 @Component({
@@ -28,6 +34,7 @@ export interface TipoCliente {
     InputGroupModule,
     InputGroupAddonModule,
     InputNumberModule,
+    CommonModule,
   ],
   template: `
   <div class="card flex flex-col gap-4">
@@ -38,6 +45,11 @@ export interface TipoCliente {
         <input type="text" pInputText placeholder="Digite o nome do cliente.">
       </div>
 
+      <div class="flex flex-col grow gap-2">
+        <label for="campo-codigo">Código:</label>
+        <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." />
+      </div>
+    
       <div class="flex flex-col basis-0 gap-2">
         <label for="">Celular:</label>
         <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
@@ -58,26 +70,11 @@ export interface TipoCliente {
         <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." [(ngModel)]="tipoClienteSelecionado"/>
       </div>
     </div>
-  </div>
-  <!-- Modelo do form para prorietário/locatário -->
-  <div class="flex card gap-2 flex-col">
-    <div class="flex flex-col grow basis-0 gap-2">
-        <div class="text-xl font-bold">Informações Adicionais:</div>
 
-        <label for="">Imóvel do Responsável:</label>
-        <div class="flex flex-row">
-        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
-           <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o imóvel." [(ngModel)]="tipoClienteSelecionado" fluid />
-           <p-button
-           severity="primary"
-           icon="pi pi-plus" />
-          </div>
-     </div>
-   </div>
-  <!-- Modelo do form para prorietário/locatário -->
-
-  <!-- Modelo do form para interessado -->
-  <div id="form-interessado" class="card flex flex-col grow basis-0 gap-3">
+    <div id="mostrar-form">
+      @switch (tipoClienteSelecionado) {
+        @case ("Interessado") {
+          <div id="form-interessado" class="card flex flex-col grow basis-0 gap-3">
     <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
 
     <div class="flex flex-col gap-2">
@@ -160,6 +157,60 @@ export interface TipoCliente {
     label="Salvar"
     (click)="salvar()" />
   </div>
+        }
+        @case ("Proprietário") {
+           <div class="flex card gap-2 flex-col">
+    <div class="flex flex-col grow basis-0 gap-2">
+        <div class="text-xl font-bold">Informações Adicionais:</div>
+
+        <label for="">Imóvel do Responsável:</label>
+        <div class="flex flex-row">
+        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
+           <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid />
+           <p-button
+           severity="primary"
+           icon="pi pi-plus" />
+          </div>
+     </div>
+   </div>
+
+  <div class="flex justify-end">
+    <p-button
+    severity="success"
+    icon="pi pi-save"
+    label="Salvar"
+    (click)="salvar()" />
+  </div>
+        }
+        @case ("Locatário") {
+           <div class="flex card gap-2 flex-col">
+    <div class="flex flex-col grow basis-0 gap-2">
+        <div class="text-xl font-bold">Informações Adicionais:</div>
+
+        <label for="">Imóvel do Responsável:</label>
+        <div class="flex flex-row">
+        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
+           <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid />
+           <p-button
+           severity="primary"
+           icon="pi pi-plus" />
+          </div>
+     </div>
+   </div>
+
+  <div class="flex justify-end">
+    <p-button
+    severity="success"
+    icon="pi pi-save"
+    label="Salvar"
+    (click)="salvar()" />
+  </div>
+        }
+        @default {
+        }
+      }
+    </div>
+  </div>
   `,
   styles: ``
 })
@@ -168,11 +219,16 @@ export class ClienteCreate {
 
   tipo: TipoCliente[] | undefined;
 
-  tipoClienteSelecionado: TipoCliente | undefined;
+  tipoClienteSelecionado: TipoCliente | string | undefined;
+
+  imoveis: Imoveis[] | undefined;
 
   constructor(
     private router: Router
-  ) { }
+  ) {
+
+  }
+
 
   salvar() {
     this.router.navigate(["/pages/pessoas"])
@@ -180,16 +236,134 @@ export class ClienteCreate {
 
   ngOnInit() {
     this.opcoesContato = [
-      {opcao: "WhatsApp"},
-      {opcao: "Anúncio"},
-      {opcao: "Contato Direto"},
-      {opcao: "Instagram"},
+      { opcao: "WhatsApp" },
+      { opcao: "Anúncio" },
+      { opcao: "Contato Direto" },
+      { opcao: "Instagram" },
     ];
 
     this.tipo = [
-      {tipo: "Interessado"},
-      {tipo: "Proprietário"},
-      {tipo: "Locatário"},
+      { tipo: "Interessado" },
+      { tipo: "Proprietário" },
+      { tipo: "Locatário" },
     ];
-   };
+
+    this.imoveis = [
+      {nome: "Imoveis cadastrados"}
+    ]
+  };
+
+  mostrarFormInteressado() {
+    return `
+    <div id="form-interessado" class="card flex flex-col grow basis-0 gap-3">
+    <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
+
+    <div class="flex flex-col gap-2">
+      <label for="">O que está Procurando?</label>
+      <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." [(ngModel)]="tipoClienteSelecionado"/>
+    </div>
+    
+    <div class="text-xl font-bold">Valores:</div>
+    <div class="flex flex-wrap gap-2">
+
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento:</label>
+        <p-inputnumber mode="currency" placeholder="Orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
+
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento Mínimo:</label>
+        <p-inputnumber mode="currency" placeholder="Valor mínimo do orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
+      
+      <div class="flex flex-col grow gap-2">
+        <label for="">Orçamento Máximo:</label>
+        <p-inputnumber mode="currency" placeholder="Valor máximo do orçamento do cliente." currency="BRL" locale="pt-BR" />
+      </div>
+    </div>
+
+  <div class="flex flex-col gap-2">
+    <div class="font-bold text-xl">Preferências:</div>
+
+    <div class="flex flex-wrap gap-6">
+      <div class="flex flex-col grow basis-0 gap-2">
+        <label for="campo-quartos">Quantidade de Quartos:</label>
+          <p-inputnumber
+          id="campo-quartos" 
+          placeholder="Digite a quantidade de quartos." />
+        </div>
+
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-suites">Sendo Suítes:</label>
+          <p-inputnumber
+          id="campo-suites"
+          placeholder="Digite a quantidade de suítes." />
+        </div>
+
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-banheiro">Quantidade de Banheiros:</label>
+          <p-inputnumber
+          id="campo-banheiro" 
+          placeholder="Digite a quantidade de banheiros." />
+        </div>
+
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-vagas">Vagas de Garagem:</label>
+          <p-inputnumber 
+          id="campo-vagas"
+          placeholder="Digite a quantidade de vagas de garagem." />
+        </div>
+
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-andares">Andares:</label>
+          <p-inputnumber 
+          id="campo-andares"
+          placeholder="Digite a quantidade de andares." />
+        </div>
+
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="campo-salas">Quantidade de Salas:</label>
+          <p-inputnumber
+          id="campo-salas" 
+          placeholder="Digite a quantidade de salas." />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <p-button
+    severity="success"
+    icon="pi pi-save"
+    label="Salvar"
+    (click)="salvar()" />
+  </div>`
+  }
+
+  mostrarFormProprietarioLocatario() {
+    return `
+    <div class="flex card gap-2 flex-col">
+    <div class="flex flex-col grow basis-0 gap-2">
+        <div class="text-xl font-bold">Informações Adicionais:</div>
+
+        <label for="">Imóvel do Responsável:</label>
+        <div class="flex flex-row">
+        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
+           <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o imóvel." [(ngModel)]="tipoClienteSelecionado" fluid />
+           <p-button
+           severity="primary"
+           icon="pi pi-plus" />
+          </div>
+     </div>
+   </div>
+
+  <div class="flex justify-end">
+    <p-button
+    severity="success"
+    icon="pi pi-save"
+    label="Salvar"
+    (click)="salvar()" />
+  </div>
+    `
+  }
 }
