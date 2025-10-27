@@ -121,8 +121,9 @@ export class AppConfigurator {
             this.onPresetChange(this.layoutService.layoutConfig().preset);
         }
     }
+
     enableDarkMode() {
-        this.layoutService.layoutConfig.update((state:any)=> ({
+        this.layoutService.layoutConfig.update((state: any) => ({
             ...state,
             darkTheme: true,
             surface: 'zinc',

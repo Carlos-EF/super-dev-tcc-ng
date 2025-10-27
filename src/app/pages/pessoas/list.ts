@@ -14,9 +14,9 @@ export interface PessoaResponse {
   email: string;
   caracteristicasEspeciais?: [
     {
-      creci?: number,
-      imovel?: string,
-      procurandoImoveis?: string[]
+      creci?: number;
+      imovel?: string;
+      procurandoImoveis?: string[];
     }
   ];
 }
@@ -79,12 +79,12 @@ export interface PessoaResponse {
                 <p><strong>Procurando imóvel com:</strong></p>
                 <div class="flex flex-row gap-2 flex-wrap">
                   @for (procurandoImovel of caracteristicaEspecial.procurandoImoveis; track procurandoImovel) {
-                  <p-tag
-                  class="max-h-min mt-2"
-                  severity="warn"
-                  value="{{procurandoImovel}}"
-                  [rounded]="true" />
-                }
+                    <p-tag
+                    class="max-h-min mt-2"
+                    severity="warn"
+                    value="{{procurandoImovel}}"
+                    [rounded]="true" />
+                  }
                 </div>
               } @else {
                 <p><strong>Imóvel associado:</strong></p>
@@ -161,7 +161,7 @@ export class PessoasList {
         caracteristicasEspeciais: [
           { procurandoImoveis: ["2 quartos", "1 suíte", "2 banheiros"] }
         ]
-      }, 
+      },
       {
         codigo: "130306",
         nome: "Unown Doe Jr.",

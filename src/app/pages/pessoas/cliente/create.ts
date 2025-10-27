@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
@@ -21,6 +19,10 @@ export interface TipoCliente {
 
 export interface Imoveis {
   nome: string;
+}
+
+export interface TiposImoveis {
+  tipo: string;
 }
 
 @Component({
@@ -77,7 +79,7 @@ export interface Imoveis {
 
     <div class="flex flex-col gap-2">
       <label for="">O que está Procurando?</label>
-      <p-select [options]="tipo" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." [(ngModel)]="tipoClienteSelecionado"/>
+      <p-select [options]="tipoImovel" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." [(ngModel)]="tipoSelecionado"/>
     </div>
     
     <div class="text-xl font-bold">Valores:</div>
@@ -221,6 +223,10 @@ export class ClienteCreate {
 
   imoveis: Imoveis[] | undefined;
 
+  tipoImovel: TiposImoveis[] | undefined;
+
+  tipoSelecionado: TiposImoveis | undefined;
+
   constructor(
     private router: Router
   ) {
@@ -248,6 +254,12 @@ export class ClienteCreate {
 
     this.imoveis = [
       {nome: "Imoveis cadastrados"}
-    ]
+    ];
+
+    this.tipoImovel = [
+      { tipo: "Casa" },
+      { tipo: "Apartamento" },
+      { tipo: "Terreno" },
+    ];
   };
 }

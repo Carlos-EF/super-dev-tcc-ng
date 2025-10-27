@@ -15,19 +15,19 @@ import { Router } from '@angular/router';
 
 // Trocar no futuro
 
-interface Finalidades {
+export interface Finalidades {
   nome: string
 }
 
-interface TiposImoveis {
+export interface TiposImoveis {
   nome: string
 }
 
-interface ValidarCondominio {
+export interface ValidarCondominio {
   resposta: string
 }
 
-interface ValidarMobilia {
+export interface ValidarMobilia {
   resposta: string
 }
 
