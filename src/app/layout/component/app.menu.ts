@@ -81,6 +81,11 @@ export class AppMenu {
                         routerLink: ['/pages/crud']
                     },
                     {
+                        label: 'Home',
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/pages/home']
+                    },
+                    {
                         label: 'Imóveis',
                         icon: 'pi pi-fw pi-building',
                         routerLink: ['/pages/imoveis']
