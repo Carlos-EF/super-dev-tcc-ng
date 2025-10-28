@@ -7,10 +7,12 @@ import { ImovelCreate } from './imoveis/create';
 import { PessoasList } from './pessoas/list';
 import { CorretorCreate } from './pessoas/corretor/create';
 import { ClienteCreate } from './pessoas/cliente/create';
+import { Home } from './home/home';
 
 export default [
     { path: 'documentation', component: Documentation },
     { path: 'crud', component: Crud },
+    { path: 'home', component: Home },
     { path: 'imoveis', component: ImovelList},
     { path: 'imoveis/cadastrar', component: ImovelCreate},
     { path: 'pessoas', component: PessoasList},

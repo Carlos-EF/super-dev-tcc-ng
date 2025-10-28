@@ -72,6 +72,7 @@ export class ChartDemo {
     radarOptions: any;
 
     subscription: Subscription;
+    
     constructor(private layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
             this.initCharts();
