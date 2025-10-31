@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -14,6 +16,8 @@ import { InputTextModule } from 'primeng/inputtext';
     InputNumberModule,
     ButtonModule,
     DatePickerModule,
+    AutoCompleteModule,
+    FormsModule
   ],
   template: `
   <div>
@@ -70,6 +74,11 @@ import { InputTextModule } from 'primeng/inputtext';
           <label for="">Cadastrado desde:</label>
           <p-date-picker dateFormat="dd/mm/yy"  placeholder="Informe quando o corretor foi cadastrado."/>
         </div>
+
+        <div class="flex flex-col grow gap-2">
+          <label for="">Teste DropDown:</label>
+          <p-autocomplete [(ngModel)]="value" [dropdown]="true" [suggestions]="items" (completeMethod)="search($event)" />
+        </div>
       </div>
     </div>
 
@@ -86,10 +95,23 @@ import { InputTextModule } from 'primeng/inputtext';
   styles: ``
 })
 export class CorretorCreate {
+  items: any[];
+
+  value: any;
+  
   constructor(
     private router: Router
-  ) { }
+  ) { 
+    this.items = []
+  }
+
   salvar() {
     this.router.navigate(["/pages/pessoas"])
+  }
+
+  search(event: AutoCompleteCompleteEvent) {
+    let _items = [...Array(10).keys()];
+
+    this.items = event.query ? [...Array(10).keys()].map((item) => event.query + '-' + item) : _items;
   }
 }
