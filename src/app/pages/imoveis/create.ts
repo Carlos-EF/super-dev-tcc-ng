@@ -64,12 +64,12 @@ export interface ValidarMobilia {
 
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-proprietario">Proprietário:</label>
+              <label for="campo-proprietario">Proprietário: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-propiretario" type="text" placeholder="Digite ou selecione o nome do proprietário." />
             </div>
 
           <div class="flex flex-col grow basis-0 gap-2">
-            <label for="campo-corretor">Corretor:</label>
+            <label for="campo-corretor">Corretor: <span class="text-red-500"><strong> *</strong></span></label>
             <input pInputText id="campo-corretor" type="text" placeholder="Digite ou selecione o nome do corretor." />
           </div>
         </div>
@@ -84,17 +84,17 @@ export interface ValidarMobilia {
         
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-codigo">Código:</label>
+              <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do imóvel." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-             <label for="campo-finalidade">Finalidade:</label>
+             <label for="campo-finalidade">Finalidade: <span class="text-red-500"><strong> *</strong></span></label>
              <p-select [options]="finalidades" [(ngModel)]="finalidadeSelecionada" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
            </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-             <label for="campo-tipo-imovel">Tipo do Imóvel:</label>
+             <label for="campo-tipo-imovel">Tipo do Imóvel: <span class="text-red-500"><strong> *</strong></span></label>
              <p-select [options]="tipo" [(ngModel)]="tipoSelecionado" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
            </div>
         </div>
@@ -109,7 +109,7 @@ export interface ValidarMobilia {
 
            <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-cep">CEP:</label>
+              <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
               <!-- Melhorar posição do botão -->
                <div class="flex flex-row">
                  <p-inputmask mask="99999-999" [(ngModel)]="cep" placeholder="99999-999" />
@@ -119,27 +119,27 @@ export interface ValidarMobilia {
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-logradouro">Logradouro:</label>
+              <label for="campo-logradouro">Logradouro: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-logradouro" type="text" placeholder="Digite o nome da rua." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-numero">Número:</label>
+              <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-numero" type="text" placeholder="Digite o número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-estado">Estado:</label>
+              <label for="campo-estado">Estado: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-estado" type="text" placeholder="Digite o nome da estado." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-cidade">Cidade:</label>
+              <label for="campo-cidade">Cidade: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-cidade" type="text" placeholder="Digite o nome da cidade." />
             </div>
             
             <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-bairro">Bairro:</label>
+              <label for="campo-bairro">Bairro: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
 
@@ -179,7 +179,7 @@ export interface ValidarMobilia {
           <div class="font-semibold text-xl mb-2">Valores:</div>
             <div class="flex flex-wrap gap-6 w-full">
               <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor">Valor Solicitado:</label>
+                <label for="campo-valor">Valor Solicitado: <span class="text-red-500"><strong> *</strong></span></label>
                 <p-inputnumber [(ngModel)]="valorSolicitado"
                 placeholder="Digite o valor solicitado no imóvel."
                 mode="currency"
@@ -268,7 +268,7 @@ export interface ValidarMobilia {
       <p-step-panel [value]="3">
         <ng-template #content let-activateCallback="activateCallback">
           <div class="flex flex-col">
-          <div class="font-semibold text-xl mb-4">Fotos do Imóvel:</div>
+          <div class="font-semibold text-xl mb-4">Fotos do Imóvel: <span class="text-red-500"><strong> *</strong></span></div>
                     <p-fileupload
                     chooseLabel="Procurar"
                     uploadLabel="Enviar"
