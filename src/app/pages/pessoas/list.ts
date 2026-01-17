@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, model } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { SplitButtonModule } from 'primeng/splitbutton';
+import { SplitButton } from 'primeng/splitbutton';
 import { TagModule } from 'primeng/tag';
 
 export interface PessoaResponse {
@@ -24,7 +24,7 @@ export interface PessoaResponse {
 @Component({
   selector: 'app-list',
   imports: [
-    SplitButtonModule,
+    SplitButton,
     ButtonModule,
     AvatarModule,
     TagModule,
@@ -34,10 +34,11 @@ export interface PessoaResponse {
   template: `
   <div class="flex justify-end">
     <p-splitbutton
+    #Teste
     severity="success"
     icon="pi pi-plus"
     label="Cadastrar"
-    [model]="opcoesPessoas" />
+    [model]="opcoesPessoas" /> 
   </div>
 
   @for (pessoa of pessoas; track pessoa) {
@@ -146,7 +147,7 @@ export class PessoasList {
         label: "Corretor",
         icon: "pi pi-id-card",
         routerLink: "corretor/cadastrar"
-      }
+      },
     ];
 
     this.pessoas = [
