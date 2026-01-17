@@ -41,22 +41,22 @@ export interface TiposImoveis {
     <div class="font-bold text-xl">Cadastro de Cliente:</div>
     <div class="flex flex-wrap basis-0 gap-3">
       <div class="flex flex-col grow gap-2">
-        <label for="">Nome Completo:</label>
+        <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
         <input type="text" pInputText placeholder="Digite o nome do cliente.">
       </div>
 
       <div class="flex flex-col grow gap-2">
-        <label for="campo-codigo">Código:</label>
+        <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
         <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." />
       </div>
     
       <div class="flex flex-col basis-0 gap-2">
-        <label for="">Celular:</label>
+        <label for="">Celular: <span class="text-red-500"><strong> *</strong></span></label>
         <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
       </div>
           
       <div class="flex flex-col grow basis-0 gap-2">
-        <label for="">Email:</label>
+        <label for="">E-mail: <span class="text-red-500"><strong> *</strong></span></label>
         <input type="email" pInputText placeholder="Digite o e-mail do cliente.">
       </div>
 
@@ -66,19 +66,19 @@ export interface TiposImoveis {
       </div>
 
       <div class="flex flex-col grow basis-0 gap-2">
-        <label for="">Tipo do Cliente:</label>
+        <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
         <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." [(ngModel)]="tipoClienteSelecionado"/>
       </div>
     </div>
 
-    <div id="mostrar-form">
+    <div id="mostrar-form" class="flex flex-col gap-4">
       @switch (tipoClienteSelecionado) {
         @case ("Interessado") {
-          <div id="form-interessado" class="card flex flex-col grow basis-0 gap-3">
+  <div id="form-interessado" class="card flex flex-col gap-4">
     <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
 
     <div class="flex flex-col gap-2">
-      <label for="">O que está Procurando?</label>
+      <label for="">O que está Procurando? <span class="text-red-500"><strong> *</strong></span></label>
       <p-select [options]="tipoImovel" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." [(ngModel)]="tipoSelecionado"/>
     </div>
     
@@ -86,7 +86,7 @@ export interface TiposImoveis {
     <div class="flex flex-wrap gap-2">
 
       <div class="flex flex-col grow gap-2">
-        <label for="">Orçamento:</label>
+        <label for="">Orçamento: <span class="text-red-500"><strong> *</strong></span></label>
         <p-inputnumber mode="currency" placeholder="Orçamento do cliente." currency="BRL" locale="pt-BR" />
       </div>
 
@@ -160,7 +160,7 @@ export interface TiposImoveis {
         }
         @case ("Proprietário") {
            <div class="flex card gap-2 flex-col">
-    <div class="flex flex-col grow basis-0 gap-2">
+    <div class="flex flex-col grow basis-0 gap-4">
         <div class="text-xl font-bold">Informações Adicionais:</div>
 
         <label for="">Imóvel do Responsável:</label>
@@ -184,7 +184,7 @@ export interface TiposImoveis {
         }
         @case ("Locatário") {
            <div class="flex card gap-2 flex-col">
-    <div class="flex flex-col grow basis-0 gap-2">
+    <div class="flex flex-col grow basis-0 gap-4">
         <div class="text-xl font-bold">Informações Adicionais:</div>
 
         <label for="">Imóvel do Responsável:</label>
