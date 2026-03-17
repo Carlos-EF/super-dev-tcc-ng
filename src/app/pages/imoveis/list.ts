@@ -1,3 +1,4 @@
+import { ActionButtons } from '@/layout/component/action-buttons';
 import { style } from '@angular/animations';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -24,7 +25,8 @@ export interface ImovelResponse {
     ImageModule,
     TagModule,
     CardModule,
-  ],
+    ActionButtons
+],
   template: `
     <div class="flex justify-end">
       <p-button
@@ -66,21 +68,10 @@ export interface ImovelResponse {
           } 
         </div>
       </div>
-
+      
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-          <p-button
-          icon="pi pi-search"
-          severity="info"
-          label="Detalhes" />
-          <p-button
-          icon="pi pi-pencil"
-          severity="warn"
-          label="Editar" />
-          <p-button
-          icon="pi pi-trash"
-          severity="danger"
-          label="Apagar" />
+          <app-action-buttons />
         </div>
       </div>
     </div>
