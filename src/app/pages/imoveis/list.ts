@@ -38,7 +38,7 @@ export interface ImovelResponse {
     
     <!-- Para fazer o modelo de listagem -->
     @for(imovel of imoveis; track imovel) {
-        <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
+  <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
     <div class="bg-surface-900 mt-3 pb-2 pl-2 w-full">
 
       <div class="flex flex-row w-full">
