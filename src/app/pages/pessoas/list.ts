@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SplitButton } from 'primeng/splitbutton';
 import { TagModule } from 'primeng/tag';
+import { ActionButtons } from "@/layout/component/action-buttons";
 
 export interface PessoaResponse {
   codigo: string;
@@ -29,7 +30,8 @@ export interface PessoaResponse {
     AvatarModule,
     TagModule,
     CardModule,
-  ],
+    ActionButtons
+],
 
   template: `
   <div class="flex justify-end">
@@ -107,20 +109,7 @@ export interface PessoaResponse {
 
         <div class="flex mt-2 mr-3 items-center">
           <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-            <p-button
-            icon="pi pi-search"
-            severity="info"
-            label="Detalhes" />
-
-            <p-button
-            icon="pi pi-pencil"
-            severity="warn"
-            label="Editar" />
-
-            <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            label="Apagar" />
+            <app-action-buttons />
           </div>
         </div>
       </div>
