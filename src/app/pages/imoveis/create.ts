@@ -46,7 +46,6 @@ export interface ValidarMobilia {
   ],
   template: `
   <p-toast/>
-  <!-- Trocar para AutoCompleteModule depois de criar os serviços :D -->
   <div class="card flex justify-center">
     <p-stepper [value]="1" class="grow basis-0 gap-2 surface-0">
       <p-step-list>

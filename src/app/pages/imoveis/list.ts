@@ -1,3 +1,4 @@
+import { style } from '@angular/animations';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -54,7 +55,7 @@ export interface ImovelResponse {
           </div>
         <div><h5>{{imovel.endereco}}</h5></div>
         
-        <div><h2><strong class="text-primary">R$ {{imovel.valor}}</strong></h2></div>
+        <div><h2><strong class="text-primary">{{formatarValorParaReais(imovel.valor)}}</strong></h2></div>
         
         <div class="flex gap-5 flex-wrap flex-row">
           @for (caracteristica of imovel.caracteristicas; track caracteristica) {
@@ -114,5 +115,15 @@ export class ImovelList {
         caracteristicas: ["2 quartos", "1 suíte", "1 vaga"]
       }
     ]
+  }
+
+  formatarValorParaReais(valor: number): string {
+     const formatador = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+
+    var valorFormatado = formatador.format(valor);
+    return valorFormatado;
   }
 }
