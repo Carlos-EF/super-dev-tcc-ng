@@ -8,19 +8,18 @@ import { TagModule } from 'primeng/tag';
 import { EditButton } from "@/layout/component/action buttons/edit-button";
 import { Router, RouterLink } from '@angular/router';
 
-export interface PessoaResponse {
+export interface CorretorResponse {
+  id: string;
+  status: string;
   codigo: string;
-  nome: string;
+  nome_completo: string;
   tipo: string;
   celular: string;
   email: string;
-  caracteristicasEspeciais?: [
-    {
-      creci?: number;
-      imovel?: string;
-      procurandoImoveis?: string[];
-    }
-  ];
+  creci: string;
+  data_nascimento?: string;
+  rg?: string;
+  cpf?: string;
 }
 
 @Component({
@@ -46,78 +45,117 @@ export interface PessoaResponse {
   </div>
 
   @for (pessoa of pessoas; track pessoa) {
-   <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
-    <div class="ng-surface-900 flex flex-col justify-between">
-      <div class="flex flex-row w-full">
-        <div class="flex flex-row w-full">
-          <div class="flex ml-3 items-center">
-            <p-avatar
+    @if (pessoa.status == "ATIVO") {
+      <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
+        <div class="ng-surface-900 flex flex-col justify-between">
+          <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full">
+              <div class="flex ml-3 items-center">
+                <p-avatar
             size="xlarge"
             shape="circle"
             [style]="obterCorAvatarPessoa(pessoa.tipo)"
-            label="{{pessoa.nome.trim().substring(0,2)}}" />
+            label="{{pessoa.nome_completo.trim().substring(0,2)}}" />
           </div>
-
+          
           <div class="flex flex-row w-full justify-between items-center ml-3">
             <div class="flex flex-wrap flex-col w-full content-start">
               <p-tag
               class="max-h-min max-w-min mt-2"
               value="{{pessoa.codigo}}"
               [rounded]="true" />
+              
+              <h4><strong>{{pessoa.nome_completo}}</strong></h4>
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{pessoa.tipo}}"
+              [severity]="obterCorTipoPessoa(pessoa.tipo)" />
+            </div>
             
-              <h4><strong>{{pessoa.nome}}</strong></h4>
-                <p-tag
-                class="max-h-min max-w-min mt-2"
-                value="{{pessoa.tipo}}"
-                [severity]="obterCorTipoPessoa(pessoa.tipo)" />
-            </div>
- 
-            @for (caracteristicaEspecial of pessoa.caracteristicasEspeciais; track caracteristicaEspecial) {
-              <div class="flex flex-col justify-center w-full">
+            
+            <div class="flex flex-col justify-center w-full">
               <h4><strong>Informações Adicionais:</strong></h4>
-              @if (pessoa.tipo === "Corretor") {
-                  <p><strong>CRECI:</strong></p>
-                  <p><strong>{{caracteristicaEspecial.creci?.toString()?.slice(0,2) + "." + caracteristicaEspecial.creci?.toString()?.slice(2)}}F</strong></p>
-              } @else if (pessoa.tipo === "Interessado") {
-                <p><strong>Procurando imóvel com:</strong></p>
-                <div class="flex flex-row gap-2 flex-wrap">
-                  @for (procurandoImovel of caracteristicaEspecial.procurandoImoveis; track procurandoImovel) {
-                    <p-tag
-                    class="max-h-min mt-2"
-                    severity="warn"
-                    value="{{procurandoImovel}}"
-                    [rounded]="true" />
-                  }
-                </div>
-              } @else {
-                <p><strong>Imóvel associado:</strong></p>
-                <p><strong>{{caracteristicaEspecial.imovel}}</strong></p>
-              }
+              <p><strong>CRECI:</strong></p>
+              <p><strong>{{pessoa.creci}}F</strong></p>
             </div>
-            }
-        </div>
-
+          </div>
+          
           <div class="flex border-l-2 border-r-2 mr-3 w-full">
             <div class="flex flex-col w-full items-center ml-5 w-full">
               <div class="flex flex-col justify-center">
-              <h4><strong>Contato:</strong></h4>
-              
-              <h6 class="pi pi-whatsapp"> {{pessoa.celular}}</h6>
-              
-              <h6 class="pi pi-at"> {{pessoa.email}}</h6>
+                <h4><strong>Contato:</strong></h4>     
+                <h6 class="pi pi-whatsapp"> {{pessoa.celular}}</h6>
+                
+                <h6 class="pi pi-at"> {{pessoa.email}}</h6>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="flex mt-2 mr-3 items-center">
-          <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-            <edit-button routerLink="corretor/editar/{{pessoa.codigo}}"/>
+          
+          <div class="flex mt-2 mr-3 items-center">
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+              <edit-button routerLink="corretor/editar/{{pessoa.id}}"/>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</p-card>
+  </p-card>
+} @else if (pessoa.status == "INATIVO") {
+  <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
+        <div class="ng-surface-900 flex flex-col justify-between">
+          <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full opacity-50">
+              <div class="flex ml-3 items-center">
+                <p-avatar
+                  size="xlarge"
+                  shape="circle"
+                  [style]="obterCorAvatarPessoa(pessoa.tipo)"
+                  label="{{pessoa.nome_completo.trim().substring(0,2)}}" />
+              </div>
+          
+          <div class="flex flex-row w-full justify-between items-center ml-3">
+            <div class="flex flex-wrap flex-col w-full content-start">
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{pessoa.codigo}}"
+              [rounded]="true" />
+              
+              <h4><strong>{{pessoa.nome_completo}}</strong></h4>
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{pessoa.tipo}}"
+              [severity]="obterCorTipoPessoa(pessoa.tipo)" />
+            </div>
+            
+            
+            <div class="flex flex-col justify-center w-full">
+              <h4><strong>Informações Adicionais:</strong></h4>
+              <p><strong>CRECI:</strong></p>
+              <p><strong>{{pessoa.creci}}F</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex border-l-2 border-r-2 mr-3 w-full">
+            <div class="flex flex-col w-full items-center ml-5 w-full">
+              <div class="flex flex-col justify-center">
+                <h4><strong>Contato:</strong></h4>     
+                <h6 class="pi pi-whatsapp"> {{pessoa.celular}}</h6>
+                
+                <h6 class="pi pi-at"> {{pessoa.email}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+
+          <div class="flex mt-2 mr-3 items-center">
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
+              <edit-button routerLink="corretor/editar/{{pessoa.id}}"/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </p-card>
+  }
 }
   `,
   styles: ``
@@ -125,7 +163,7 @@ export interface PessoaResponse {
 export class PessoasList {
   opcoesPessoas: MenuItem[];
 
-  pessoas: PessoaResponse[];
+  pessoas: CorretorResponse[];
 
   constructor(
     private router : Router
@@ -145,44 +183,24 @@ export class PessoasList {
 
     this.pessoas = [
       {
-        codigo: "060102",
-        nome: "John Doe",
-        tipo: "Interessado",
-        celular: "(47) 91234-4321",
-        email: "johndoe144@gmail.com",
-        caracteristicasEspeciais: [
-          { procurandoImoveis: ["2 quartos", "1 suíte", "2 banheiros"] }
-        ]
-      },
-      {
-        codigo: "130306",
-        nome: "Unown Doe Jr.",
-        tipo: "Proprietário",
-        celular: "(47) 94321-1234",
-        email: "unowndoejr144@hotmail.com",
-        caracteristicasEspeciais: [
-          { imovel: "Link (futuro link do imóvel)" }
-        ]
-      },
-      {
-        codigo: "140205",
-        nome: "Jane Doe",
-        tipo: "Locatário",
-        celular: "(47) 98873-1212",
-        email: "janedoe144@hotmail.com",
-        caracteristicasEspeciais: [
-          { imovel: "Link (futuro link do imóvel)" }
-        ]
-      },
-      {
+        id: "019d43e8-4317-78c2-8cc0-02863c1c3c38",
+        status: "ATIVO",
         codigo: "100101",
-        nome: "Sem Nome",
         tipo: "Corretor",
+        nome_completo: "Sem Nome",
         celular: "(47) 92003-8001",
         email: "semnomecorretor@gmail.com",
-        caracteristicasEspeciais: [
-          { creci: 12345 }
-        ]
+        creci: "12345",
+      },
+      {
+        id: "019d43e8-76f8-7858-8e31-32d7d8af1a01",
+        status: "INATIVO",
+        codigo: "100102",
+        tipo: "Corretor",
+        nome_completo: "Sem Nome 2.0",
+        celular: "(47) 92003-8001",
+        email: "semnomecorretor2@gmail.com",
+        creci: "54321",
       },
     ]
   };
