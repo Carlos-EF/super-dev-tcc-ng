@@ -11,7 +11,7 @@ export default [
     { path: 'imoveis/cadastrar', component: ImovelCreate},
     { path: 'pessoas', component: PessoasList},
     { path: 'pessoas/corretor/cadastrar', component: CorretorCreate},
-    { path: 'pessoas/corretor/editar/{id}', component: CorretorEdit},
+    { path: 'pessoas/corretor/editar/:id', component: CorretorEdit},
     { path: 'pessoas/cliente/cadastrar', component: ClienteCreate},
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;
