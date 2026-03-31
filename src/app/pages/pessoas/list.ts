@@ -5,6 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { SplitButton } from 'primeng/splitbutton';
 import { TagModule } from 'primeng/tag';
+import { EditButton } from "@/layout/component/action buttons/edit-button";
+import { Router, RouterLink } from '@angular/router';
 
 export interface PessoaResponse {
   codigo: string;
@@ -29,6 +31,8 @@ export interface PessoaResponse {
     AvatarModule,
     TagModule,
     CardModule,
+    EditButton,
+    RouterLink
 ],
 
   template: `
@@ -107,6 +111,7 @@ export interface PessoaResponse {
 
         <div class="flex mt-2 mr-3 items-center">
           <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+            <edit-button routerLink="corretor/editar/{{pessoa.codigo}}"/>
           </div>
         </div>
       </div>
@@ -122,7 +127,9 @@ export class PessoasList {
 
   pessoas: PessoaResponse[];
 
-  constructor() {
+  constructor(
+    private router : Router
+  ) {
     this.opcoesPessoas = [
       {
         label: "Cliente",
