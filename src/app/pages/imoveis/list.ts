@@ -1,5 +1,3 @@
-import { ActionButtons } from '@/layout/component/action-buttons';
-import { style } from '@angular/animations';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -25,7 +23,6 @@ export interface ImovelResponse {
     ImageModule,
     TagModule,
     CardModule,
-    ActionButtons
 ],
   template: `
     <div class="flex justify-end">
@@ -71,7 +68,6 @@ export interface ImovelResponse {
       
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-          <app-action-buttons />
         </div>
       </div>
     </div>
