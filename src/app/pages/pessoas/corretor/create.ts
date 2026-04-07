@@ -46,7 +46,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
       <div class="flex flex-col basis-0 gap-2">
         <label for="">CRECI: <span class="text-red-500">*</span></label>
-        <p-inputnumber [maxlength]="5" placeholder="Digite o CRECI do corretor." formControlName='creci'/>
+        <p-inputmask mask="99.999F" placeholder="00.000F" formControlName='creci'/>
       </div>
     </div>
 
