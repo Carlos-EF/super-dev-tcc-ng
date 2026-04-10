@@ -39,4 +39,10 @@ export class CorretorService {
 
     return this.httpClient.put<void>(url, {});
   }
+
+  deactivate(id: string): Observable<void> {
+    const url = `${enviroment.apiUrl}/corretores/${id}/desativar`;
+
+    return this.httpClient.put<void>(url, {});
+  }
 }
