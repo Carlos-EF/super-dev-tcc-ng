@@ -45,4 +45,10 @@ export class CorretorService {
 
     return this.httpClient.put<void>(url, {});
   }
+
+  delete(id: string): Observable<void> {
+    const url = `${enviroment.apiUrl}/corretores/${id}`;
+
+    return this.httpClient.delete<void>(url);
+  }
 }
