@@ -33,4 +33,10 @@ export class CorretorService {
     
     return this.httpClient.put<CorretorResponse>(url, form);
   }
+
+  activate(id: string): Observable<void> {
+    const url = `${enviroment.apiUrl}/corretores/${id}/ativar`;
+
+    return this.httpClient.put<void>(url, {});
+  }
 }
