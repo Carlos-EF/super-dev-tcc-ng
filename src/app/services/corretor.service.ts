@@ -21,4 +21,10 @@ export class CorretorService {
 
     return this.httpClient.post<CorretorResponse>(url, form);
   }
+
+  getById(id: string): Observable<CorretorResponse> {
+    const url = `${enviroment.apiUrl}/corretores/${id}`;
+
+    return this.httpClient.get<CorretorResponse>(url);
+  }
 }
