@@ -21,3 +21,12 @@ export interface CorretorCriarRequest {
     rg: string;
     cpf: string;
 }
+
+export interface CorretorEditarRequest {
+    nome_completo: string;
+    celular: string;
+    email: string;
+    data_nascimento: string;
+    rg: string;
+    cpf: string;
+}
