@@ -1,4 +1,4 @@
-import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
+import { CorretorCriarRequest, CorretorEditarRequest, CorretorResponse } from '@/models/corretor.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -16,7 +16,7 @@ export class CorretorService {
     return this.httpClient.get<CorretorResponse[]>(url);
   }
 
-  create(form: CorretorCriarRequest): Observable<CorretorResponse>{
+  create(form: CorretorCriarRequest): Observable<CorretorResponse> {
     const url = `${enviroment.apiUrl}/corretores`;
 
     return this.httpClient.post<CorretorResponse>(url, form);
@@ -26,5 +26,11 @@ export class CorretorService {
     const url = `${enviroment.apiUrl}/corretores/${id}`;
 
     return this.httpClient.get<CorretorResponse>(url);
+  }
+
+  update(id: string, form: CorretorEditarRequest): Observable<CorretorResponse> {
+    const url = `${enviroment.apiUrl}/corretores/${id}`;
+    
+    return this.httpClient.put<CorretorResponse>(url, form);
   }
 }
