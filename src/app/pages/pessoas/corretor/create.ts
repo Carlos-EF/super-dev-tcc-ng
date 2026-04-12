@@ -1,12 +1,16 @@
+import { CorretorCriarRequest } from '@/models/corretor.model';
+import { CorretorService } from '@/services/corretor.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -83,7 +87,10 @@ import { InputTextModule } from 'primeng/inputtext';
   styles: ``
 })
 export class CorretorCreate {
-  private readonly formBuilder = inject(FormBuilder)
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly corretorService = inject(CorretorService);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   corretorForm = this.formBuilder.group({
     nome: ['', Validators.required, Validators.minLength(3), Validators.maxLength(60)],
@@ -95,6 +102,7 @@ export class CorretorCreate {
     rg: ['', Validators.minLength(7), Validators.maxLength(7)],
     cpf: ['', Validators.minLength(11), Validators.maxLength(11)]
   })
+
   constructor(
     private router: Router
   ) {
@@ -102,6 +110,39 @@ export class CorretorCreate {
   }
 
   salvar() {
-    this.router.navigate(["/pages/pessoas"])
+    const form: CorretorCriarRequest = {
+      nome_completo: this.corretorForm.getRawValue().nome!,
+      codigo: this.corretorForm.getRawValue().codigo!,
+      cpf: this.corretorForm.getRawValue().cpf!,
+      creci: this.corretorForm.getRawValue().creci!,
+      data_nascimento: this.corretorForm.getRawValue().dataNascimento!,
+      rg: this.corretorForm.getRawValue().rg!,
+      celular: this.corretorForm.getRawValue().celular!,
+      email: this.corretorForm.getRawValue().email!,
+    };
+
+    this.cadastrar(form);
+  }
+
+  cadastrar(form: CorretorCriarRequest) {
+    this.corretorService.create(form).subscribe({
+      next: () => {
+        this.corretorForm.reset();
+        this.messageService.add({
+          severity: "success",
+          summary: "SUCESSO!",
+          detail: "Corretor cadastrado com êxito!"
+        });
+        this.router.navigate(["/pages/pessoas"]);
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar cadastrar o corretor: ${erro}`);
+                this.messageService.add({
+          severity: "error",
+          summary: "FALHA NO CADASTRO!",
+          detail: "Ocorreu um erro ao tentar cadastrar o corretor."
+        });
+      }
+    })
   }
 }
