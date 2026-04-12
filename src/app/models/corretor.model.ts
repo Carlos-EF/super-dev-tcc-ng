@@ -4,6 +4,7 @@ export interface CorretorResponse {
     nome_completo: string;
     codigo: string;
     celular: string;
+    tipo: string
     email: string;
     creci: string;
     data_nascimento: string;
