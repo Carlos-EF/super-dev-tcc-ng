@@ -3,14 +3,13 @@ import { CorretorService } from '@/services/corretor.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { MessageService } from 'primeng/api';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
-import { from } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -90,7 +89,6 @@ export class CorretorCreate {
   private readonly formBuilder = inject(FormBuilder);
   private readonly corretorService = inject(CorretorService);
   private readonly messageService = inject(MessageService);
-  private readonly confirmationService = inject(ConfirmationService);
 
   corretorForm = this.formBuilder.group({
     nome: ['', Validators.required, Validators.minLength(3), Validators.maxLength(60)],
