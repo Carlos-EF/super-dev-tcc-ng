@@ -194,6 +194,48 @@ export class PessoasList {
     })
   }
 
+  ativarCorretor(id: string) {
+    this.corretorService.activate(id).subscribe({
+      next:() => {
+          this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Corretor ativado com sucesso!'
+        });
+        this.buscarCorretores();
+      },
+      error:(erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar ativar o corretor: ${erro}`);
+          this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
+          detail: 'Ocorreu um erro ao tentar ativar o corretor.'
+        })
+      }
+    })
+  }
+
+  desativarCorretor(id: string) {
+    this.corretorService.deactivate(id).subscribe({
+      next:() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Corretor desativado com sucesso!'
+        });
+        this.buscarCorretores();
+      },
+      error:(erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar desativar o corretor: ${erro}`);
+        this.messageService.add({
+          severity:'error',
+          summary:'ERRO (CORRETORES).',
+          detail: 'Ocorreu um erro ao tentar desativar o corretor.'
+        })
+      }
+    })
+  }
+
   obterCorTipoPessoa(tipo: string): "success" | "danger" | "contrast" | null | undefined {
     switch (tipo) {
       case "Interessado": return "success";
