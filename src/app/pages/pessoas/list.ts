@@ -68,7 +68,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
             <div class="flex flex-col justify-center w-full">
               <h4><strong>Informações Adicionais:</strong></h4>
               <p><strong>CRECI:</strong></p>
-              <p><strong>{{corretor.creci}}F</strong></p>
+              <p><strong>{{corretor.creci}}</strong></p>
             </div>
           </div>
           
@@ -125,7 +125,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
             <div class="flex flex-col justify-center w-full">
               <h4><strong>Informações Adicionais:</strong></h4>
               <p><strong>CRECI:</strong></p>
-              <p><strong>{{corretor.creci}}F</strong></p>
+              <p><strong>{{corretor.creci}}</strong></p>
             </div>
           </div>
           
