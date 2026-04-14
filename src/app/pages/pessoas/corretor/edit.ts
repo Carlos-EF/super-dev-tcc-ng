@@ -1,4 +1,4 @@
-import { CorretorCriarRequest } from '@/models/corretor.model';
+import { CorretorEditarRequest } from '@/models/corretor.model';
 import { CorretorService } from '@/services/corretor.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,7 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-  selector: 'app-create',
+  selector: 'app-edit',
   imports: [
     InputMaskModule,
     InputTextModule,
@@ -24,7 +24,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ReactiveFormsModule
   ],
   template: `
-  <form [formGroup]="corretorForm">
+  <form [formGroup]="corretorEditarForm">
 
     <div class="card flex flex-col p-2 gap-2">
       <div class="font-bold text-xl">Informações Necessárias: <span class="text-red-500">*</span></div>
@@ -35,11 +35,6 @@ import { InputTextModule } from 'primeng/inputtext';
       
       <div class="flex flex-wrap gap-6">
         <div class="flex flex-col basis-0 gap-2">
-          <label for="campo-codigo">Código: <span class="text-red-500">*</span></label>
-          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do corretor." formControlName='codigo'/>
-        </div>
-        
-        <div class="flex flex-col basis-0 gap-2">
           <label for="">Celular: <span class="text-red-500">*</span></label>
           <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName='celular'/>
         </div>
@@ -47,11 +42,6 @@ import { InputTextModule } from 'primeng/inputtext';
         <div class="flex flex-col basis-0 grow gap-2">
           <label for="">E-Mail: <span class="text-red-500">*</span></label>
           <input type="email" pInputText placeholder="Digite o e-mail do corretor." formControlName='email'>
-        </div>
-        
-        <div class="flex flex-col basis-0 gap-2">
-          <label for="">CRECI: <span class="text-red-500">*</span></label>
-          <p-inputmask mask="99.999F" placeholder="00.000F" formControlName='creci'/>
         </div>
       </div>
       
@@ -88,21 +78,21 @@ import { InputTextModule } from 'primeng/inputtext';
   `,
   styles: ``
 })
-export class CorretorCreate {
+export class CorretorEdit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly corretorService = inject(CorretorService);
   private readonly messageService = inject(MessageService);
 
-  corretorForm = this.formBuilder.group({
+  corretorEditarForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    codigo: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
     celular: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
     email: ['', [Validators.required, Validators.maxLength(50)]],
-    creci: ['', [Validators.required, Validators.maxLength(5)]],
     dataNascimento: [''],
     rg: ['', [Validators.minLength(7), Validators.maxLength(7)]],
     cpf: ['', [Validators.minLength(11), Validators.maxLength(11)]]
   })
+
+  idParaEditar: string = '';
 
   constructor(
     private router: Router
@@ -111,28 +101,26 @@ export class CorretorCreate {
   }
 
   salvar() {
-    const form: CorretorCriarRequest = {
-      nome_completo: this.corretorForm.getRawValue().nome!,
-      codigo: this.corretorForm.getRawValue().codigo!,
-      cpf: this.corretorForm.getRawValue().cpf!,
-      creci: this.corretorForm.getRawValue().creci!,
-      data_nascimento: this.corretorForm.getRawValue().dataNascimento!,
-      rg: this.corretorForm.getRawValue().rg!,
-      celular: this.corretorForm.getRawValue().celular!,
-      email: this.corretorForm.getRawValue().email!,
+    const form: CorretorEditarRequest = {
+      nome_completo: this.corretorEditarForm.getRawValue().nome!,
+      cpf: this.corretorEditarForm.getRawValue().cpf!,
+      data_nascimento: this.corretorEditarForm.getRawValue().dataNascimento!,
+      rg: this.corretorEditarForm.getRawValue().rg!,
+      celular: this.corretorEditarForm.getRawValue().celular!,
+      email: this.corretorEditarForm.getRawValue().email!,
     };
 
-    this.cadastrar(form);
+    this.editar(form);
   }
 
-  cadastrar(form: CorretorCriarRequest) {
-    this.corretorService.create(form).subscribe({
+  editar( form: CorretorEditarRequest) {
+    this.corretorService.update(this.idParaEditar, form).subscribe({
       next: () => {
-        this.corretorForm.reset();
+        this.corretorEditarForm.reset();
         this.messageService.add({
           severity: "success",
           summary: "SUCESSO!",
-          detail: "Corretor cadastrado com êxito!"
+          detail: "Corretor editado com êxito!"
         });
         this.router.navigate(["/pages/pessoas"]);
       },
@@ -140,8 +128,8 @@ export class CorretorCreate {
         console.log(`Ocorreu um erro ao tentar cadastrar o corretor: ${erro}`);
                 this.messageService.add({
           severity: "error",
-          summary: "FALHA NO CADASTRO!",
-          detail: "Ocorreu um erro ao tentar cadastrar o corretor."
+          summary: "FALHA NA EDIÇÂO!",
+          detail: `Ocorreu um erro ao tentar editar o corretor.`
         });
       }
     })
