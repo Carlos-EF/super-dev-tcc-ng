@@ -223,6 +223,28 @@ export class PessoasList {
     })
   }
 
+  confirmarInativacao(corretor: CorretorResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja inativar o corretor : ${corretor.nome_completo}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Inativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.desativarCorretor(corretor.id);
+      }
+    })
+  }
+
   ativarCorretor(id: string) {
     this.corretorService.activate(id).subscribe({
       next:() => {
