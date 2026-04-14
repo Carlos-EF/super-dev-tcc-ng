@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
     <div class="flex flex-col justify-between gap-4">
       <p-button
       icon="pi pi-circle-off"
-      severity="warn"
+      severity="secondary"
       [outlined]="true"
       />
     </div>
