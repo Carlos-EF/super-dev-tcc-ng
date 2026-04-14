@@ -87,7 +87,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
               <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
-              <delete-button/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
               <status-button [status]="corretor.status" (click)="confirmarAtivacao(corretor)"/>
-              <delete-button/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
         </div>
@@ -285,6 +285,50 @@ export class PessoasList {
           summary:'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar desativar o corretor.'
         })
+      }
+    })
+  }
+
+  confirmarApagarCorretor(corretor: CorretorResponse) {
+      this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja apagar o corretor: ${corretor.nome_completo}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Apagar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.apagarCorretor(corretor.id);
+      },
+    })
+  }
+
+  apagarCorretor(id: string) {
+    this.corretorService.delete(id).subscribe({
+      next:() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Corretor apagado com sucesso!'
+        });
+        this.buscarCorretores();
+      },
+      error: (erro: Error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
+          detail: 'Ocorreru um erro ao tentar apagar o corretor.'
+        });
+        console.log(`Ocorreu um erro ao tentar apagar o corretor: ${erro}.`);
+        
       }
     })
   }
