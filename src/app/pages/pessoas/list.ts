@@ -289,6 +289,28 @@ export class PessoasList {
     })
   }
 
+  apagarCorretor(id: string) {
+    this.corretorService.delete(id).subscribe({
+      next:() => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Corretor apagado com sucesso!'
+        });
+        this.buscarCorretores();
+      },
+      error: (erro: Error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
+          detail: 'Ocorreru um erro ao tentar apagar o corretor.'
+        });
+        console.log(`Ocorreu um erro ao tentar apagar o corretor: ${erro}.`);
+        
+      }
+    })
+  }
+
   obterCorTipoPessoa(tipo: string): "success" | "danger" | "contrast" | null | undefined {
     switch (tipo) {
       case "Interessado": return "success";
