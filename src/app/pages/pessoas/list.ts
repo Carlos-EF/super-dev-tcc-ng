@@ -85,7 +85,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
           
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-              <status-button [status]="corretor.status" (onClick)="desativarCorretor(corretor.id)"/>
+              <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button/>
             </div>
@@ -143,7 +143,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <status-button [status]="corretor.status" (onClick)="ativarCorretor(corretor.id)"/>
+              <status-button [status]="corretor.status" (click)="confirmarAtivacao(corretor)"/>
               <delete-button/>
             </div>
           </div>
@@ -219,7 +219,8 @@ export class PessoasList {
       },
       accept: () => {
         this.ativarCorretor(corretor.id);
-      }
+      },
+      reject: () => {}
     })
   }
 
@@ -241,7 +242,8 @@ export class PessoasList {
       },
       accept: () => {
         this.desativarCorretor(corretor.id);
-      }
+      },
+      reject: () => {}
     })
   }
 
