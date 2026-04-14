@@ -1,4 +1,4 @@
 export const enviroment = {
     producion: false,
-    apiUrl: '',
+    apiUrl: 'http://localhost:8000',
 }

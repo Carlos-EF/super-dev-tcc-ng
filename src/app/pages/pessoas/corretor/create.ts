@@ -96,12 +96,12 @@ export class CorretorCreate {
   corretorForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
-    celular: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
-    email: ['', [Validators.required, Validators.maxLength(50)]],
-    creci: ['', [Validators.required, Validators.maxLength(5)]],
+    celular: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    creci: ['', [Validators.required]],
     dataNascimento: [''],
-    rg: ['', [Validators.minLength(7), Validators.maxLength(7)]],
-    cpf: ['', [Validators.minLength(11), Validators.maxLength(11)]]
+    rg: [''],
+    cpf: ['']
   })
 
   constructor(
