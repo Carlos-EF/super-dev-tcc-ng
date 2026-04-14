@@ -87,7 +87,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
               <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
-              <delete-button/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
               <status-button [status]="corretor.status" (click)="confirmarAtivacao(corretor)"/>
-              <delete-button/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
         </div>
@@ -286,6 +286,28 @@ export class PessoasList {
           detail: 'Ocorreu um erro ao tentar desativar o corretor.'
         })
       }
+    })
+  }
+
+  confirmarApagarCorretor(corretor: CorretorResponse) {
+      this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja apagar o corretor: ${corretor.nome_completo}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Apagar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.apagarCorretor(corretor.id);
+      },
     })
   }
 
