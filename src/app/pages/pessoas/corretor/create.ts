@@ -36,7 +36,7 @@ import { InputTextModule } from 'primeng/inputtext';
       <div class="flex flex-wrap gap-6">
         <div class="flex flex-col basis-0 gap-2">
           <label for="campo-codigo">Código: <span class="text-red-500">*</span></label>
-          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do corretor." formControlName='codigo'/>
+          <p-inputnumber id="campo-codigo" [minlength]="5" [maxlength]="10" [showClear]="true" [useGrouping]="false" placeholder="Digite o código de referência do corretor." formControlName='codigo'/>
         </div>
         
         <div class="flex flex-col basis-0 gap-2">
@@ -60,7 +60,7 @@ import { InputTextModule } from 'primeng/inputtext';
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col grow gap-2">
             <label for="">Data de Nascimento:</label>
-            <p-date-picker dateFormat="dd/mm/yy" placeholder="Informe a data de nascimento do corretor." formControlName='dataNascimento'/>
+            <p-date-picker dateFormat="dd/mm/yy" dataType="string" placeholder="Informe a data de nascimento do corretor." formControlName='dataNascimento'/>
           </div>
           
           <div class="flex flex-col w-full basis-0 gap-2">
@@ -95,7 +95,7 @@ export class CorretorCreate {
 
   corretorForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    codigo: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+    codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
     celular: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
     email: ['', [Validators.required, Validators.maxLength(50)]],
     creci: ['', [Validators.required, Validators.maxLength(5)]],
