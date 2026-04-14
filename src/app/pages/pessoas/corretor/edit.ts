@@ -106,12 +106,14 @@ export class CorretorEdit {
   buscarCorretor() {
     this.corretorService.getById(this.idParaEditar).subscribe({
       next: (corretor: CorretorEditarRequest) => {
-        this.corretorEditarForm.value.nome = corretor.nome_completo;
-        this.corretorEditarForm.value.celular = corretor.celular;
-        this.corretorEditarForm.value.email = corretor.email;
-        this.corretorEditarForm.value.dataNascimento = corretor.data_nascimento;
-        this.corretorEditarForm.value.rg = corretor.rg;
-        this.corretorEditarForm.value.cpf = corretor.cpf;
+        this.corretorEditarForm.patchValue({
+          nome: corretor.nome_completo,
+          celular: corretor.celular,
+          email: corretor.email,
+          dataNascimento: corretor.data_nascimento,
+          rg: corretor.rg,
+          cpf: corretor.cpf,
+        })
       },
       error: (erro: Error) => {
           console.log(`Ocorreu um erro ao tentar cadastrar o corretor: ${erro}`);
