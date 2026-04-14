@@ -50,7 +50,7 @@ import { InputTextModule } from 'primeng/inputtext';
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col grow gap-2">
             <label for="">Data de Nascimento:</label>
-            <p-date-picker dateFormat="dd/mm/yy" placeholder="Informe a data de nascimento do corretor." formControlName='dataNascimento'/>
+            <p-date-picker dateFormat="dd/mm/yy" dataType="string" placeholder="Informe a data de nascimento do corretor." formControlName='dataNascimento'/>
           </div>
           
           <div class="flex flex-col w-full basis-0 gap-2">
