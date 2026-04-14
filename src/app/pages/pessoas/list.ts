@@ -9,6 +9,8 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
 import { Router, RouterLink } from '@angular/router';
 import { CorretorResponse } from '@/models/corretor.model';
 import { CorretorService } from '@/services/corretor.service';
+import { StatusButton } from "@/layout/component/action buttons/status-button";
+import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 
 @Component({
   selector: 'app-list',
@@ -19,7 +21,9 @@ import { CorretorService } from '@/services/corretor.service';
     TagModule,
     CardModule,
     EditButton,
-    RouterLink
+    RouterLink,
+    StatusButton,
+    DeleteButton
 ],
 
   template: `
@@ -81,7 +85,9 @@ import { CorretorService } from '@/services/corretor.service';
           
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+              <status-button [status]="corretor.status" (onClick)="ativarCorretor(corretor.id)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
+              <delete-button/>
             </div>
           </div>
         </div>
@@ -137,7 +143,8 @@ import { CorretorService } from '@/services/corretor.service';
 
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
+              <status-button [status]="corretor.status" (onClick)="ativarCorretor(corretor.id)"/>
+              <delete-button/>
             </div>
           </div>
         </div>
