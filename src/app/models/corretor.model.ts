@@ -2,7 +2,7 @@ export interface CorretorResponse {
     id: string;
     status: string;
     nome_completo: string;
-    codigo: string;
+    codigo: number;
     celular: string;
     tipo: string
     email: string;
@@ -14,7 +14,7 @@ export interface CorretorResponse {
 
 export interface CorretorCriarRequest {
     nome_completo: string;
-    codigo: string;
+    codigo: number;
     celular: string;
     email: string;
     creci: string;
