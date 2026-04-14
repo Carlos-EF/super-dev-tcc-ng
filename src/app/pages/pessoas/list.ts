@@ -85,7 +85,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
           
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-              <status-button [status]="corretor.status" (onClick)="ativarCorretor(corretor.id)"/>
+              <status-button [status]="corretor.status" (onClick)="desativarCorretor(corretor.id)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button/>
             </div>
@@ -197,6 +197,28 @@ export class PessoasList {
           summary: 'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar carregar os corretores cadastrados.'
         })
+      }
+    })
+  }
+
+  confirmarAtivacao(corretor: CorretorResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja ativar o corretor : ${corretor.nome_completo}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Ativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.ativarCorretor(corretor.id);
       }
     })
   }
