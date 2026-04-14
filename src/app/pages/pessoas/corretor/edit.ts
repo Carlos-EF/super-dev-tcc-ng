@@ -86,11 +86,11 @@ export class CorretorEdit {
 
   corretorEditarForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    celular: ['', [Validators.required, Validators.minLength(11), Validators.maxLength(11)]],
+    celular: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.maxLength(50)]],
     dataNascimento: [''],
-    rg: ['', [Validators.minLength(7), Validators.maxLength(7)]],
-    cpf: ['', [Validators.minLength(11), Validators.maxLength(11)]]
+    rg: ['', [Validators.minLength(9), Validators.maxLength(9)]],
+    cpf: ['', [Validators.minLength(14), Validators.maxLength(14)]]
   })
 
   idParaEditar: string = '';
