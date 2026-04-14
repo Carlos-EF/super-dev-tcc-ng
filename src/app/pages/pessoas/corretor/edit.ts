@@ -1,8 +1,8 @@
 import { CorretorEditarRequest } from '@/models/corretor.model';
 import { CorretorService } from '@/services/corretor.service';
-import { Component, inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
@@ -82,6 +82,7 @@ export class CorretorEdit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly corretorService = inject(CorretorService);
   private readonly messageService = inject(MessageService);
+  private readonly activatedRoute= inject(ActivatedRoute);
 
   corretorEditarForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
@@ -97,7 +98,30 @@ export class CorretorEdit {
   constructor(
     private router: Router
   ) {
+    this.idParaEditar = this.activatedRoute.snapshot.paramMap.get('id')!;
 
+    this.buscarCorretor();
+  }
+
+  buscarCorretor() {
+    this.corretorService.getById(this.idParaEditar).subscribe({
+      next: (corretor: CorretorEditarRequest) => {
+        this.corretorEditarForm.value.nome = corretor.nome_completo;
+        this.corretorEditarForm.value.celular = corretor.celular;
+        this.corretorEditarForm.value.email = corretor.email;
+        this.corretorEditarForm.value.dataNascimento = corretor.data_nascimento;
+        this.corretorEditarForm.value.rg = corretor.rg;
+        this.corretorEditarForm.value.cpf = corretor.cpf;
+      },
+      error: (erro: Error) => {
+          console.log(`Ocorreu um erro ao tentar cadastrar o corretor: ${erro}`);
+          this.messageService.add({
+          severity: "error",
+          summary: "FALHA NA EDIÇÂO!",
+          detail: `Ocorreu um erro ao tentar editar o corretor.`
+        });
+      }
+    })
   }
 
   salvar() {
@@ -113,7 +137,7 @@ export class CorretorEdit {
     this.editar(form);
   }
 
-  editar( form: CorretorEditarRequest) {
+  editar(form: CorretorEditarRequest) {
     this.corretorService.update(this.idParaEditar, form).subscribe({
       next: () => {
         this.corretorEditarForm.reset();
@@ -125,8 +149,8 @@ export class CorretorEdit {
         this.router.navigate(["/pages/pessoas"]);
       },
       error: (erro: Error) => {
-        console.log(`Ocorreu um erro ao tentar cadastrar o corretor: ${erro}`);
-                this.messageService.add({
+        console.log(`Ocorreu um erro ao tentar editar o corretor: ${erro}`);
+          this.messageService.add({
           severity: "error",
           summary: "FALHA NA EDIÇÂO!",
           detail: `Ocorreu um erro ao tentar editar o corretor.`
