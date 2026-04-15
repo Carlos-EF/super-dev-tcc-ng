@@ -11,6 +11,8 @@ import { CorretorResponse } from '@/models/corretor.model';
 import { CorretorService } from '@/services/corretor.service';
 import { StatusButton } from "@/layout/component/action buttons/status-button";
 import { DeleteButton } from "@/layout/component/action buttons/delete-button";
+import { DialogModule } from 'primeng/dialog';
+import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
 
 @Component({
   selector: 'app-list',
@@ -23,7 +25,9 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
     EditButton,
     RouterLink,
     StatusButton,
-    DeleteButton
+    DialogModule,
+    DeleteButton,
+    MoreDetailsButton
 ],
 
   template: `
@@ -88,6 +92,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
               <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
+              <more-details-button (click)="showDialog()"/>
             </div>
           </div>
         </div>
@@ -152,6 +157,24 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
   </p-card>
   }
 }
+
+<p-dialog header="Dados do Corretor:" [modal]="true" [(visible)]="visible" [style]="{width: '50rem'}">
+  <div>
+    <div>Nome Completo: AQUI!</div>
+    <div class="flex justify-between">
+      <div>codigo: AQUI!</div>
+      <div>tipo: AQUI!</div>
+      <div>CRECI: AQUI!</div>
+      <div>celular: AQUI!</div>
+      <div>email: AQUI!</div>
+    </div>
+  </div>
+  <div>
+    <div>Data de Nascimento: AQUI!</div>
+    <div>RG: AQUI!</div>
+    <div>CPF: AQUI!</div>
+  </div>
+</p-dialog>
   `,
   styles: ``
 })
@@ -165,6 +188,8 @@ export class PessoasList {
   opcoesPessoas: MenuItem[];
 
   corretores = model<CorretorResponse[]>([]);
+
+  visible: boolean = false;
 
   constructor(
     private router : Router
@@ -184,6 +209,10 @@ export class PessoasList {
 
     this.buscarCorretores();
   };
+
+  showDialog() {
+    this.visible = true;
+  }
 
   buscarCorretores() {
     this.corretorService.getAll().subscribe({
