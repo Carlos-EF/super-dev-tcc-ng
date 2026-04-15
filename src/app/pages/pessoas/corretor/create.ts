@@ -31,27 +31,52 @@ import { InputTextModule } from 'primeng/inputtext';
       <div class="flex flex-col basis-0 gap-2">
         <label for="">Nome Completo: <span class="text-red-500">*</span></label>
         <input type="text" pInputText placeholder="Digite o nome completo do corretor." formControlName='nome'>
+        @if (corretorForm.get('nome')?.touched && corretorForm.get('nome')?.hasError('required')) {
+          <small class="text-red-500">
+            Campo obrigatório.
+          </small>
+        }
       </div>
       
-      <div class="flex flex-wrap gap-6">
+      <div class="flex flex-wrap gap-6 mt-3">
         <div class="flex flex-col basis-0 gap-2">
           <label for="campo-codigo">Código: <span class="text-red-500">*</span></label>
           <p-inputnumber id="campo-codigo" [minlength]="5" [maxlength]="10" [showClear]="true" [useGrouping]="false" placeholder="Digite o código de referência do corretor." formControlName='codigo'/>
+          @if (corretorForm.get('codigo')?.touched && corretorForm.get('codigo')?.hasError('required')) {
+            <small class="text-red-500">
+              Campo obrigatório.
+            </small>
+          }
         </div>
         
         <div class="flex flex-col basis-0 gap-2">
           <label for="">Celular: <span class="text-red-500">*</span></label>
           <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName='celular'/>
+          @if (corretorForm.get('celular')?.touched && corretorForm.get('celular')?.hasError('required')) {
+            <small class="text-red-500">
+              Campo obrigatório.
+            </small>
+          }
         </div>
         
         <div class="flex flex-col basis-0 grow gap-2">
           <label for="">E-Mail: <span class="text-red-500">*</span></label>
           <input type="email" pInputText placeholder="Digite o e-mail do corretor." formControlName='email'>
+          @if (corretorForm.get('email')?.touched && corretorForm.get('email')?.hasError('required')) {
+            <small class="text-red-500">
+              Campo obrigatório.
+            </small>
+          }
         </div>
         
         <div class="flex flex-col basis-0 gap-2">
           <label for="">CRECI: <span class="text-red-500">*</span></label>
           <p-inputmask mask="99.999F" placeholder="00.000F" formControlName='creci'/>
+          @if (corretorForm.get('creci')?.touched && corretorForm.get('creci')?.hasError('required')) {
+            <small class="text-red-500">
+              Campo obrigatório.
+            </small>
+          }
         </div>
       </div>
       
