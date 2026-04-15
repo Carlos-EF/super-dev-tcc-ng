@@ -25,22 +25,21 @@ import { InputTextModule } from 'primeng/inputtext';
   ],
   template: `
   <form [formGroup]="corretorEditarForm">
-
     <div class="card flex flex-col p-2 gap-2">
-      <div class="font-bold text-xl">Informações Necessárias: <span class="text-red-500">*</span></div>
+      <div class="font-bold text-xl mb-3">Informações para editar:</div>
       <div class="flex flex-col basis-0 gap-2">
-        <label for="">Nome Completo: <span class="text-red-500">*</span></label>
+        <label for="">Nome Completo:</label>
         <input type="text" pInputText placeholder="Digite o nome completo do corretor." formControlName='nome'>
       </div>
       
       <div class="flex flex-wrap gap-6">
         <div class="flex flex-col basis-0 gap-2">
-          <label for="">Celular: <span class="text-red-500">*</span></label>
+          <label for="">Celular:</label>
           <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName='celular'/>
         </div>
         
         <div class="flex flex-col basis-0 grow gap-2">
-          <label for="">E-Mail: <span class="text-red-500">*</span></label>
+          <label for="">E-Mail:</label>
           <input type="email" pInputText placeholder="Digite o e-mail do corretor." formControlName='email'>
         </div>
       </div>
