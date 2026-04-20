@@ -167,24 +167,31 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
 
   @if (corretorSelecionado) {
     <div class="flex flex-col gap-6">
-      <div class="flex items-center gap-4 border-b pb-4">
-        <p-avatar
-        size="xlarge"
-        shape="circle"
-        [style]="obterCorAvatarPessoa(corretorSelecionado.tipo)"
-        [label]="corretorSelecionado.nome_completo.trim().substring(0, 2)"
-        />
-        
-        <div>
-          <h2 class="text-xl font-bold">
-            {{corretorSelecionado.nome_completo}}
-          </h2>
-          
-          <p-tag
-          [value]="corretorSelecionado.tipo"
-          [severity]="obterCorTipoPessoa(corretorSelecionado.tipo)"
-          />
-        </div>
+        <div class="flex items-center justify-between border-b pb-4">
+          <div class="flex items-center gap-4">
+            <p-avatar
+            size="xlarge"
+            shape="circle"
+            [style]="obterCorAvatarPessoa(corretorSelecionado.tipo)"
+            [label]="corretorSelecionado.nome_completo.trim().substring(0, 2)"
+            />
+            
+            <div>
+              <h2 class="text-xl font-bold">
+                {{corretorSelecionado.nome_completo}}
+              </h2>
+              
+              <p-tag
+              [value]="corretorSelecionado.tipo"
+              [severity]="obterCorTipoPessoa(corretorSelecionado.tipo)"
+              />
+            </div>
+          </div>
+            
+            <div class="flex justify-end pt-4">
+            <edit-button
+            routerLink="corretor/editar/{{corretorSelecionado.id}}" />
+          </div>
       </div>
       
       <div class="grid grid-cols-2 gap-4">
@@ -212,8 +219,8 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
       <div class="grid grid-cols-2 gap-4 border-t pt-4">
         <div>
           <strong>Data de nascimento:</strong>
-          @if (corretorSelecionado.dataNascimento) {
-            <p>{{corretorSelecionado.dataNascimento}}</p>
+          @if (corretorSelecionado.data_nascimento) {
+            <p>{{corretorSelecionado.data_nascimento}}</p>
           } @else {
             <p class="text-gray-400">Dado não cadastrado.</p>
           }
@@ -279,7 +286,7 @@ export class PessoasList {
   };
 
   showDialog(corretor: CorretorResponse) {
-    this.corretorSelecionado = corretor
+    this.corretorSelecionado = corretor;
     this.visible = true;
   }
 
