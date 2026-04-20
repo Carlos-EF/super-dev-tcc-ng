@@ -92,7 +92,7 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
               <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-              <more-details-button (click)="showDialog()"/>
+              <more-details-button (click)="showDialog(corretor)"/>
             </div>
           </div>
         </div>
@@ -158,25 +158,98 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
   }
 }
 
-<p-dialog header="Dados do Corretor:" [modal]="true" [(visible)]="visible" [style]="{width: '50rem'}">
-  <div>
-    <div>Nome Completo: AQUI!</div>
-    <div class="flex justify-between">
-      <div>codigo: AQUI!</div>
-      <div>tipo: AQUI!</div>
-      <div>CRECI: AQUI!</div>
-      <div>celular: AQUI!</div>
-      <div>email: AQUI!</div>
+<p-dialog 
+  header="Dados do Corretor" 
+  [modal]="true" 
+  [(visible)]="visible" 
+  [style]="{width: '50rem'}"
+>
+
+  @if (corretorSelecionado) {
+    <div class="flex flex-col gap-6">
+        <div class="flex items-center justify-between border-b pb-4">
+          <div class="flex items-center gap-4">
+            <p-avatar
+            size="xlarge"
+            shape="circle"
+            [style]="obterCorAvatarPessoa(corretorSelecionado.tipo)"
+            [label]="corretorSelecionado.nome_completo.trim().substring(0, 2)"
+            />
+            
+            <div>
+              <h2 class="text-xl font-bold">
+                {{corretorSelecionado.nome_completo}}
+              </h2>
+              
+              <p-tag
+              [value]="corretorSelecionado.tipo"
+              [severity]="obterCorTipoPessoa(corretorSelecionado.tipo)"
+              />
+            </div>
+          </div>
+            
+            <div class="flex justify-end pt-4">
+            <edit-button
+            routerLink="corretor/editar/{{corretorSelecionado.id}}" />
+          </div>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <strong>Código:</strong>
+          <p>{{corretorSelecionado.codigo}}</p>
+        </div>
+        
+      <div>
+        <strong>CRECI:</strong>
+        <p>{{corretorSelecionado.creci}}</p>
+      </div>
+      
+      <div>
+        <strong>Celular:</strong>
+        <p>{{corretorSelecionado.celular}}</p>
+      </div>
+      
+      <div>
+        <strong>E-mail:</strong>
+        <p>{{corretorSelecionado.email}}</p>
+      </div>
     </div>
+      
+      <div class="grid grid-cols-2 gap-4 border-t pt-4">
+        <div>
+          <strong>Data de nascimento:</strong>
+          @if (corretorSelecionado.data_nascimento) {
+            <p>{{corretorSelecionado.data_nascimento}}</p>
+          } @else {
+            <p class="text-gray-400">Dado não cadastrado.</p>
+          }
+        </div>
+        
+        <div>
+          <strong>RG:</strong>
+          @if (corretorSelecionado.rg) {
+            <p>{{corretorSelecionado.rg}}</p>
+          } @else {
+            <p class="text-gray-400">Dado não cadastrado.</p>
+          }
+        </div>
+        
+        <div>
+          <strong>CPF:</strong>
+          @if (corretorSelecionado.cpf) {
+            <p>{{corretorSelecionado.cpf}}</p>
+          } @else {
+            <p class="text-gray-400">Dado não cadastrado.</p>
+          }
+        </div>
+      </div>
   </div>
-  <div>
-    <div>Data de Nascimento: AQUI!</div>
-    <div>RG: AQUI!</div>
-    <div>CPF: AQUI!</div>
-  </div>
+  }
+  
 </p-dialog>
-  `,
-  styles: ``
+`,
+styles: ``
 })
 export class PessoasList {
   private readonly corretorService = inject(CorretorService);
@@ -190,6 +263,8 @@ export class PessoasList {
   corretores = model<CorretorResponse[]>([]);
 
   visible: boolean = false;
+
+  corretorSelecionado: any = null;
 
   constructor(
     private router : Router
@@ -210,7 +285,8 @@ export class PessoasList {
     this.buscarCorretores();
   };
 
-  showDialog() {
+  showDialog(corretor: CorretorResponse) {
+    this.corretorSelecionado = corretor;
     this.visible = true;
   }
 
