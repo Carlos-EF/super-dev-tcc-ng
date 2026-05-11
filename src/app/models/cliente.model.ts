@@ -64,3 +64,15 @@ export interface CriarClienteInteressadoRequest {
     quantidade_andares: number;
     quantidade_salas: number;
 }
+
+export interface ClienteProprietarioResponse {
+    imovel_associado: string;
+}
+
+export interface EditarClienteProprietarioRequest {
+    imovel_associado: string;
+}
+
+export interface CriarClienteProprietarioRequest {
+    imovel_associado: string;
+}
