@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -33,6 +34,7 @@ export interface TiposImoveis {
     SelectModule,
     InputMaskModule,
     FormsModule,
+    ReactiveFormsModule,
     InputNumberModule,
     CommonModule,
   ],
@@ -165,7 +167,6 @@ export interface TiposImoveis {
 
         <label for="">Imóvel do Responsável:</label>
         <div class="flex flex-row">
-        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
            <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid />
            <p-button
            severity="primary"
@@ -189,7 +190,6 @@ export interface TiposImoveis {
 
         <label for="">Imóvel do Responsável:</label>
         <div class="flex flex-row">
-        <!-- Puxar lista de imóveis cadastrado / deixar que a pessoa cadastre um imóvel de forma rápida -->
            <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid />
            <p-button
            severity="primary"
@@ -226,6 +226,9 @@ export class ClienteCreate {
   tipoImovel: TiposImoveis[] | undefined;
 
   tipoSelecionado: TiposImoveis | undefined;
+
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly messageService = inject(MessageService);
 
   constructor(
     private router: Router
