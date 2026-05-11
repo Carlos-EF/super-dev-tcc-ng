@@ -22,9 +22,15 @@ export class ClienteService {
       return this.httpClient.post<ClienteResponse>(url, form);
     }
 
-    edit(id: string, form: EditarClienteRequest): Observable<ClienteResponse> {
+    update(id: string, form: EditarClienteRequest): Observable<ClienteResponse> {
       const url = `${enviroment.apiUrl}/clientes/${id}`;
 
       return this.httpClient.put<ClienteResponse>(url, form);
+    }
+
+    delete(id: string): Observable<void> {
+      const url = `${enviroment.apiUrl}/clientes/${id}`;
+
+      return this.httpClient.delete<void>(url);
     }
 }
