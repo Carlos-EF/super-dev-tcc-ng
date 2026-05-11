@@ -33,4 +33,16 @@ export class ClienteService {
 
       return this.httpClient.delete<void>(url);
     }
+
+    activate(id: string): Observable<void> {
+      const url = `${enviroment.apiUrl}/clientes/${id}/ativar`;
+
+      return this.httpClient.put<void>(url, {});
+    }
+
+    deactivate(id: string): Observable<void> {
+      const url = `${enviroment.apiUrl}/clientes/${id}/inativar`;
+
+      return this.httpClient.put<void>(url, {});
+    }
 }
