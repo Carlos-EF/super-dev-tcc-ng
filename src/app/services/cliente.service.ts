@@ -1,4 +1,4 @@
-import { ClienteResponse } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest } from '@/models/cliente.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -12,7 +12,13 @@ export class ClienteService {
 
     getAll(): Observable<ClienteResponse[]> {
       const url = `${enviroment.apiUrl}/clientes`;
-      
+
       return this.httpClient.get<ClienteResponse[]>(url);
+    }
+
+    create(form: CriarClienteRequest): Observable<ClienteResponse> {
+      const url = `${enviroment.apiUrl}/clientes`;
+      
+      return this.httpClient.post<ClienteResponse>(url, form);
     }
 }

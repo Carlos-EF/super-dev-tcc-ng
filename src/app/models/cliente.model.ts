@@ -11,7 +11,7 @@ export interface ClienteResponse {
     ClienteLocatarioResponse;
 }
 
-export interface ClienteCriarRequest {
+export interface CriarClienteRequest {
     nome_completo: string;
     codigo: number;
     celular: string;
@@ -22,7 +22,7 @@ export interface ClienteCriarRequest {
     CriarClienteLocatarioRequest;
 }
 
-export interface ClienteEditarRequest {
+export interface EditarClienteRequest {
     nome_completo: string;
     celular: string;
     email: string;
