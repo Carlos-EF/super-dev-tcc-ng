@@ -267,7 +267,33 @@ export class ClienteCreate {
       tipo: this.clienteForm.getRawValue().tipo!,
       dados_adicionais: this.clienteForm.getRawValue().dados_adicionais! as CriarClienteRequest['dados_adicionais']
     };
+
+    this.cadastrar(formCliente);
   }
+
+  cadastrar(form: CriarClienteRequest) {
+    this.clienteService.create(form).subscribe({
+      next: () => {
+        this.clienteForm.reset();
+        this.messageService.add({
+          severity: "success",
+          summary: "SUCESSO!",
+          detail: `Cliente do tipo ${this.clienteForm.getRawValue().tipo} cadastrado com êxito!`
+        });
+        this.router.navigate(["/pages/pessoas"]);
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar cadastrar o cliente: ${erro}`);
+                this.messageService.add({
+          severity: "error",
+          summary: "FALHA NO CADASTRO!",
+          detail: "Ocorreu um erro ao tentar cadastrar o cliente."
+        });
+      }
+    })
+  }
+  
+
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
     if (tipo === "Interessado") {
@@ -322,5 +348,5 @@ export class ClienteCreate {
     .subscribe(tipo => {
       this.alterarFormularioDadosAdicionais(tipo);
     });
-}
+  }
 }
