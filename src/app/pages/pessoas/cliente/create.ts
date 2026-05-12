@@ -1,6 +1,7 @@
 import { ClienteService } from '@/services/cliente.service';
 import { TipoCliente } from '@/types/cliente.types';
-import { TipoContato } from '@/types/tipo.contato';
+import { TipoContato } from '@/types/contato.types';
+import { TipoImovel } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -225,9 +226,9 @@ export class ClienteCreate {
 
   imoveis: Imoveis[] | undefined;
 
-  tipoImovel: TiposImoveis[] | undefined;
+  tipoImovel: TipoImovel[] | undefined;
 
-  tipoSelecionado: TiposImoveis | undefined;
+  tipoSelecionado: TipoImovel | undefined;
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly clienteService = inject(ClienteService);
@@ -238,7 +239,7 @@ export class ClienteCreate {
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
     celular: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
-    tipoCliente: ['', [Validators.required]],
+    tipo: ['', [Validators.required]],
   })
 
   constructor(
@@ -253,27 +254,8 @@ export class ClienteCreate {
   }
 
   ngOnInit() {
-    this.opcoesContato = [
-      { opcao: "WhatsApp" },
-      { opcao: "Anúncio" },
-      { opcao: "Contato Direto" },
-      { opcao: "Instagram" },
-    ];
-
-    this.tipo = [
-      { tipo: "Interessado" },
-      { tipo: "Proprietário" },
-      { tipo: "Locatário" },
-    ];
-
     this.imoveis = [
       {nome: "Imoveis cadastrados"}
-    ];
-
-    this.tipoImovel = [
-      { tipo: "Casa" },
-      { tipo: "Apartamento" },
-      { tipo: "Terreno" },
     ];
   };
 }
