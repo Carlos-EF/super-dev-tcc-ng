@@ -91,7 +91,7 @@ import { ClienteService } from '@/services/cliente.service';
           
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-              <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
+              <status-button [status]="corretor.status" (click)="confirmarInativacaoCorretor(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
               <more-details-button (click)="maisDetalhesCorretor(corretor)"/>
@@ -150,7 +150,7 @@ import { ClienteService } from '@/services/cliente.service';
 
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <status-button [status]="corretor.status" (click)="confirmarAtivacao(corretor)"/>
+              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
@@ -330,7 +330,7 @@ export class PessoasList {
     })
   }
 
-  confirmarAtivacao(corretor: CorretorResponse) {
+  confirmarAtivacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja ativar o corretor : ${corretor.nome_completo}?`,
@@ -353,7 +353,7 @@ export class PessoasList {
     })
   }
 
-  confirmarInativacao(corretor: CorretorResponse) {
+  confirmarInativacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja inativar o corretor : ${corretor.nome_completo}?`,
