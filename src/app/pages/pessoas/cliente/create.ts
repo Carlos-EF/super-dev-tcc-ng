@@ -1,3 +1,4 @@
+import { CriarClienteInteressadoRequest, CriarClienteLocatarioRequest, CriarClienteProprietarioRequest, CriarClienteRequest } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
 import { TipoCliente } from '@/types/cliente.types';
 import { TipoContato } from '@/types/contato.types';
@@ -258,7 +259,14 @@ export class ClienteCreate {
   }
 
   salvar() {
-    this.router.navigate(["/pages/pessoas"])
+    const formCliente: CriarClienteRequest = {
+      nome_completo: this.clienteForm.getRawValue().nome!,
+      codigo: this.clienteForm.getRawValue().codigo!,
+      celular: this.clienteForm.getRawValue().celular!,
+      email: this.clienteForm.getRawValue().email!,
+      tipo: this.clienteForm.getRawValue().tipo!,
+      dados_adicionais: this.clienteForm.getRawValue().dados_adicionais! as CriarClienteRequest['dados_adicionais']
+    };
   }
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
