@@ -1,4 +1,6 @@
 import { ClienteService } from '@/services/cliente.service';
+import { TipoCliente } from '@/types/cliente.types';
+import { TipoContato } from '@/types/tipo.contato';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,10 +15,6 @@ import { SelectModule } from 'primeng/select';
 
 export interface Opcoes {
   opcao: string
-}
-
-export interface TipoCliente {
-  tipo: string
 }
 
 export interface Imoveis {
@@ -219,11 +217,11 @@ export interface TiposImoveis {
 styles: ``
 })
 export class ClienteCreate {
-  opcoesContato: Opcoes[] | undefined;
+  opcoesContato: TipoContato[] | undefined;
 
   tipo: TipoCliente[] | undefined;
 
-  tipoClienteSelecionado: TipoCliente | string | undefined;
+  tipoClienteSelecionado: TipoCliente | undefined;
 
   imoveis: Imoveis[] | undefined;
 
