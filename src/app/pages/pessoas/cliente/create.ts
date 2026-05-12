@@ -71,12 +71,12 @@ export interface TiposImoveis {
 
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
-        <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." [(ngModel)]="tipoClienteSelecionado"/>
+        <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." formControlName="tipo"/>
       </div>
     </div>
     
     <div id="mostrar-form" class="flex flex-col gap-4">
-      @switch (tipoClienteSelecionado) {
+      @switch (clienteForm.get("tipo")?.value) {
         @case ("Interessado") {
           <div id="form-interessado" class="card flex flex-col gap-4">
             <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
@@ -255,6 +255,21 @@ export class ClienteCreate {
     this.router.navigate(["/pages/pessoas"])
   }
 
+  alterarFormularioDadosAdicionais(tipo: string | null): void {
+    if (tipo === "Interessado") {
+      this.clienteForm.setControl("dados_adicionais", 
+      this.criarFormInteressado())
+    }
+    else if (tipo === "Proprietário") {
+      this.clienteForm.setControl("dados_adicionais", 
+      this.criarFormProprietario())
+    }
+    else if (tipo === "Locatário") {
+      this.clienteForm.setControl("dados_adicionais", 
+      this.criarFormLocatario())
+    }
+  }
+
   criarFormInteressado() : FormGroup {
     return this.formBuilder.group({
       tipo_imovel: ['', [Validators.required]],
@@ -286,5 +301,12 @@ export class ClienteCreate {
     this.imoveis = [
       {nome: "Imoveis cadastrados"}
     ];
-  };
+
+    this.clienteForm
+    .get("tipo")
+    ?.valueChanges
+    .subscribe(tipo => {
+      this.alterarFormularioDadosAdicionais(tipo);
+    });
+}
 }
