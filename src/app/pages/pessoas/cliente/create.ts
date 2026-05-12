@@ -4,7 +4,7 @@ import { TipoContato } from '@/types/contato.types';
 import { TipoImovel } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -239,7 +239,10 @@ export class ClienteCreate {
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
     celular: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    como_encontrou: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
+
+    dados_adicionais: this.formBuilder.group({})
   })
 
   constructor(
@@ -248,9 +251,23 @@ export class ClienteCreate {
 
   }
 
-
   salvar() {
     this.router.navigate(["/pages/pessoas"])
+  }
+
+  criarFormInteressado() : FormGroup {
+    return this.formBuilder.group({
+      tipo_imovel: ['', [Validators.required]],
+      orcamento: [null, [Validators.required]],
+      orcamento_minimo: [null],
+      orcamento_maximo: [null],
+      quantidade_quartos: [null],
+      quantidade_suites: [null],
+      quantidade_banheiros: [null],
+      quantidade_vagas_garagem: [null],
+      quantidade_andares: [null],
+      quantidade_salas: [null]
+    })
   }
 
   ngOnInit() {
