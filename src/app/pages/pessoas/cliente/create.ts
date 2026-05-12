@@ -270,6 +270,18 @@ export class ClienteCreate {
     })
   }
 
+  criarFormProprietario() : FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: [null, [Validators.required]]
+    })
+  }
+
+  criarFormLocatario() : FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: [null, [Validators.required]]
+    })
+  }
+
   ngOnInit() {
     this.imoveis = [
       {nome: "Imoveis cadastrados"}
