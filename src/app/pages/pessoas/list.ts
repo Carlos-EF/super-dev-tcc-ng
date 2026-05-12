@@ -13,6 +13,8 @@ import { StatusButton } from "@/layout/component/action buttons/status-button";
 import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 import { DialogModule } from 'primeng/dialog';
 import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
+import { ClienteResponse } from '@/models/cliente.model';
+import { ClienteService } from '@/services/cliente.service';
 
 @Component({
   selector: 'app-list',
@@ -89,10 +91,10 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
           
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-              <status-button [status]="corretor.status" (click)="confirmarInativacao(corretor)"/>
+              <status-button [status]="corretor.status" (click)="confirmarInativacaoCorretor(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-              <more-details-button (click)="showDialog(corretor)"/>
+              <more-details-button (click)="maisDetalhesCorretor(corretor)"/>
             </div>
           </div>
         </div>
@@ -148,7 +150,7 @@ import { MoreDetailsButton } from "@/layout/component/action buttons/more-detail
 
           <div class="flex mt-2 mr-3 items-center">
             <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <status-button [status]="corretor.status" (click)="confirmarAtivacao(corretor)"/>
+              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
             </div>
           </div>
@@ -254,6 +256,8 @@ styles: ``
 export class PessoasList {
   private readonly corretorService = inject(CorretorService);
 
+  private readonly clienteService = inject(ClienteService);
+
   private readonly messageService = inject(MessageService);
 
   private readonly confirmationService = inject(ConfirmationService);
@@ -261,6 +265,8 @@ export class PessoasList {
   opcoesPessoas: MenuItem[];
 
   corretores = model<CorretorResponse[]>([]);
+
+  clientes = model<ClienteResponse[]>([]);
 
   visible: boolean = false;
 
@@ -283,9 +289,11 @@ export class PessoasList {
     ];
 
     this.buscarCorretores();
+
+    this.buscarClientes();
   };
 
-  showDialog(corretor: CorretorResponse) {
+  maisDetalhesCorretor(corretor: CorretorResponse) {
     this.corretorSelecionado = corretor;
     this.visible = true;
   }
@@ -306,7 +314,23 @@ export class PessoasList {
     })
   }
 
-  confirmarAtivacao(corretor: CorretorResponse) {
+  buscarClientes() {
+    this.clienteService.getAll().subscribe({
+      next:(clientes: ClienteResponse[]) => {
+        this.clientes.set(clientes);
+      },
+      error:(erro: Error) => {
+        console.log(`Ocorreu um erro ao carregar os clientes: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar carregar os clientes cadastrados.'
+        })
+      }
+    })
+  }
+
+  confirmarAtivacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja ativar o corretor : ${corretor.nome_completo}?`,
@@ -329,7 +353,7 @@ export class PessoasList {
     })
   }
 
-  confirmarInativacao(corretor: CorretorResponse) {
+  confirmarInativacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja inativar o corretor : ${corretor.nome_completo}?`,
