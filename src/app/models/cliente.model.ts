@@ -1,8 +1,8 @@
 export interface ClienteResponse {
     id: string;
     status: string;
-    nome_completo: string;
-    codigo: number;
+    nome: string;
+    codigo: string;
     celular: string;
     email: string;
     tipo: string;
@@ -12,7 +12,7 @@ export interface ClienteResponse {
 }
 
 export interface CriarClienteRequest {
-    nome_completo: string;
+    nome: string;
     codigo: number;
     celular: string;
     email: string;
@@ -23,7 +23,7 @@ export interface CriarClienteRequest {
 }
 
 export interface EditarClienteRequest {
-    nome_completo: string;
+    nome: string;
     celular: string;
     email: string;
     tipo: string;
@@ -40,7 +40,7 @@ export interface ClienteInteressadoResponse {
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
-    quantidade_vagas_garagem: number;
+    quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
 }
@@ -53,7 +53,7 @@ export interface EditarClienteInteressadoRequest {
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
-    quantidade_vagas_garagem: number;
+    quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
 }
@@ -66,7 +66,7 @@ export interface CriarClienteInteressadoRequest {
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
-    quantidade_vagas_garagem: number;
+    quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
 }

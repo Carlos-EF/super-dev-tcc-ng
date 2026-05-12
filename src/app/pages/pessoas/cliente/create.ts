@@ -77,7 +77,7 @@ export interface Imoveis {
               
               <div class="flex flex-col gap-2">
                 <label for="">O que está Procurando? <span class="text-red-500"><strong> *</strong></span></label>
-                <p-select [options]="tiposImovel" placeholder="Selecione a opção desejada." formControlName="tipo_imovel"/>
+                <p-select [options]="tiposImovel" placeholder="Selecione a opção desejada." formControlName="procurando"/>
               </div>
               
               <div class="text-xl font-bold">Valores:</div>
@@ -248,7 +248,7 @@ export class ClienteCreate {
 
   salvar() {
     const formCliente: CriarClienteRequest = {
-      nome_completo: this.clienteForm.getRawValue().nome!,
+      nome: this.clienteForm.getRawValue().nome!,
       codigo: this.clienteForm.getRawValue().codigo!,
       celular: this.clienteForm.getRawValue().celular!,
       email: this.clienteForm.getRawValue().email!,
@@ -300,14 +300,14 @@ export class ClienteCreate {
 
   criarFormInteressado() : FormGroup {
     return this.formBuilder.group({
-      tipo_imovel: ['', [Validators.required]],
+      procurando: ['', [Validators.required]],
       orcamento: [null, [Validators.required]],
       orcamento_minimo: [null],
       orcamento_maximo: [null],
       quantidade_quartos: [null],
       quantidade_suites: [null],
       quantidade_banheiros: [null],
-      quantidade_vagas_garagem: [null],
+      quantidade_vagas: [null],
       quantidade_andares: [null],
       quantidade_salas: [null]
     })
@@ -315,13 +315,13 @@ export class ClienteCreate {
 
   criarFormProprietario() : FormGroup {
     return this.formBuilder.group({
-      imovel_associado: [null, [Validators.required]]
+      imovel_associado: ['', [Validators.required]]
     })
   }
 
   criarFormLocatario() : FormGroup {
     return this.formBuilder.group({
-      imovel_associado: [null, [Validators.required]]
+      imovel_associado: ['', [Validators.required]]
     })
   }
 
