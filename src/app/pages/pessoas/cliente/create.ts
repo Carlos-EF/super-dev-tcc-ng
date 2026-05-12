@@ -1,11 +1,11 @@
-import { CriarClienteInteressadoRequest, CriarClienteLocatarioRequest, CriarClienteProprietarioRequest, CriarClienteRequest } from '@/models/cliente.model';
+import {  CriarClienteRequest } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import { TipoCliente } from '@/types/cliente.types';
-import { TipoContato } from '@/types/contato.types';
-import { TipoImovel } from '@/types/imovel.types';
+import { TipoCliente, TIPOS_CLIENTE } from '@/types/cliente.types';
+import { TIPOS_CONTATO } from '@/types/contato.types';
+import { TipoImovel, TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -15,16 +15,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 
 
-export interface Opcoes {
-  opcao: string
-}
-
 export interface Imoveis {
   nome: string;
-}
-
-export interface TiposImoveis {
-  tipo: string;
 }
 
 @Component({
@@ -64,14 +56,14 @@ export interface TiposImoveis {
           <input type="email" pInputText placeholder="Digite o e-mail do cliente." formControlName="email">
         </div>
         
-        <div class="flex flex-col grow basis-0 gap-2">
+        <div class="flex flex-col gap-2">
           <label for="">Como nos encontrou:</label>
-          <p-select [options]="opcoesContato" optionLabel="opcao" optionValue="opcao" placeholder="Selecione por onde o cliente veio." formControlName="como_encontrou"/>
+          <p-select [options]="tiposContato" placeholder="Selecione por onde o cliente veio." formControlName="como_encontrou" fluid/>
         </div>
 
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
-        <p-select [options]="tipo" id="tipo-cliente" optionLabel="tipo" optionValue="tipo" placeholder="Selecione o tipo do cliente." formControlName="tipo"/>
+        <p-select [options]="tiposCliente" id="tipo-cliente" placeholder="Selecione o tipo do cliente." formControlName="tipo"/>
       </div>
     </div>
     
@@ -85,7 +77,7 @@ export interface TiposImoveis {
               
               <div class="flex flex-col gap-2">
                 <label for="">O que está Procurando? <span class="text-red-500"><strong> *</strong></span></label>
-                <p-select [options]="tipoImovel" optionLabel="tipo" optionValue="tipo" placeholder="Selecione a opção desejada." formControlName="tipo_imovel"/>
+                <p-select [options]="tiposImovel" placeholder="Selecione a opção desejada." formControlName="tipo_imovel"/>
               </div>
               
               <div class="text-xl font-bold">Valores:</div>
@@ -225,17 +217,13 @@ export interface TiposImoveis {
 styles: ``
 })
 export class ClienteCreate {
-  opcoesContato: TipoContato[] | undefined;
+  tiposContato = [...TIPOS_CONTATO];
 
-  tipo: TipoCliente[] | undefined;
-
-  tipoClienteSelecionado: TipoCliente | undefined;
+ tiposCliente = [...TIPOS_CLIENTE];
 
   imoveis: Imoveis[] | undefined;
 
-  tipoImovel: TipoImovel[] | undefined;
-
-  tipoSelecionado: TipoImovel | undefined;
+  tiposImovel = [...TIPOS_IMOVEL];
 
   private readonly formBuilder = inject(FormBuilder);
   private readonly clienteService = inject(ClienteService);

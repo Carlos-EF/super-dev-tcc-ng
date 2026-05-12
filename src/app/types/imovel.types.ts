@@ -1,4 +1,8 @@
+export const TIPOS_IMOVEL = [
+    'Apartamento',
+    'Casa',
+    'Terreno'
+] as const;
+
 export type TipoImovel = 
-    | 'Apartamento'
-    | 'Casa'
-    | 'Terreno'
+    typeof TIPOS_IMOVEL[number];
