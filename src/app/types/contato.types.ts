@@ -1,5 +1,5 @@
 export const TIPOS_CONTATO = [
-     'Whatsapp',
+     'WhatsApp',
      'Anúncio',
      'Contato Direto',
      'Instagram'

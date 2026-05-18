@@ -70,8 +70,7 @@ export interface Imoveis {
     <div id="mostrar-form" class="flex flex-col gap-4">
       @switch (clienteForm.get("tipo")?.value) {
         @case ("Interessado") {
-          <form formGroupName="dados_adicionais">
-
+          <form [formGroup]="dadosAdicionaisForm">
             <div id="form-interessado" class="card flex flex-col gap-4">
               <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
               
@@ -158,7 +157,7 @@ export interface Imoveis {
       </form>
        }
         @case ("Proprietário") {
-          <form formGroupName="dados_adicionais">
+          <form [formGroup]="dadosAdicionaisForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
               <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -183,7 +182,7 @@ export interface Imoveis {
           </form>
       }
         @case ("Locatário") {
-        <form formGroupName="dados_adicionais">
+        <form [formGroup]="dadosAdicionaisForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
             <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -238,7 +237,7 @@ export class ClienteCreate {
     tipo: ['', [Validators.required]],
   })
 
-  dados_adicionais = this.formBuilder.group({})
+  dadosAdicionaisForm = this.formBuilder.group({});
 
   constructor(
     private router: Router
@@ -256,7 +255,7 @@ export class ClienteCreate {
       como_encontrou: this.clienteForm.getRawValue().como_encontrou!
     };
 
-    const formDadosAdicionais = this.dados_adicionais.getRawValue() as CriarDadosAdicionais;
+    const formDadosAdicionais = this.dadosAdicionaisForm.getRawValue() as CriarDadosAdicionais;
 
     this.cadastrar(formCliente, formDadosAdicionais);
   }
@@ -292,13 +291,13 @@ export class ClienteCreate {
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
     if (tipo === "Interessado") {
-      this.dados_adicionais = this.criarFormInteressado();
+      this.dadosAdicionaisForm = this.criarFormInteressado();
     }
     else if (tipo === "Proprietário") {
-      this.dados_adicionais = this.criarFormProprietario();
+      this.dadosAdicionaisForm = this.criarFormProprietario();
     }
     else if (tipo === "Locatário") {
-      this.dados_adicionais = this.criarFormLocatario();
+      this.dadosAdicionaisForm = this.criarFormLocatario();
     }
   }
 
