@@ -6,6 +6,7 @@ export interface ClienteResponse {
     celular: string;
     email: string;
     tipo: string;
+    cpomo_encontrou: string;
     dados_adicionais: ClienteInteressadoResponse | 
     ClienteProprietarioResponse | 
     ClienteLocatarioResponse;
@@ -17,9 +18,7 @@ export interface CriarClienteRequest {
     celular: string;
     email: string;
     tipo: string;
-    dados_adicionais: CriarClienteInteressadoRequest | 
-    CriarClienteProprietarioRequest | 
-    CriarClienteLocatarioRequest;
+    como_encontrou: string;
 }
 
 export interface EditarClienteRequest {
@@ -27,9 +26,6 @@ export interface EditarClienteRequest {
     celular: string;
     email: string;
     tipo: string;
-    dados_adicionais: EditarClienteInteressadoRequest | 
-    EditarClienteProprietarioRequest | 
-    EditarClienteLocatarioRequest;
 }
 
 export interface ClienteInteressadoResponse {
@@ -94,3 +90,18 @@ export interface EditarClienteLocatarioRequest {
 export interface CriarClienteLocatarioRequest {
     imovel_associado: string;
 }
+
+export type DadosAdicionais = 
+ClienteInteressadoResponse | 
+ClienteProprietarioResponse | 
+ClienteLocatarioResponse
+
+export type CriarDadosAdicionais = 
+CriarClienteInteressadoRequest | 
+CriarClienteProprietarioRequest | 
+CriarClienteLocatarioRequest
+
+export type EditarDadosAdicionais = 
+EditarClienteInteressadoRequest | 
+EditarClienteProprietarioRequest | 
+EditarClienteLocatarioRequest

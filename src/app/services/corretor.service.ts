@@ -2,7 +2,7 @@ import { CorretorCriarRequest, CorretorEditarRequest, CorretorResponse } from '@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { enviroment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,43 +11,43 @@ export class CorretorService {
   private httpClient = inject(HttpClient);
 
   getAll(): Observable<CorretorResponse[]> {
-    const url = `${enviroment.apiUrl}/corretores`;
+    const url = `${environment.apiUrl}/corretores`;
 
     return this.httpClient.get<CorretorResponse[]>(url);
   }
 
   create(form: CorretorCriarRequest): Observable<CorretorResponse> {
-    const url = `${enviroment.apiUrl}/corretores`;
+    const url = `${environment.apiUrl}/corretores`;
 
     return this.httpClient.post<CorretorResponse>(url, form);
   }
 
   getById(id: string): Observable<CorretorResponse> {
-    const url = `${enviroment.apiUrl}/corretores/${id}`;
+    const url = `${environment.apiUrl}/corretores/${id}`;
 
     return this.httpClient.get<CorretorResponse>(url);
   }
 
   update(id: string, form: CorretorEditarRequest): Observable<CorretorResponse> {
-    const url = `${enviroment.apiUrl}/corretores/${id}`;
+    const url = `${environment.apiUrl}/corretores/${id}`;
     
     return this.httpClient.put<CorretorResponse>(url, form);
   }
 
   activate(id: string): Observable<void> {
-    const url = `${enviroment.apiUrl}/corretores/${id}/ativar`;
+    const url = `${environment.apiUrl}/corretores/${id}/ativar`;
 
     return this.httpClient.put<void>(url, {});
   }
 
   deactivate(id: string): Observable<void> {
-    const url = `${enviroment.apiUrl}/corretores/${id}/inativar`;
+    const url = `${environment.apiUrl}/corretores/${id}/inativar`;
 
     return this.httpClient.put<void>(url, {});
   }
 
   delete(id: string): Observable<void> {
-    const url = `${enviroment.apiUrl}/corretores/${id}`;
+    const url = `${environment.apiUrl}/corretores/${id}`;
 
     return this.httpClient.delete<void>(url);
   }
