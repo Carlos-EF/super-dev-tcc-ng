@@ -1,8 +1,8 @@
-import {  CriarClienteRequest } from '@/models/cliente.model';
+import {  CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import { TipoCliente, TIPOS_CLIENTE } from '@/types/cliente.types';
+import {  TIPOS_CLIENTE } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
-import { TipoImovel, TIPOS_IMOVEL } from '@/types/imovel.types';
+import {  TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -70,8 +70,7 @@ export interface Imoveis {
     <div id="mostrar-form" class="flex flex-col gap-4">
       @switch (clienteForm.get("tipo")?.value) {
         @case ("Interessado") {
-          <form formGroupName="dados_adicionais">
-
+          <form [formGroup]="dadosAdicionaisForm">
             <div id="form-interessado" class="card flex flex-col gap-4">
               <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
               
@@ -158,7 +157,7 @@ export interface Imoveis {
       </form>
        }
         @case ("Proprietário") {
-          <form formGroupName="dados_adicionais">
+          <form [formGroup]="dadosAdicionaisForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
               <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -183,7 +182,7 @@ export interface Imoveis {
           </form>
       }
         @case ("Locatário") {
-        <form formGroupName="dados_adicionais">
+        <form [formGroup]="dadosAdicionaisForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
             <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -236,9 +235,9 @@ export class ClienteCreate {
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
     como_encontrou: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
-
-    dados_adicionais: this.formBuilder.group({})
   })
+
+  dadosAdicionaisForm = this.formBuilder.group({});
 
   constructor(
     private router: Router
@@ -253,20 +252,27 @@ export class ClienteCreate {
       celular: this.clienteForm.getRawValue().celular!,
       email: this.clienteForm.getRawValue().email!,
       tipo: this.clienteForm.getRawValue().tipo!,
-      dados_adicionais: this.clienteForm.getRawValue().dados_adicionais! as CriarClienteRequest['dados_adicionais']
+      como_encontrou: this.clienteForm.getRawValue().como_encontrou!
     };
 
-    this.cadastrar(formCliente);
+    const formDadosAdicionais = this.dadosAdicionaisForm.getRawValue() as CriarDadosAdicionais;
+
+    this.cadastrar(formCliente, formDadosAdicionais);
   }
 
-  cadastrar(form: CriarClienteRequest) {
-    this.clienteService.create(form).subscribe({
+  cadastrar(form: CriarClienteRequest, dadosAdicionais: CriarDadosAdicionais) {
+    this.clienteService.create(
+      form, 
+      dadosAdicionais
+    ).subscribe({
       next: () => {
+        const tipoCliente = this.clienteForm.getRawValue().tipo;
+
         this.clienteForm.reset();
         this.messageService.add({
           severity: "success",
           summary: "SUCESSO!",
-          detail: `Cliente do tipo ${this.clienteForm.getRawValue().tipo} cadastrado com êxito!`
+          detail: `Cliente do tipo ${tipoCliente} cadastrado com êxito!`
         });
         this.router.navigate(["/pages/pessoas"]);
       },
@@ -285,16 +291,13 @@ export class ClienteCreate {
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
     if (tipo === "Interessado") {
-      this.clienteForm.setControl("dados_adicionais", 
-      this.criarFormInteressado())
+      this.dadosAdicionaisForm = this.criarFormInteressado();
     }
     else if (tipo === "Proprietário") {
-      this.clienteForm.setControl("dados_adicionais", 
-      this.criarFormProprietario())
+      this.dadosAdicionaisForm = this.criarFormProprietario();
     }
     else if (tipo === "Locatário") {
-      this.clienteForm.setControl("dados_adicionais", 
-      this.criarFormLocatario())
+      this.dadosAdicionaisForm = this.criarFormLocatario();
     }
   }
 
