@@ -6,7 +6,7 @@ export interface ClienteResponse {
     celular: string;
     email: string;
     tipo: string;
-    cpomo_encontrou: string;
+    como_encontrou: string;
     dados_adicionais: ClienteInteressadoResponse | 
     ClienteProprietarioResponse | 
     ClienteLocatarioResponse;
