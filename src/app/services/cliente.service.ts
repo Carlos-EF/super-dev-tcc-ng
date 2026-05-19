@@ -8,43 +8,51 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ClienteService {
-    private httpClient = inject(HttpClient);
+  private httpClient = inject(HttpClient);
 
-    getAll(): Observable<ClienteResponse[]> {
-      const url = `${environment.apiUrl}/clientes`;
+  getAll(): Observable<ClienteResponse[]> {
+    const url = `${environment.apiUrl}/clientes`;
 
-      return this.httpClient.get<ClienteResponse[]>(url);
-    }
+    return this.httpClient.get<ClienteResponse[]>(url);
+  }
 
-    create(form: CriarClienteRequest, dadosAdicionais: CriarDadosAdicionais): Observable<ClienteResponse> {
-      const url = `${environment.apiUrl}/clientes`;
+  create(form: CriarClienteRequest, dadosAdicionais: CriarDadosAdicionais): Observable<ClienteResponse> {
+    const url = `${environment.apiUrl}/clientes`;
 
-      return this.httpClient.post<ClienteResponse>(url, 
-        {dados: form, 
-        dados_adicionais: dadosAdicionais});
-    }
+    return this.httpClient.post<ClienteResponse>(url,
+      {
+        dados: form,
+        dados_adicionais: dadosAdicionais
+      });
+  }
 
-    update(id: string, form: EditarClienteRequest): Observable<ClienteResponse> {
-      const url = `${environment.apiUrl}/clientes/${id}`;
+  update(id: string, form: EditarClienteRequest): Observable<ClienteResponse> {
+    const url = `${environment.apiUrl}/clientes/${id}`;
 
-      return this.httpClient.put<ClienteResponse>(url, form);
-    }
+    return this.httpClient.put<ClienteResponse>(url, form);
+  }
 
-    delete(id: string): Observable<void> {
-      const url = `${environment.apiUrl}/clientes/${id}`;
+  delete(id: string): Observable<void> {
+    const url = `${environment.apiUrl}/clientes/${id}`;
 
-      return this.httpClient.delete<void>(url);
-    }
+    return this.httpClient.delete<void>(url);
+  }
 
-    activate(id: string): Observable<void> {
-      const url = `${environment.apiUrl}/clientes/${id}/ativar`;
+  activate(id: string): Observable<void> {
+    const url = `${environment.apiUrl}/clientes/${id}/ativar`;
 
-      return this.httpClient.put<void>(url, {});
-    }
+    return this.httpClient.put<void>(url, {});
+  }
 
-    deactivate(id: string): Observable<void> {
-      const url = `${environment.apiUrl}/clientes/${id}/inativar`;
+  deactivate(id: string): Observable<void> {
+    const url = `${environment.apiUrl}/clientes/${id}/inativar`;
 
-      return this.httpClient.put<void>(url, {});
-    }
+    return this.httpClient.put<void>(url, {});
+  }
+
+  getById(id: string): Observable<ClienteResponse> {
+    const url = `${environment.apiUrl}/clientes/${id}`;
+
+    return this.httpClient.get<ClienteResponse>(url);
+  }
 }

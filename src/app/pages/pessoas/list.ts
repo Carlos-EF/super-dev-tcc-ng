@@ -30,7 +30,7 @@ import { ClienteService } from '@/services/cliente.service';
     DialogModule,
     DeleteButton,
     MoreDetailsButton
-],
+  ],
 
   template: `
   <div class="flex justify-end">
@@ -94,7 +94,7 @@ import { ClienteService } from '@/services/cliente.service';
               <status-button [status]="corretor.status" (click)="confirmarInativacaoCorretor(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-              <more-details-button (click)="maisDetalhesCorretor(corretor)"/>
+              <more-details-button (click)="abrirModalMaisDetalhes(corretor.id, corretor.tipo)"/>
             </div>
           </div>
         </div>
@@ -251,7 +251,7 @@ import { ClienteService } from '@/services/cliente.service';
   
 </p-dialog>
 `,
-styles: ``
+  styles: ``
 })
 export class PessoasList {
   private readonly corretorService = inject(CorretorService);
@@ -272,8 +272,10 @@ export class PessoasList {
 
   corretorSelecionado: any = null;
 
+  clienteSelecionado: any = null;
+
   constructor(
-    private router : Router
+    private router: Router
   ) {
     this.opcoesPessoas = [
       {
@@ -293,19 +295,23 @@ export class PessoasList {
     this.buscarClientes();
   };
 
-  abrirModalMaisDetalhes(id: string,tipo: string) {
-    if (tipo === "corretor") {
+  abrirModalMaisDetalhes(id: string, tipo: string) {
+    if (tipo === "Corretor") {
       this.carregarCorretorPorId(id);
+      this.visible = true;
+    }
+    else {
+      this.buscarClientePorId(id);
       this.visible = true;
     }
   }
 
   carregarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
-      next:(corretor: CorretorResponse) => {
+      next: (corretor: CorretorResponse) => {
         this.corretorSelecionado = corretor;
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao carregar o corretor: ${erro}`);
         this.messageService.add({
           severity: 'error',
@@ -318,10 +324,10 @@ export class PessoasList {
 
   buscarCorretores() {
     this.corretorService.getAll().subscribe({
-      next:(corretores: CorretorResponse[]) => {
+      next: (corretores: CorretorResponse[]) => {
         this.corretores.set(corretores);
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao carregar os corretores: ${erro}`);
         this.messageService.add({
           severity: 'error',
@@ -334,10 +340,10 @@ export class PessoasList {
 
   buscarClientes() {
     this.clienteService.getAll().subscribe({
-      next:(clientes: ClienteResponse[]) => {
+      next: (clientes: ClienteResponse[]) => {
         this.clientes.set(clientes);
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao carregar os clientes: ${erro}`);
         this.messageService.add({
           severity: 'error',
@@ -346,6 +352,22 @@ export class PessoasList {
         })
       }
     })
+  }
+
+  buscarClientePorId(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.clienteSelecionado = cliente;
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao carregar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar carregar o cliente.'
+        })
+      }
+    });
   }
 
   confirmarAtivacaoCorretor(corretor: CorretorResponse) {
@@ -367,7 +389,7 @@ export class PessoasList {
       accept: () => {
         this.ativarCorretor(corretor.id);
       },
-      reject: () => {}
+      reject: () => { }
     })
   }
 
@@ -390,23 +412,23 @@ export class PessoasList {
       accept: () => {
         this.desativarCorretor(corretor.id);
       },
-      reject: () => {}
+      reject: () => { }
     })
   }
 
   ativarCorretor(id: string) {
     this.corretorService.activate(id).subscribe({
-      next:() => {
-          this.messageService.add({
+      next: () => {
+        this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Corretor ativado com sucesso!'
         });
         this.buscarCorretores();
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar ativar o corretor: ${erro}`);
-          this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar ativar o corretor.'
@@ -417,7 +439,7 @@ export class PessoasList {
 
   desativarCorretor(id: string) {
     this.corretorService.deactivate(id).subscribe({
-      next:() => {
+      next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
@@ -425,11 +447,11 @@ export class PessoasList {
         });
         this.buscarCorretores();
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar desativar o corretor: ${erro}`);
         this.messageService.add({
-          severity:'error',
-          summary:'ERRO (CORRETORES).',
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar desativar o corretor.'
         })
       }
@@ -437,7 +459,7 @@ export class PessoasList {
   }
 
   confirmarApagarCorretor(corretor: CorretorResponse) {
-      this.confirmationService.confirm({
+    this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja apagar o corretor: ${corretor.nome_completo}?`,
       icon: 'pi pi-info-circle',
@@ -460,7 +482,7 @@ export class PessoasList {
 
   apagarCorretor(id: string) {
     this.corretorService.delete(id).subscribe({
-      next:() => {
+      next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
@@ -475,7 +497,7 @@ export class PessoasList {
           detail: 'Ocorreru um erro ao tentar apagar o corretor.'
         });
         console.log(`Ocorreu um erro ao tentar apagar o corretor: ${erro}.`);
-        
+
       }
     })
   }
