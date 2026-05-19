@@ -293,9 +293,27 @@ export class PessoasList {
     this.buscarClientes();
   };
 
-  maisDetalhesCorretor(corretor: CorretorResponse) {
-    this.corretorSelecionado = corretor;
-    this.visible = true;
+  abrirModalMaisDetalhes(id: string,tipo: string) {
+    if (tipo === "corretor") {
+      this.carregarCorretorPorId(id);
+      this.visible = true;
+    }
+  }
+
+  carregarCorretorPorId(id: string) {
+    this.corretorService.getById(id).subscribe({
+      next:(corretor: CorretorResponse) => {
+        this.corretorSelecionado = corretor;
+      },
+      error:(erro: Error) => {
+        console.log(`Ocorreu um erro ao carregar o corretor: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
+          detail: 'Ocorreu um erro ao tentar carregar o corretor.'
+        })
+      }
+    });
   }
 
   buscarCorretores() {
