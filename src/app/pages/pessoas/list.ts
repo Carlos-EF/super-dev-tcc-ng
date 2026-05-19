@@ -13,8 +13,9 @@ import { StatusButton } from "@/layout/component/action buttons/status-button";
 import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 import { DialogModule } from 'primeng/dialog';
 import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
-import { ClienteResponse } from '@/models/cliente.model';
+import { ClienteInteressadoResponse, ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
+import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
@@ -205,7 +206,7 @@ import { ClienteService } from '@/services/cliente.service';
                   <p>
                     <strong>
                       {{
-                        cliente.dados_adicionais.orcamento
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
                       }}
                     </strong>
                   </p>
@@ -217,7 +218,7 @@ import { ClienteService } from '@/services/cliente.service';
                   <p>
                     <strong>
                       {{
-                        cliente.dados_adicionais.imovel_associado
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
                       }}
                     </strong>
                   </p>
@@ -302,7 +303,7 @@ import { ClienteService } from '@/services/cliente.service';
                   <p>
                     <strong>
                       {{
-                        cliente.dados_adicionais.orcamento
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
                       }}
                     </strong>
                   </p>
@@ -313,8 +314,7 @@ import { ClienteService } from '@/services/cliente.service';
                   <p>
                     <strong>
                       {{
-                        cliente.dados_adicionais.imovel_associado ||
-                        cliente.dados_adicionais.imovel_associado
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
                       }}
                     </strong>
                   </p>
@@ -813,7 +813,7 @@ export class PessoasList {
           detail: 'Cliente apagado com sucesso!'
         });
         this.buscarClientes();
-      }
+      },
       error: (erro: Error) => {
         this.messageService.add({
           severity: 'error',
@@ -826,22 +826,44 @@ export class PessoasList {
   }
 
   obterCorTipoPessoa(tipo: string): "success" | "danger" | "contrast" | null | undefined {
-        switch (tipo) {
-          case "Interessado": return "success";
-          case "Corretor": return "danger";
-          case "Proprietário": return "contrast";
-          case "Locatário": return "contrast";
-          default: return undefined;
-        }
-      };
-
-      obterCorAvatarPessoa(tipo: string): "background-color: var(--p-tag-success-background)" | "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)" | "background-color: var(--p-tag-danger-background)" | null | undefined {
-        switch (tipo) {
-          case "Interessado": return "background-color: var(--p-tag-success-background)";
-          case "Corretor": return "background-color: var(--p-tag-danger-background)";
-          case "Proprietário": return "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)";
-          case "Locatário": return "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)";
-          default: return undefined;
-        }
-      }
+    switch (tipo) {
+      case "Interessado": return "success";
+      case "Corretor": return "danger";
+      case "Proprietário": return "contrast";
+      case "Locatário": return "contrast";
+      default: return undefined;
     }
+  };
+
+  obterCorAvatarPessoa(tipo: string): "background-color: var(--p-tag-success-background)" | "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)" | "background-color: var(--p-tag-danger-background)" | null | undefined {
+    switch (tipo) {
+      case "Interessado": return "background-color: var(--p-tag-success-background)";
+      case "Corretor": return "background-color: var(--p-tag-danger-background)";
+      case "Proprietário": return "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)";
+      case "Locatário": return "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)";
+      default: return undefined;
+    }
+  }
+
+  obterDadosAdicionaisCliente(tipo: string,
+    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse): number | string {
+    if (tipo === "Interessado") {
+      const valor = this.obterOrcamentoCliente(dados_adicionais as ClienteInteressadoResponse);
+      return this.formatarValor(valor);
+    } else {
+      return this.obterImovelAssociadoCliente(dados_adicionais as ClienteLocatarioResponse | ClienteProprietarioResponse);
+    }
+  }
+
+  obterOrcamentoCliente(dados_adicionais: ClienteInteressadoResponse): number {
+    return dados_adicionais.orcamento;
+  }
+
+  obterImovelAssociadoCliente(dados_adicionais: ClienteLocatarioResponse | ClienteProprietarioResponse): string {
+    return dados_adicionais.imovel_associado;
+  }
+
+  formatarValor(valor: number): string {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+}
