@@ -13,8 +13,9 @@ import { StatusButton } from "@/layout/component/action buttons/status-button";
 import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 import { DialogModule } from 'primeng/dialog';
 import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
-import { ClienteResponse } from '@/models/cliente.model';
+import { ClienteInteressadoResponse, ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
+import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
@@ -30,7 +31,7 @@ import { ClienteService } from '@/services/cliente.service';
     DialogModule,
     DeleteButton,
     MoreDetailsButton
-],
+  ],
 
   template: `
   <div class="flex justify-end">
@@ -94,7 +95,7 @@ import { ClienteService } from '@/services/cliente.service';
               <status-button [status]="corretor.status" (click)="confirmarInativacaoCorretor(corretor)"/>
               <edit-button routerLink="corretor/editar/{{corretor.id}}"/>
               <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-              <more-details-button (click)="maisDetalhesCorretor(corretor)"/>
+              <more-details-button (click)="abrirModalMaisDetalhes(corretor.id, corretor.tipo)"/>
             </div>
           </div>
         </div>
@@ -157,6 +158,196 @@ import { ClienteService } from '@/services/cliente.service';
         </div>
       </div>
   </p-card>
+  }
+}
+
+@for (cliente of clientes(); track cliente) {
+  @if (cliente.status == "ATIVO") {
+    <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
+      <div class="ng-surface-900 flex flex-col justify-between">      
+        <div class="flex flex-row w-full">       
+          <div class="flex flex-row w-full">         
+            <div class="flex ml-3 items-center">
+              <p-avatar
+                size="xlarge"
+                shape="circle"
+                [style]="obterCorAvatarPessoa(cliente.tipo)"
+                label="{{cliente.nome.trim().substring(0,2)}}" />
+            </div>
+
+            <div class="flex flex-row w-full justify-between items-center ml-3">        
+              <div class="flex flex-wrap flex-col w-full content-start">         
+                <p-tag
+                  class="max-h-min max-w-min mt-2"
+                  value="{{cliente.codigo}}"
+                  [rounded]="true" />
+
+                <h4><strong>{{cliente.nome}}</strong></h4>
+                <p-tag
+                  class="max-h-min max-w-min mt-2"
+                  value="{{cliente.tipo}}"
+                  [severity]="obterCorTipoPessoa(cliente.tipo)" />
+              </div>
+
+              <div class="flex flex-col justify-center w-full">        
+                <h4><strong>Informações Adicionais:</strong></h4>
+                <p>
+                  <strong>Como nos encontrou:</strong>
+                </p>
+                <p>
+                  <strong>{{cliente.como_encontrou}}</strong>
+                </p>
+
+                @if (cliente.tipo == "Interessado") {
+                  <p class="mt-2">
+                    <strong>Orçamento:</strong>
+                  </p>
+
+                  <p>
+                    <strong>
+                      {{
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
+                      }}
+                    </strong>
+                  </p>
+                } @else {
+                  <p class="mt-2">
+                    <strong>Imóvel Associado:</strong>
+                  </p>
+
+                  <p>
+                    <strong>
+                      {{
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
+                      }}
+                    </strong>
+                  </p>
+                }
+              </div>
+
+            </div>
+            <div class="flex border-l-2 border-r-2 mr-3 w-full">           
+              <div class="flex flex-col w-full items-center ml-5">             
+                <div class="flex flex-col justify-center">                 
+                  <h4><strong>Contato:</strong></h4>
+                  <h6 class="pi pi-whatsapp">
+                    {{cliente.celular}}
+                  </h6>
+
+                  <h6 class="pi pi-at">
+                    {{cliente.email}}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex mt-2 mr-3 items-center">          
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+              <status-button
+                [status]="cliente.status"
+                (click)="confirmarInativacaoCliente(cliente)" />
+              <edit-button
+                routerLink="cliente/editar/{{cliente.id}}" />
+              <delete-button
+                (click)="confirmarApagarCliente(cliente)" />
+              <more-details-button
+                (click)="abrirModalMaisDetalhes(cliente.id, cliente.tipo)" />
+            </div>
+         </div>
+        </div>
+      </div>
+    </p-card>
+
+  } @else if (cliente.status == "INATIVO") {
+    <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
+      <div class="ng-surface-900 flex flex-col justify-between">
+        <div class="flex flex-row w-full">
+          <div class="flex flex-row w-full opacity-50">
+            <div class="flex ml-3 items-center">
+              <p-avatar
+                size="xlarge"
+                shape="circle"
+                [style]="obterCorAvatarPessoa(cliente.tipo)"
+                label="{{cliente.nome.trim().substring(0,2)}}" />
+            </div>
+
+            <div class="flex flex-row w-full justify-between items-center ml-3">
+              <div class="flex flex-wrap flex-col w-full content-start">
+                <p-tag
+                  class="max-h-min max-w-min mt-2"
+                  value="{{cliente.codigo}}"
+                  [rounded]="true" />
+
+                <h4><strong>{{cliente.nome}}</strong></h4>
+                <p-tag
+                  class="max-h-min max-w-min mt-2"
+                  value="{{cliente.tipo}}"
+                  [severity]="obterCorTipoPessoa(cliente.tipo)" />
+              </div>
+
+              <div class="flex flex-col justify-center w-full">
+                <h4><strong>Informações Adicionais:</strong></h4>
+
+                <p>
+                  <strong>Como nos encontrou:</strong>
+                </p>
+                <p>
+                  <strong>{{cliente.como_encontrou}}</strong>
+                </p>
+
+                @if (cliente.tipo == "Interessado") {
+                  <p class="mt-2">
+                    <strong>Orçamento:</strong>
+                  </p>
+                  <p>
+                    <strong>
+                      {{
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
+                      }}
+                    </strong>
+                  </p>
+                } @else {
+                  <p class="mt-2">
+                    <strong>Imóvel Associado:</strong>
+                  </p>
+                  <p>
+                    <strong>
+                      {{
+                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
+                      }}
+                    </strong>
+                  </p>
+                }
+              </div>
+            </div>
+
+            <div class="flex border-l-2 border-r-2 mr-3 w-full">
+              <div class="flex flex-col w-full items-center ml-5">
+                <div class="flex flex-col justify-center">
+                  <h4><strong>Contato:</strong></h4>
+                  <h6 class="pi pi-whatsapp">
+                    {{cliente.celular}}
+                  </h6>
+                  <h6 class="pi pi-at">
+                    {{cliente.email}}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex mt-2 mr-3 items-center">
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+              <status-button
+                [status]="cliente.status"
+                (click)="confirmarAtivacaoCliente(cliente)" />
+              <delete-button
+                (click)="confirmarApagarCliente(cliente)" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
   }
 }
 
@@ -251,7 +442,7 @@ import { ClienteService } from '@/services/cliente.service';
   
 </p-dialog>
 `,
-styles: ``
+  styles: ``
 })
 export class PessoasList {
   private readonly corretorService = inject(CorretorService);
@@ -272,8 +463,10 @@ export class PessoasList {
 
   corretorSelecionado: any = null;
 
+  clienteSelecionado: any = null;
+
   constructor(
-    private router : Router
+    private router: Router
   ) {
     this.opcoesPessoas = [
       {
@@ -293,17 +486,39 @@ export class PessoasList {
     this.buscarClientes();
   };
 
-  maisDetalhesCorretor(corretor: CorretorResponse) {
-    this.corretorSelecionado = corretor;
-    this.visible = true;
+  abrirModalMaisDetalhes(id: string, tipo: string) {
+    if (tipo === "Corretor") {
+      this.carregarCorretorPorId(id);
+      this.visible = true;
+    }
+    else {
+      this.buscarClientePorId(id);
+      this.visible = true;
+    }
+  }
+
+  carregarCorretorPorId(id: string) {
+    this.corretorService.getById(id).subscribe({
+      next: (corretor: CorretorResponse) => {
+        this.corretorSelecionado = corretor;
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao carregar o corretor: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
+          detail: 'Ocorreu um erro ao tentar carregar o corretor.'
+        })
+      }
+    });
   }
 
   buscarCorretores() {
     this.corretorService.getAll().subscribe({
-      next:(corretores: CorretorResponse[]) => {
+      next: (corretores: CorretorResponse[]) => {
         this.corretores.set(corretores);
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao carregar os corretores: ${erro}`);
         this.messageService.add({
           severity: 'error',
@@ -316,10 +531,10 @@ export class PessoasList {
 
   buscarClientes() {
     this.clienteService.getAll().subscribe({
-      next:(clientes: ClienteResponse[]) => {
+      next: (clientes: ClienteResponse[]) => {
         this.clientes.set(clientes);
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao carregar os clientes: ${erro}`);
         this.messageService.add({
           severity: 'error',
@@ -328,6 +543,22 @@ export class PessoasList {
         })
       }
     })
+  }
+
+  buscarClientePorId(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.clienteSelecionado = cliente;
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao carregar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar carregar o cliente.'
+        })
+      }
+    });
   }
 
   confirmarAtivacaoCorretor(corretor: CorretorResponse) {
@@ -349,9 +580,98 @@ export class PessoasList {
       accept: () => {
         this.ativarCorretor(corretor.id);
       },
-      reject: () => {}
+      reject: () => { }
     })
   }
+
+  confirmarAtivacaoCliente(cliente: ClienteResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja ativar o cliente : ${cliente.nome}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Ativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.ativarCliente(cliente.id);
+      },
+      reject: () => { }
+    })
+  }
+
+  confirmarInativacaoCliente(cliente: ClienteResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja inativar o cliente : ${cliente.nome}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Inativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.desativarCliente(cliente.id);
+      },
+      reject: () => { }
+    })
+  }
+
+  ativarCliente(id: string) {
+    this.clienteService.activate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Cliente ativado com sucesso!'
+        });
+        this.buscarClientes();
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar ativar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar ativar o cliente.'
+        })
+      }
+    })
+  }
+
+  desativarCliente(id: string) {
+    this.clienteService.deactivate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Cliente desativado com sucesso!'
+        });
+        this.buscarClientes();
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar desativar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar desativar o cliente.'
+        })
+      }
+    })
+  }
+
 
   confirmarInativacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
@@ -372,23 +692,23 @@ export class PessoasList {
       accept: () => {
         this.desativarCorretor(corretor.id);
       },
-      reject: () => {}
+      reject: () => { }
     })
   }
 
   ativarCorretor(id: string) {
     this.corretorService.activate(id).subscribe({
-      next:() => {
-          this.messageService.add({
+      next: () => {
+        this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Corretor ativado com sucesso!'
         });
         this.buscarCorretores();
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar ativar o corretor: ${erro}`);
-          this.messageService.add({
+        this.messageService.add({
           severity: 'error',
           summary: 'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar ativar o corretor.'
@@ -399,7 +719,7 @@ export class PessoasList {
 
   desativarCorretor(id: string) {
     this.corretorService.deactivate(id).subscribe({
-      next:() => {
+      next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
@@ -407,11 +727,11 @@ export class PessoasList {
         });
         this.buscarCorretores();
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar desativar o corretor: ${erro}`);
         this.messageService.add({
-          severity:'error',
-          summary:'ERRO (CORRETORES).',
+          severity: 'error',
+          summary: 'ERRO (CORRETORES).',
           detail: 'Ocorreu um erro ao tentar desativar o corretor.'
         })
       }
@@ -419,7 +739,7 @@ export class PessoasList {
   }
 
   confirmarApagarCorretor(corretor: CorretorResponse) {
-      this.confirmationService.confirm({
+    this.confirmationService.confirm({
       header: 'ATENÇÂO!',
       message: `Deseja apagar o corretor: ${corretor.nome_completo}?`,
       icon: 'pi pi-info-circle',
@@ -442,7 +762,7 @@ export class PessoasList {
 
   apagarCorretor(id: string) {
     this.corretorService.delete(id).subscribe({
-      next:() => {
+      next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
@@ -457,7 +777,50 @@ export class PessoasList {
           detail: 'Ocorreru um erro ao tentar apagar o corretor.'
         });
         console.log(`Ocorreu um erro ao tentar apagar o corretor: ${erro}.`);
-        
+
+      }
+    })
+  }
+
+  confirmarApagarCliente(cliente: ClienteResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja apagar o cliente: ${cliente.nome}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Apagar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.apagarCliente(cliente.id);
+      },
+    })
+  }
+
+  apagarCliente(id: string) {
+    this.clienteService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Cliente apagado com sucesso!'
+        });
+        this.buscarClientes();
+      },
+      error: (erro: Error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreru um erro ao tentar apagar o cliente.'
+        });
+        console.log(`Ocorreu um erro ao tentar apagar o cliente: ${erro}.`);
       }
     })
   }
@@ -480,5 +843,27 @@ export class PessoasList {
       case "Locatário": return "background-color: var(--p-tag-contrast-background); color: var(--p-tag-contrast-color)";
       default: return undefined;
     }
+  }
+
+  obterDadosAdicionaisCliente(tipo: string,
+    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse): number | string {
+    if (tipo === "Interessado") {
+      const valor = this.obterOrcamentoCliente(dados_adicionais as ClienteInteressadoResponse);
+      return this.formatarValor(valor);
+    } else {
+      return this.obterImovelAssociadoCliente(dados_adicionais as ClienteLocatarioResponse | ClienteProprietarioResponse);
+    }
+  }
+
+  obterOrcamentoCliente(dados_adicionais: ClienteInteressadoResponse): number {
+    return dados_adicionais.orcamento;
+  }
+
+  obterImovelAssociadoCliente(dados_adicionais: ClienteLocatarioResponse | ClienteProprietarioResponse): string {
+    return dados_adicionais.imovel_associado;
+  }
+
+  formatarValor(valor: number): string {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 }
