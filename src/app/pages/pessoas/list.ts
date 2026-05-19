@@ -393,6 +393,95 @@ export class PessoasList {
     })
   }
 
+  confirmarAtivacaoCliente(cliente: ClienteResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja ativar o cliente : ${cliente.nome}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Ativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.ativarCliente(cliente.id);
+      },
+      reject: () => { }
+    })
+  }
+
+  confirmarInativacaoCliente(cliente: ClienteResponse) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: `Deseja inativar o cliente : ${cliente.nome}?`,
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Inativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.desativarCliente(cliente.id);
+      },
+      reject: () => { }
+    })
+  }
+
+  ativarCliente(id: string) {
+    this.clienteService.activate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Cliente ativado com sucesso!'
+        });
+        this.buscarClientes();
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar ativar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar ativar o cliente.'
+        })
+      }
+    })
+  }
+
+  desativarCliente(id: string) {
+    this.clienteService.deactivate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Cliente desativado com sucesso!'
+        });
+        this.buscarClientes();
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar desativar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO (CLIENTES).',
+          detail: 'Ocorreu um erro ao tentar desativar o cliente.'
+        })
+      }
+    })
+  }
+  
+
   confirmarInativacaoCorretor(corretor: CorretorResponse) {
     this.confirmationService.confirm({
       header: 'ATENÇÂO!',
