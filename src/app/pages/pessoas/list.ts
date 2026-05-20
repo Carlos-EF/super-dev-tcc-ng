@@ -442,6 +442,230 @@ import { ClienteService } from '@/services/cliente.service';
       </div>
   </div>
   }
+
+  @if (clienteSelecionado) {
+  <div class="flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b pb-4">
+      <div class="flex items-center gap-4">
+        <p-avatar
+          size="xlarge"
+          shape="circle"
+          [style]="obterCorAvatarPessoa(clienteSelecionado.tipo)"
+          [label]="clienteSelecionado.nome.trim().substring(0, 2)"
+        />
+
+        <div>
+          <h2 class="text-xl font-bold">
+            {{clienteSelecionado.nome}}
+          </h2>
+
+          <p-tag
+            [value]="clienteSelecionado.tipo"
+            [severity]="obterCorTipoPessoa(clienteSelecionado.tipo)"
+          />
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <edit-button
+          routerLink="cliente/editar/{{clienteSelecionado.id}}" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <strong>Código:</strong>
+        <p>{{clienteSelecionado.codigo}}</p>
+      </div>
+
+      <div>
+        <strong>Celular:</strong>
+        <p>{{clienteSelecionado.celular}}</p>
+      </div>
+
+      <div>
+        <strong>E-mail:</strong>
+        <p>{{clienteSelecionado.email}}</p>
+      </div>
+
+      <div>
+        <strong>Como nos encontrou:</strong>
+        <p>{{clienteSelecionado.como_encontrou}}</p>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 flex flex-col gap-4">
+      <h3 class="text-lg font-bold">
+        Informações Adicionais:
+      </h3>
+
+      @if (clienteSelecionado.tipo == "Interessado") {
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <strong>Procurando:</strong>
+            <p>
+              {{
+                (clienteSelecionado.dados_adicionais).procurando
+              }}
+            </p>
+          </div>
+
+          <div>
+            <strong>Orçamento:</strong>
+            <p>
+              {{
+                formatarValor(
+                  (clienteSelecionado.dados_adicionais).orcamento
+                )
+              }}
+            </p>
+          </div>
+
+          <div>
+            <strong>Orçamento Mínimo:</strong>
+            @if ((clienteSelecionado.dados_adicionais).orcamento_minimo) {
+              <p>
+                {{
+                  formatarValor(
+                    (clienteSelecionado.dados_adicionais).orcamento_minimo
+                  )
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Orçamento Máximo:</strong>
+            @if ((clienteSelecionado.dados_adicionais).orcamento_maximo) {
+              <p>
+                {{
+                  formatarValor(
+                    (clienteSelecionado.dados_adicionais).orcamento_maximo
+                  )
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Quartos:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_quartos) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_quartos
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Suítes:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_suites) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_suites
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Banheiros:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_banheiros) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_banheiros
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Vagas de Garagem:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_vagas) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_vagas
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Andares:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_andares) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_andares
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Salas:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_salas) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_salas
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <strong>Imóvel Associado:</strong>
+            @if ((clienteSelecionado.dados_adicionais).imovel_associado) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).imovel_associado
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
   
 </p-dialog>
 `,
