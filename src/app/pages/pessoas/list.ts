@@ -15,7 +15,6 @@ import { DialogModule } from 'primeng/dialog';
 import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
 import { ClienteInteressadoResponse, ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
@@ -43,7 +42,7 @@ import { NumberValueAccessor } from '@angular/forms';
     [model]="opcoesPessoas" /> 
   </div>
 
-  @for (corretor of corretores(); track corretor) {
+  @for (corretor of corretores(); track corretor.id) {
     @if (corretor.status == "ATIVO") {
       <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
         <div class="ng-surface-900 flex flex-col justify-between">
@@ -102,66 +101,9 @@ import { NumberValueAccessor } from '@angular/forms';
       </div>
     </div>
   </p-card>
-} @else if (corretor.status == "INATIVO") {
-  <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
-        <div class="ng-surface-900 flex flex-col justify-between">
-          <div class="flex flex-row w-full">
-            <div class="flex flex-row w-full opacity-50">
-              <div class="flex ml-3 items-center">
-                <p-avatar
-                  size="xlarge"
-                  shape="circle"
-                  [style]="obterCorAvatarPessoa(corretor.tipo)"
-                  label="{{corretor.nome_completo.trim().substring(0,2)}}" />
-              </div>
-          
-          <div class="flex flex-row w-full justify-between items-center ml-3">
-            <div class="flex flex-wrap flex-col w-full content-start">
-              <p-tag
-              class="max-h-min max-w-min mt-2"
-              value="{{corretor.codigo}}"
-              [rounded]="true" />
-              
-              <h4><strong>{{corretor.nome_completo}}</strong></h4>
-              <p-tag
-              class="max-h-min max-w-min mt-2"
-              value="{{corretor.tipo}}"
-              [severity]="obterCorTipoPessoa(corretor.tipo)" />
-            </div>
-            
-            
-            <div class="flex flex-col justify-center w-full">
-              <h4><strong>Informações Adicionais:</strong></h4>
-              <p><strong>CRECI:</strong></p>
-              <p><strong>{{corretor.creci}}</strong></p>
-            </div>
-          </div>
-          
-          <div class="flex border-l-2 border-r-2 mr-3 w-full">
-            <div class="flex flex-col w-full items-center ml-5 w-full">
-              <div class="flex flex-col justify-center">
-                <h4><strong>Contato:</strong></h4>     
-                <h6 class="pi pi-whatsapp"> {{corretor.celular}}</h6>
-                
-                <h6 class="pi pi-at"> {{corretor.email}}</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-
-          <div class="flex mt-2 mr-3 items-center">
-            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
-              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-            </div>
-          </div>
-        </div>
-      </div>
-  </p-card>
   }
 }
-
-@for (cliente of clientes(); track cliente) {
+@for (cliente of clientes(); track cliente.id) {
   @if (cliente.status == "ATIVO") {
     <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
       <div class="ng-surface-900 flex flex-col justify-between">      
@@ -258,8 +200,69 @@ import { NumberValueAccessor } from '@angular/forms';
         </div>
       </div>
     </p-card>
+    }
+  }
+  @for (corretor of corretores(); track corretor.id) {
+  @if (corretor.status == "INATIVO") {
+  <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
+        <div class="ng-surface-900 flex flex-col justify-between">
+          <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full opacity-50">
+              <div class="flex ml-3 items-center">
+                <p-avatar
+                  size="xlarge"
+                  shape="circle"
+                  [style]="obterCorAvatarPessoa(corretor.tipo)"
+                  label="{{corretor.nome_completo.trim().substring(0,2)}}" />
+              </div>
+          
+          <div class="flex flex-row w-full justify-between items-center ml-3">
+            <div class="flex flex-wrap flex-col w-full content-start">
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{corretor.codigo}}"
+              [rounded]="true" />
+              
+              <h4><strong>{{corretor.nome_completo}}</strong></h4>
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{corretor.tipo}}"
+              [severity]="obterCorTipoPessoa(corretor.tipo)" />
+            </div>
+            
+            
+            <div class="flex flex-col justify-center w-full">
+              <h4><strong>Informações Adicionais:</strong></h4>
+              <p><strong>CRECI:</strong></p>
+              <p><strong>{{corretor.creci}}</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex border-l-2 border-r-2 mr-3 w-full">
+            <div class="flex flex-col w-full items-center ml-5 w-full">
+              <div class="flex flex-col justify-center">
+                <h4><strong>Contato:</strong></h4>     
+                <h6 class="pi pi-whatsapp"> {{corretor.celular}}</h6>
+                
+                <h6 class="pi pi-at"> {{corretor.email}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  } @else if (cliente.status == "INATIVO") {
+          <div class="flex mt-2 mr-3 items-center">
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
+              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </p-card>
+  }
+}
+  @for(cliente of clientes(); track cliente.id) {
+    @if (cliente.status == "INATIVO") {
     <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
       <div class="ng-surface-900 flex flex-col justify-between">
         <div class="flex flex-row w-full">
@@ -348,8 +351,8 @@ import { NumberValueAccessor } from '@angular/forms';
         </div>
       </div>
     </p-card>
+    }
   }
-}
 
 <p-dialog 
   header="Dados do Corretor" 
@@ -439,6 +442,230 @@ import { NumberValueAccessor } from '@angular/forms';
       </div>
   </div>
   }
+
+  @if (clienteSelecionado) {
+  <div class="flex flex-col gap-6">
+    <div class="flex items-center justify-between border-b pb-4">
+      <div class="flex items-center gap-4">
+        <p-avatar
+          size="xlarge"
+          shape="circle"
+          [style]="obterCorAvatarPessoa(clienteSelecionado.tipo)"
+          [label]="clienteSelecionado.nome.trim().substring(0, 2)"
+        />
+
+        <div>
+          <h2 class="text-xl font-bold">
+            {{clienteSelecionado.nome}}
+          </h2>
+
+          <p-tag
+            [value]="clienteSelecionado.tipo"
+            [severity]="obterCorTipoPessoa(clienteSelecionado.tipo)"
+          />
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <edit-button
+          routerLink="cliente/editar/{{clienteSelecionado.id}}" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <strong>Código:</strong>
+        <p>{{clienteSelecionado.codigo}}</p>
+      </div>
+
+      <div>
+        <strong>Celular:</strong>
+        <p>{{clienteSelecionado.celular}}</p>
+      </div>
+
+      <div>
+        <strong>E-mail:</strong>
+        <p>{{clienteSelecionado.email}}</p>
+      </div>
+
+      <div>
+        <strong>Como nos encontrou:</strong>
+        <p>{{clienteSelecionado.como_encontrou}}</p>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 flex flex-col gap-4">
+      <h3 class="text-lg font-bold">
+        Informações Adicionais:
+      </h3>
+
+      @if (clienteSelecionado.tipo == "Interessado") {
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <strong>Procurando:</strong>
+            <p>
+              {{
+                (clienteSelecionado.dados_adicionais).procurando
+              }}
+            </p>
+          </div>
+
+          <div>
+            <strong>Orçamento:</strong>
+            <p>
+              {{
+                formatarValor(
+                  (clienteSelecionado.dados_adicionais).orcamento
+                )
+              }}
+            </p>
+          </div>
+
+          <div>
+            <strong>Orçamento Mínimo:</strong>
+            @if ((clienteSelecionado.dados_adicionais).orcamento_minimo) {
+              <p>
+                {{
+                  formatarValor(
+                    (clienteSelecionado.dados_adicionais).orcamento_minimo
+                  )
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Orçamento Máximo:</strong>
+            @if ((clienteSelecionado.dados_adicionais).orcamento_maximo) {
+              <p>
+                {{
+                  formatarValor(
+                    (clienteSelecionado.dados_adicionais).orcamento_maximo
+                  )
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Quartos:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_quartos) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_quartos
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Suítes:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_suites) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_suites
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Banheiros:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_banheiros) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_banheiros
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Vagas de Garagem:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_vagas) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_vagas
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Andares:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_andares) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_andares
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+
+          <div>
+            <strong>Quantidade de Salas:</strong>
+            @if ((clienteSelecionado.dados_adicionais).quantidade_salas) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).quantidade_salas
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <strong>Imóvel Associado:</strong>
+            @if ((clienteSelecionado.dados_adicionais).imovel_associado) {
+              <p>
+                {{
+                  (clienteSelecionado.dados_adicionais).imovel_associado
+                }}
+              </p>
+            } @else {
+              <p class="text-gray-400">
+                Dado não cadastrado.
+              </p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}
   
 </p-dialog>
 `,
