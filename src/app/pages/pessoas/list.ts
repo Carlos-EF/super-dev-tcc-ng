@@ -15,7 +15,6 @@ import { DialogModule } from 'primeng/dialog';
 import { MoreDetailsButton } from "@/layout/component/action buttons/more-details-button";
 import { ClienteInteressadoResponse, ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import { NumberValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
@@ -43,7 +42,7 @@ import { NumberValueAccessor } from '@angular/forms';
     [model]="opcoesPessoas" /> 
   </div>
 
-  @for (corretor of corretores(); track corretor) {
+  @for (corretor of corretores(); track corretor.id) {
     @if (corretor.status == "ATIVO") {
       <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
         <div class="ng-surface-900 flex flex-col justify-between">
@@ -102,66 +101,9 @@ import { NumberValueAccessor } from '@angular/forms';
       </div>
     </div>
   </p-card>
-} @else if (corretor.status == "INATIVO") {
-  <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
-        <div class="ng-surface-900 flex flex-col justify-between">
-          <div class="flex flex-row w-full">
-            <div class="flex flex-row w-full opacity-50">
-              <div class="flex ml-3 items-center">
-                <p-avatar
-                  size="xlarge"
-                  shape="circle"
-                  [style]="obterCorAvatarPessoa(corretor.tipo)"
-                  label="{{corretor.nome_completo.trim().substring(0,2)}}" />
-              </div>
-          
-          <div class="flex flex-row w-full justify-between items-center ml-3">
-            <div class="flex flex-wrap flex-col w-full content-start">
-              <p-tag
-              class="max-h-min max-w-min mt-2"
-              value="{{corretor.codigo}}"
-              [rounded]="true" />
-              
-              <h4><strong>{{corretor.nome_completo}}</strong></h4>
-              <p-tag
-              class="max-h-min max-w-min mt-2"
-              value="{{corretor.tipo}}"
-              [severity]="obterCorTipoPessoa(corretor.tipo)" />
-            </div>
-            
-            
-            <div class="flex flex-col justify-center w-full">
-              <h4><strong>Informações Adicionais:</strong></h4>
-              <p><strong>CRECI:</strong></p>
-              <p><strong>{{corretor.creci}}</strong></p>
-            </div>
-          </div>
-          
-          <div class="flex border-l-2 border-r-2 mr-3 w-full">
-            <div class="flex flex-col w-full items-center ml-5 w-full">
-              <div class="flex flex-col justify-center">
-                <h4><strong>Contato:</strong></h4>     
-                <h6 class="pi pi-whatsapp"> {{corretor.celular}}</h6>
-                
-                <h6 class="pi pi-at"> {{corretor.email}}</h6>
-              </div>
-            </div>
-          </div>
-        </div>
-
-          <div class="flex mt-2 mr-3 items-center">
-            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
-              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
-              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
-            </div>
-          </div>
-        </div>
-      </div>
-  </p-card>
   }
 }
-
-@for (cliente of clientes(); track cliente) {
+@for (cliente of clientes(); track cliente.id) {
   @if (cliente.status == "ATIVO") {
     <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
       <div class="ng-surface-900 flex flex-col justify-between">      
@@ -258,8 +200,69 @@ import { NumberValueAccessor } from '@angular/forms';
         </div>
       </div>
     </p-card>
+    }
+  }
+  @for (corretor of corretores(); track corretor.id) {
+  @if (corretor.status == "INATIVO") {
+  <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
+        <div class="ng-surface-900 flex flex-col justify-between">
+          <div class="flex flex-row w-full">
+            <div class="flex flex-row w-full opacity-50">
+              <div class="flex ml-3 items-center">
+                <p-avatar
+                  size="xlarge"
+                  shape="circle"
+                  [style]="obterCorAvatarPessoa(corretor.tipo)"
+                  label="{{corretor.nome_completo.trim().substring(0,2)}}" />
+              </div>
+          
+          <div class="flex flex-row w-full justify-between items-center ml-3">
+            <div class="flex flex-wrap flex-col w-full content-start">
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{corretor.codigo}}"
+              [rounded]="true" />
+              
+              <h4><strong>{{corretor.nome_completo}}</strong></h4>
+              <p-tag
+              class="max-h-min max-w-min mt-2"
+              value="{{corretor.tipo}}"
+              [severity]="obterCorTipoPessoa(corretor.tipo)" />
+            </div>
+            
+            
+            <div class="flex flex-col justify-center w-full">
+              <h4><strong>Informações Adicionais:</strong></h4>
+              <p><strong>CRECI:</strong></p>
+              <p><strong>{{corretor.creci}}</strong></p>
+            </div>
+          </div>
+          
+          <div class="flex border-l-2 border-r-2 mr-3 w-full">
+            <div class="flex flex-col w-full items-center ml-5 w-full">
+              <div class="flex flex-col justify-center">
+                <h4><strong>Contato:</strong></h4>     
+                <h6 class="pi pi-whatsapp"> {{corretor.celular}}</h6>
+                
+                <h6 class="pi pi-at"> {{corretor.email}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  } @else if (cliente.status == "INATIVO") {
+          <div class="flex mt-2 mr-3 items-center">
+            <div class="flex flex-col justify-between w-full items-end ml-5 gap-4 ">
+              <status-button [status]="corretor.status" (click)="confirmarAtivacaoCorretor(corretor)"/>
+              <delete-button (click)="confirmarApagarCorretor(corretor)"/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </p-card>
+  }
+}
+  @for(cliente of clientes(); track cliente.id) {
+    @if (cliente.status == "INATIVO") {
     <p-card class="p-0 mt-3 mb-3 border-gray-900 border-r-2 border-l-2">
       <div class="ng-surface-900 flex flex-col justify-between">
         <div class="flex flex-row w-full">
@@ -348,8 +351,8 @@ import { NumberValueAccessor } from '@angular/forms';
         </div>
       </div>
     </p-card>
+    }
   }
-}
 
 <p-dialog 
   header="Dados do Corretor" 
