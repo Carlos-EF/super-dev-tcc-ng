@@ -1,8 +1,8 @@
-import {  CriarClienteRequest, CriarDadosAdicionais, EditarClienteRequest } from '@/models/cliente.model';
+import { EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import {  TIPOS_CLIENTE } from '@/types/cliente.types';
+import { TIPOS_CLIENTE } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
-import {  TIPOS_IMOVEL } from '@/types/imovel.types';
+import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,7 +20,7 @@ export interface Imoveis {
 }
 
 @Component({
-  selector: 'app-create',
+  selector: 'app-edit',
   imports: [
     ButtonModule,
     InputTextModule,
@@ -32,7 +32,7 @@ export interface Imoveis {
     CommonModule,
   ],
   template: `
-  <form [formGroup]="clienteForm">
+  <form [formGroup]="clienteParaEditarForm">
     <div class="card flex flex-col gap-4">
       <div class="font-bold text-xl">Edição de Cliente:</div>
       <div class="flex flex-wrap basis-0 gap-3">
@@ -64,9 +64,9 @@ export interface Imoveis {
     </div>
     
     <div id="mostrar-form" class="flex flex-col gap-4">
-      @switch (clienteForm.get("tipo")?.value) {
+      @switch (clienteParaEditarForm.get("tipo")?.value) {
         @case ("Interessado") {
-          <form [formGroup]="dadosAdicionaisForm">
+          <form [formGroup]="dadosAdicionaisparaEditarForm">
             <div id="form-interessado" class="card flex flex-col gap-4">
               <div class="font-bold text-xl">Informações Sobre o Cliente:</div>
               
@@ -153,7 +153,7 @@ export interface Imoveis {
       </form>
        }
         @case ("Proprietário") {
-          <form [formGroup]="dadosAdicionaisForm">
+          <form [formGroup]="dadosAdicionaisparaEditarForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
               <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -178,7 +178,7 @@ export interface Imoveis {
           </form>
       }
         @case ("Locatário") {
-        <form [formGroup]="dadosAdicionaisForm">
+        <form [formGroup]="dadosAdicionaisparaEditarForm">
           <div class="flex card gap-2 flex-col">
             <div class="flex flex-col grow basis-0 gap-4">
             <div class="text-xl font-bold">Informações Adicionais:</div>
@@ -209,12 +209,12 @@ export interface Imoveis {
   </div>
 </form>
 `,
-styles: ``
+  styles: ``
 })
 export class ClienteEdit {
   tiposContato = [...TIPOS_CONTATO];
 
- tiposCliente = [...TIPOS_CLIENTE];
+  tiposCliente = [...TIPOS_CLIENTE];
 
   imoveis: Imoveis[] | undefined;
 
@@ -225,7 +225,7 @@ export class ClienteEdit {
   private readonly messageService = inject(MessageService);
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  clienteparaEditarForm = this.formBuilder.group({
+  clienteParaEditarForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     celular: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -245,47 +245,79 @@ export class ClienteEdit {
     this.idParaEditar = this.activatedRoute.snapshot.paramMap.get("id")!;
 
     this.buscarCliente();
+
+    this.buscarDadosAdicionaisCliente();
   }
 
 
   buscarCliente() {
     this.clienteService.getById(this.idParaEditar).subscribe({
       next: (cliente: EditarClienteRequest) => {
-        this.clienteparaEditarForm.patchValue({
+        this.clienteParaEditarForm.patchValue({
           nome: cliente.nome,
           celular: cliente.celular,
           email: cliente.email,
           como_encontrou: cliente.como_encontrou,
           tipo: cliente.tipo
         });
+
         this.tipoOriginal = cliente.tipo;
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar buscar o cliente: ${erro}`);
+        this.messageService.add({
+          severity: "error",
+          summary: "FALHA AO BUSCAR!",
+          detail: `Ocorreu um erro ao tentar buscar os dados do cliente.`
+        });
+      }
+    });
+  }
+
+  buscarDadosAdicionaisCliente() {
+    this.clienteService.getById(this.idParaEditar).subscribe({
+      next: (cliente) => {
+        const dadosAdicionais = cliente.dados_adicionais;
+
+        this.dadosAdicionaisparaEditarForm.patchValue({
+          ...dadosAdicionais
+        });
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar buscar os dados adicionais do cliente: ${erro}`);
+        this.messageService.add({
+          severity: "error",
+          summary: "FALHA AO BUSCAR!",
+          detail: `Ocorreu um erro ao tentar buscar os dados adicionais do cliente.`
+        });
       }
     });
   }
 
   salvar() {
     const formClienteParaEditar: EditarClienteRequest = {
-      nome: this.clienteparaEditarForm.getRawValue().nome!,
-      celular: this.clienteparaEditarForm.getRawValue().celular!,
-      email: this.clienteparaEditarForm.getRawValue().email!,
-      tipo: this.clienteparaEditarForm.getRawValue().tipo!,
-      como_encontrou: this.clienteparaEditarForm.getRawValue().como_encontrou!
+      nome: this.clienteParaEditarForm.getRawValue().nome!,
+      celular: this.clienteParaEditarForm.getRawValue().celular!,
+      email: this.clienteParaEditarForm.getRawValue().email!,
+      tipo: this.clienteParaEditarForm.getRawValue().tipo!,
+      como_encontrou: this.clienteParaEditarForm.getRawValue().como_encontrou!
     };
 
-    const formDadosAdicionais = this.dadosAdicionaisparaEditarForm.getRawValue() as CriarDadosAdicionais;
+    const formDadosAdicionais = this.dadosAdicionaisparaEditarForm.getRawValue() as EditarDadosAdicionais;
 
-    this.cadastrar(formClienteParaEditar, formDadosAdicionais);
+    this.editar(formClienteParaEditar, formDadosAdicionais);
   }
 
-  cadastrar(form: CriarClienteRequest, dadosAdicionais: CriarDadosAdicionais) {
-    this.clienteService.create(
-      form, 
+  editar(form: EditarClienteRequest, dadosAdicionais: EditarDadosAdicionais) {
+    this.clienteService.update(
+      this.idParaEditar,
+      form,
       dadosAdicionais
     ).subscribe({
       next: () => {
-        const tipoCliente = this.clienteparaEditarForm.getRawValue().tipo;
+        const tipoCliente = this.clienteParaEditarForm.getRawValue().tipo;
 
-        this.clienteparaEditarForm.reset();
+        this.clienteParaEditarForm.reset();
         this.messageService.add({
           severity: "success",
           summary: "SUCESSO!",
@@ -295,7 +327,7 @@ export class ClienteEdit {
       },
       error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar cadastrar o cliente: ${erro}`);
-                this.messageService.add({
+        this.messageService.add({
           severity: "error",
           summary: "FALHA NO CADASTRO!",
           detail: "Ocorreu um erro ao tentar cadastrar o cliente."
@@ -303,7 +335,7 @@ export class ClienteEdit {
       }
     })
   }
-  
+
 
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
@@ -318,7 +350,7 @@ export class ClienteEdit {
     }
   }
 
-  criarFormInteressado() : FormGroup {
+  criarFormInteressado(): FormGroup {
     return this.formBuilder.group({
       procurando: ['', [Validators.required]],
       orcamento: [null, [Validators.required]],
@@ -333,13 +365,13 @@ export class ClienteEdit {
     })
   }
 
-  criarFormProprietario() : FormGroup {
+  criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
       imovel_associado: ['', [Validators.required]]
     })
   }
 
-  criarFormLocatario() : FormGroup {
+  criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
       imovel_associado: ['', [Validators.required]]
     })
@@ -347,14 +379,14 @@ export class ClienteEdit {
 
   ngOnInit() {
     this.imoveis = [
-      {nome: "Imoveis cadastrados"}
+      { nome: "Imoveis cadastrados" }
     ];
 
-    this.clienteparaEditarForm
-    .get("tipo")
-    ?.valueChanges
-    .subscribe(tipo => {
-      this.alterarFormularioDadosAdicionais(tipo);
-    });
+    this.clienteParaEditarForm
+      .get("tipo")
+      ?.valueChanges
+      .subscribe(tipo => {
+        this.alterarFormularioDadosAdicionais(tipo);
+      });
   }
 }
