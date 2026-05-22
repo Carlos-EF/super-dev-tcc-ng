@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -223,6 +223,7 @@ export class ClienteEdit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly clienteService = inject(ClienteService);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService); 
   private readonly activatedRoute = inject(ActivatedRoute);
 
   clienteParaEditarForm = this.formBuilder.group({
@@ -238,6 +239,8 @@ export class ClienteEdit {
   idParaEditar = '';
 
   tipoOriginal = '';
+
+  tipoSelecionado = '';
 
   constructor(
     private router: Router
@@ -303,9 +306,30 @@ export class ClienteEdit {
       como_encontrou: this.clienteParaEditarForm.getRawValue().como_encontrou!
     };
 
+    this.tipoSelecionado = this.clienteParaEditarForm.getRawValue().tipo!;
+
     const formDadosAdicionais = this.dadosAdicionaisparaEditarForm.getRawValue() as EditarDadosAdicionais;
 
-    this.editar(formClienteParaEditar, formDadosAdicionais);
+    if (this.tipoSelecionado === this.tipoOriginal) {
+      this.editar(formClienteParaEditar, formDadosAdicionais);
+    } else {
+      this.confirmarEdicaoDeTipoCliente(formClienteParaEditar, formDadosAdicionais);
+    }
+  }
+
+  confirmarEdicaoDeTipoCliente(formClienteParaEditar: EditarClienteRequest, formDadosAdicionais: EditarDadosAdicionais) {
+    this.confirmationService.confirm({
+      message: 'Ao alterar o tipo do cliente, os dados adicionais relacionados ao tipo anterior serão perdidos. Deseja continuar?',
+      header: 'Confirmação de Alteração de Tipo',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, continuar',
+      rejectLabel: 'Não, cancelar',
+      accept: () => {
+        this.editar(formClienteParaEditar, formDadosAdicionais);
+      },
+      reject: () => {
+      }
+    });
   }
 
   editar(form: EditarClienteRequest, dadosAdicionais: EditarDadosAdicionais) {

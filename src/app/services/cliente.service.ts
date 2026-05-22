@@ -30,10 +30,10 @@ export class ClienteService {
     const url = `${environment.apiUrl}/clientes/${id}`;
 
     return this.httpClient.put<ClienteResponse>(url, 
-      { dados: form, 
+      { cliente: form, 
         dados_adicionais: dadosAdicionais 
       });
-  }
+  } 
 
   delete(id: string): Observable<void> {
     const url = `${environment.apiUrl}/clientes/${id}`;
