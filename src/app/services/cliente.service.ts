@@ -1,4 +1,4 @@
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, DadosAdicionais, EditarClienteRequest } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, DadosAdicionais, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -26,11 +26,14 @@ export class ClienteService {
       });
   }
 
-  update(id: string, form: EditarClienteRequest): Observable<ClienteResponse> {
+  update(id: string, form: EditarClienteRequest, dadosAdicionais: EditarDadosAdicionais): Observable<ClienteResponse> {
     const url = `${environment.apiUrl}/clientes/${id}`;
 
-    return this.httpClient.put<ClienteResponse>(url, form);
-  }
+    return this.httpClient.put<ClienteResponse>(url, 
+      { cliente: form, 
+        dados_adicionais: dadosAdicionais 
+      });
+  } 
 
   delete(id: string): Observable<void> {
     const url = `${environment.apiUrl}/clientes/${id}`;

@@ -26,6 +26,7 @@ export interface EditarClienteRequest {
     celular: string;
     email: string;
     tipo: string;
+    como_encontrou: string;
 }
 
 export interface ClienteInteressadoResponse {

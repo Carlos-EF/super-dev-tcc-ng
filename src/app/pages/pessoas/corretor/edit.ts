@@ -1,6 +1,6 @@
 import { CorretorEditarRequest } from '@/models/corretor.model';
 import { CorretorService } from '@/services/corretor.service';
-import { Component, Inject, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
