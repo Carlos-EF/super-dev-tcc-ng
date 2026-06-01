@@ -12,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { FINALIDADES } from '@/types/finalidade.types';
+import { TIPOS_IMOVEL } from '@/types/imovel.types';
 
 // Trocar no futuro
 
@@ -89,12 +91,12 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-finalidade">Finalidade: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="finalidades" [(ngModel)]="finalidadeSelecionada" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
+             <p-select [options]="finalidades" [checkmark]="true" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
            </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-tipo-imovel">Tipo do Imóvel: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="tipo" [(ngModel)]="tipoSelecionado" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
+             <p-select [options]="tipoImovel"  [checkmark]="true"  [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
            </div>
         </div>
       </div>
@@ -298,14 +300,9 @@ export interface ValidarMobilia {
   styles: ``
 })
 export class ImovelCreate {
-  // Trocar no futuro com as informações corretas
-  finalidades: Finalidades[] | undefined;
+  finalidades = [...FINALIDADES];
 
-  finalidadeSelecionada: Finalidades | undefined;
-
-  tipo: TiposImoveis[] | undefined;
-
-  tipoSelecionado: TiposImoveis | undefined;
+  tipoImovel = [...TIPOS_IMOVEL]
 
   condominioValidar: ValidarCondominio[] | undefined;
 
@@ -345,17 +342,6 @@ export class ImovelCreate {
    }
 
   ngOnInit() {
-    this.finalidades = [
-      { nome: 'Venda' },
-      { nome: 'Locação' },
-    ];
-
-    this.tipo = [
-      { nome: 'Casa' },
-      { nome: 'Apartamento' },
-      { nome: 'Terreno' },
-    ];
-
     this.condominioValidar = [
       { resposta: 'Sim' },
       { resposta: 'Não' },
