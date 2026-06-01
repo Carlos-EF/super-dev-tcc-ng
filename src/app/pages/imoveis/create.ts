@@ -108,7 +108,7 @@ export interface ValidarMobilia {
       <div class="card flex flex-col gap-4 mt-3">
         <div class="font-semibold text-xl">Localização:</div>
 
-           <div class="flex flex-wrap gap-6">
+           <div class="flex flex-row flex-wrap gap-4">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
@@ -125,7 +125,7 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-numero" type="text" placeholder="Digite o número do imóvel."/>
+              <input pInputText id="campo-numero" type="text" placeholder="Número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
@@ -156,14 +156,20 @@ export interface ValidarMobilia {
 
               @switch (respostaCondominio) {
                 @case ('Sim') {
-                  <div class="flex flex-col grow gap-2">
+                  <div class="flex flex-col grow basis-0 gap-2">
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
-                    <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio." />
+                    <div class="flex flex-row">
+                    <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio."
+                    class="grow" />
+                    <p-button 
+                    icon="pi pi-plus" 
+                     />
                   </div>
+                </div>
                 }
               } 
         
-            <div class="flex flex-col grow gap-2">
+            <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-complemento">Complemento:</label>
               <input pInputText id="campo-complemento" type="text" placeholder="Ex.: Apartamento 101." />
             </div>
