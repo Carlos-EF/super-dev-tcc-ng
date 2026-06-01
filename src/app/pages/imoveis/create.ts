@@ -143,7 +143,7 @@ export interface ValidarMobilia {
               <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
 
-            <div class="flex flex-col grow basis-0 gap-2">
+            <div class="flex flex-col grow gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
               <p-select [options]="condominioValidar" 
               [(ngModel)]="respostaCondominio" 
@@ -154,12 +154,16 @@ export interface ValidarMobilia {
               placeholder="Diga se o imóvel está em um condomínio" />
             </div>
 
-            <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-nome-condominio">Nome Condomínio:</label>
-              <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio." />
-            </div>
-
-            <div class="flex flex-col grow basis-0 gap-2">
+              @switch (respostaCondominio) {
+                @case ('Sim') {
+                  <div class="flex flex-col grow gap-2">
+                    <label for="campo-nome-condominio">Nome Condomínio:</label>
+                    <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio." />
+                  </div>
+                }
+              } 
+        
+            <div class="flex flex-col grow gap-2">
               <label for="campo-complemento">Complemento:</label>
               <input pInputText id="campo-complemento" type="text" placeholder="Ex.: Apartamento 101." />
             </div>
@@ -306,7 +310,7 @@ export class ImovelCreate {
 
   condominioValidar: ValidarCondominio[] | undefined;
 
-  respostaCondominio: ValidarCondominio | undefined;
+  respostaCondominio: ValidarCondominio | string | undefined;
 
   mobiliaValidar: ValidarMobilia[] | undefined;
 
@@ -338,8 +342,8 @@ export class ImovelCreate {
     private messageService: MessageService,
     private router: Router
   ) {
-    
-   }
+
+  }
 
   ngOnInit() {
     this.condominioValidar = [
