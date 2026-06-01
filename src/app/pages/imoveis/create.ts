@@ -12,6 +12,8 @@ import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { FINALIDADES } from '@/types/finalidade.types';
+import { TIPOS_IMOVEL } from '@/types/imovel.types';
 
 // Trocar no futuro
 
@@ -89,12 +91,12 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-finalidade">Finalidade: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="finalidades" [(ngModel)]="finalidadeSelecionada" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
+             <p-select [options]="finalidades" [checkmark]="true" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
            </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-tipo-imovel">Tipo do Imóvel: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="tipo" [(ngModel)]="tipoSelecionado" [checkmark]="true" optionLabel="nome" optionValue="nome" [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
+             <p-select [options]="tipoImovel"  [checkmark]="true"  [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
            </div>
         </div>
       </div>
@@ -106,7 +108,7 @@ export interface ValidarMobilia {
       <div class="card flex flex-col gap-4 mt-3">
         <div class="font-semibold text-xl">Localização:</div>
 
-           <div class="flex flex-wrap gap-6">
+           <div class="flex flex-row flex-wrap gap-4">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
@@ -123,7 +125,7 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-numero" type="text" placeholder="Digite o número do imóvel."/>
+              <input pInputText id="campo-numero" type="text" placeholder="Número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
@@ -141,7 +143,7 @@ export interface ValidarMobilia {
               <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
 
-            <div class="flex flex-col grow basis-0 gap-2">
+            <div class="flex flex-col grow gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
               <p-select [options]="condominioValidar" 
               [(ngModel)]="respostaCondominio" 
@@ -152,11 +154,21 @@ export interface ValidarMobilia {
               placeholder="Diga se o imóvel está em um condomínio" />
             </div>
 
-            <div class="flex flex-col grow basis-0 gap-2">
-              <label for="campo-nome-condominio">Nome Condomínio:</label>
-              <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio." />
-            </div>
-
+              @switch (respostaCondominio) {
+                @case ('Sim') {
+                  <div class="flex flex-col grow basis-0 gap-2">
+                    <label for="campo-nome-condominio">Nome Condomínio:</label>
+                    <div class="flex flex-row">
+                    <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio."
+                    class="grow" />
+                    <p-button 
+                    icon="pi pi-plus" 
+                     />
+                  </div>
+                </div>
+                }
+              } 
+        
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-complemento">Complemento:</label>
               <input pInputText id="campo-complemento" type="text" placeholder="Ex.: Apartamento 101." />
@@ -298,18 +310,13 @@ export interface ValidarMobilia {
   styles: ``
 })
 export class ImovelCreate {
-  // Trocar no futuro com as informações corretas
-  finalidades: Finalidades[] | undefined;
+  finalidades = [...FINALIDADES];
 
-  finalidadeSelecionada: Finalidades | undefined;
-
-  tipo: TiposImoveis[] | undefined;
-
-  tipoSelecionado: TiposImoveis | undefined;
+  tipoImovel = [...TIPOS_IMOVEL]
 
   condominioValidar: ValidarCondominio[] | undefined;
 
-  respostaCondominio: ValidarCondominio | undefined;
+  respostaCondominio: ValidarCondominio | string | undefined;
 
   mobiliaValidar: ValidarMobilia[] | undefined;
 
@@ -341,21 +348,10 @@ export class ImovelCreate {
     private messageService: MessageService,
     private router: Router
   ) {
-    
-   }
+
+  }
 
   ngOnInit() {
-    this.finalidades = [
-      { nome: 'Venda' },
-      { nome: 'Locação' },
-    ];
-
-    this.tipo = [
-      { nome: 'Casa' },
-      { nome: 'Apartamento' },
-      { nome: 'Terreno' },
-    ];
-
     this.condominioValidar = [
       { resposta: 'Sim' },
       { resposta: 'Não' },
