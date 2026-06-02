@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -14,6 +14,10 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
+import { CorretorService } from '@/services/corretor.service';
+import { ClienteService } from '@/services/cliente.service';
+import { ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
+import { CorretorResponse } from '@/models/corretor.model';
 
 // Trocar no futuro
 
@@ -258,7 +262,6 @@ export interface ValidarMobilia {
              <label for="campo-finalidade">Está Mobiliado?</label>
              <p-select 
              [options]="mobiliaValidar" 
-             [(ngModel)]="respostaMobilia" 
              [checkmark]="true" 
              optionLabel="resposta" 
              optionValue="resposta" 
@@ -310,6 +313,16 @@ export interface ValidarMobilia {
   styles: ``
 })
 export class ImovelCreate {
+  private readonly messageService = inject(MessageService);
+
+  private readonly corretorService = inject(CorretorService);
+
+  private readonly clienteService = inject(ClienteService);
+
+  proprietarios: ClienteResponse[] | undefined;
+
+  corretores: CorretorResponse[] | undefined;
+
   finalidades = [...FINALIDADES];
 
   tipoImovel = [...TIPOS_IMOVEL]
@@ -319,8 +332,6 @@ export class ImovelCreate {
   respostaCondominio: ValidarCondominio | string | undefined;
 
   mobiliaValidar: ValidarMobilia[] | undefined;
-
-  respostaMobilia: ValidarMobilia | undefined;
 
   cep: string = '';
 
@@ -345,7 +356,6 @@ export class ImovelCreate {
   uploadedFiles: any[] = [];
 
   constructor(
-    private messageService: MessageService,
     private router: Router
   ) {
 
@@ -361,6 +371,32 @@ export class ImovelCreate {
       { resposta: 'Sim' },
       { resposta: 'Não' },
     ]
+
+    this.corretorService.getAll().subscribe({
+      next: (corretores: CorretorResponse[]) => {
+        this.corretores = corretores;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar corretores:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Não foi possível carregar a lista de corretores.' });
+      }
+    });
+
+    this.clienteService.getAll().subscribe({
+      next: (clientes: ClienteResponse[]) => {
+        this.proprietarios = clientes.filter(cliente => cliente.tipo === 'Proprietário');
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar clientes:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário".' });
+      }
+    });
   }
 
   cadastrarImovel() {
