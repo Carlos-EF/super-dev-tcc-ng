@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -14,6 +14,10 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
+import { CorretorService } from '@/services/corretor.service';
+import { ClienteService } from '@/services/cliente.service';
+import { ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
+import { CorretorResponse } from '@/models/corretor.model';
 
 // Trocar no futuro
 
@@ -66,12 +70,32 @@ export interface ValidarMobilia {
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-proprietario">Proprietário: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-propiretario" type="text" placeholder="Digite ou selecione o nome do proprietário." />
+              <div class="flex flex-row">
+              <p-select 
+              [options]="proprietarios" 
+              [checkmark]="true" 
+              [showClear]="true" 
+              placeholder="Selecione o proprietário."
+              class="w-full"/>
+              <p-button 
+              icon="pi pi-plus" 
+               />
+             </div>
             </div>
 
           <div class="flex flex-col grow basis-0 gap-2">
             <label for="campo-corretor">Corretor: <span class="text-red-500"><strong> *</strong></span></label>
-            <input pInputText id="campo-corretor" type="text" placeholder="Digite ou selecione o nome do corretor." />
+            <div class="flex flex-row">
+            <p-select 
+            [options]="corretores" 
+            [checkmark]="true" 
+            [showClear]="true" 
+            placeholder="Selecione o corretor."
+            class="w-full"/>
+            <p-button 
+            icon="pi pi-plus" 
+             />
+            </div>
           </div>
         </div>
       </div>
@@ -197,14 +221,18 @@ export interface ValidarMobilia {
                 locale="pt-BR" />
               </div>
 
-              <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-condominio">Condomínio:</label>
-                <p-inputnumber [(ngModel)]="valorCondominio"
-                placeholder="Digite o valor do condomínio."
-                mode="currency"
-                currency="BRL"
-                locale="pt-BR" />
-              </div>
+              @switch (respostaCondominio) {
+                @case ('Sim') {
+                  <div class="flex flex-col grow basis-0 gap-2">
+                    <label for="campo-valor-condominio">Condomínio:</label>
+                    <p-inputnumber [(ngModel)]="valorCondominio"
+                    placeholder="Digite o valor do condomínio."
+                    mode="currency"
+                    currency="BRL"
+                    locale="pt-BR" />
+                  </div>
+                }
+              }
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
@@ -258,7 +286,6 @@ export interface ValidarMobilia {
              <label for="campo-finalidade">Está Mobiliado?</label>
              <p-select 
              [options]="mobiliaValidar" 
-             [(ngModel)]="respostaMobilia" 
              [checkmark]="true" 
              optionLabel="resposta" 
              optionValue="resposta" 
@@ -310,6 +337,16 @@ export interface ValidarMobilia {
   styles: ``
 })
 export class ImovelCreate {
+  private readonly messageService = inject(MessageService);
+
+  private readonly corretorService = inject(CorretorService);
+
+  private readonly clienteService = inject(ClienteService);
+
+  proprietarios: ClienteResponse[] | undefined;
+
+  corretores: CorretorResponse[] | undefined;
+
   finalidades = [...FINALIDADES];
 
   tipoImovel = [...TIPOS_IMOVEL]
@@ -319,8 +356,6 @@ export class ImovelCreate {
   respostaCondominio: ValidarCondominio | string | undefined;
 
   mobiliaValidar: ValidarMobilia[] | undefined;
-
-  respostaMobilia: ValidarMobilia | undefined;
 
   cep: string = '';
 
@@ -345,7 +380,6 @@ export class ImovelCreate {
   uploadedFiles: any[] = [];
 
   constructor(
-    private messageService: MessageService,
     private router: Router
   ) {
 
@@ -361,6 +395,32 @@ export class ImovelCreate {
       { resposta: 'Sim' },
       { resposta: 'Não' },
     ]
+
+    this.corretorService.getAll().subscribe({
+      next: (corretores: CorretorResponse[]) => {
+        this.corretores = corretores;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar corretores:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Não foi possível carregar a lista de corretores.' });
+      }
+    });
+
+    this.clienteService.getAll().subscribe({
+      next: (clientes: ClienteResponse[]) => {
+        this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar clientes:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
+      }
+    });
   }
 
   cadastrarImovel() {
