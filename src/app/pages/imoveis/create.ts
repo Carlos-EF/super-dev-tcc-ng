@@ -70,12 +70,32 @@ export interface ValidarMobilia {
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-proprietario">Proprietário: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-propiretario" type="text" placeholder="Digite ou selecione o nome do proprietário." />
+              <div class="flex flex-row">
+              <p-select 
+              [options]="proprietarios" 
+              [checkmark]="true" 
+              [showClear]="true" 
+              placeholder="Selecione o proprietário."
+              class="w-full"/>
+              <p-button 
+              icon="pi pi-plus" 
+               />
+             </div>
             </div>
 
           <div class="flex flex-col grow basis-0 gap-2">
             <label for="campo-corretor">Corretor: <span class="text-red-500"><strong> *</strong></span></label>
-            <input pInputText id="campo-corretor" type="text" placeholder="Digite ou selecione o nome do corretor." />
+            <div class="flex flex-row">
+            <p-select 
+            [options]="corretores" 
+            [checkmark]="true" 
+            [showClear]="true" 
+            placeholder="Selecione o corretor."
+            class="w-full"/>
+            <p-button 
+            icon="pi pi-plus" 
+             />
+            </div>
           </div>
         </div>
       </div>
@@ -201,14 +221,18 @@ export interface ValidarMobilia {
                 locale="pt-BR" />
               </div>
 
-              <div class="flex flex-col grow basis-0 gap-2">
-                <label for="campo-valor-condominio">Condomínio:</label>
-                <p-inputnumber [(ngModel)]="valorCondominio"
-                placeholder="Digite o valor do condomínio."
-                mode="currency"
-                currency="BRL"
-                locale="pt-BR" />
-              </div>
+              @switch (respostaCondominio) {
+                @case ('Sim') {
+                  <div class="flex flex-col grow basis-0 gap-2">
+                    <label for="campo-valor-condominio">Condomínio:</label>
+                    <p-inputnumber [(ngModel)]="valorCondominio"
+                    placeholder="Digite o valor do condomínio."
+                    mode="currency"
+                    currency="BRL"
+                    locale="pt-BR" />
+                  </div>
+                }
+              }
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
@@ -387,14 +411,14 @@ export class ImovelCreate {
 
     this.clienteService.getAll().subscribe({
       next: (clientes: ClienteResponse[]) => {
-        this.proprietarios = clientes.filter(cliente => cliente.tipo === 'Proprietário');
+        this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar clientes:', erro);
         this.messageService.add({ 
           severity: 'error', 
           summary: 'Erro', 
-          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário".' });
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
       }
     });
   }
