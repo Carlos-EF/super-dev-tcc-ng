@@ -18,6 +18,7 @@ import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
 import { ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { CorretorResponse } from '@/models/corretor.model';
+import { DialogModule } from 'primeng/dialog';
 
 // Trocar no futuro
 
@@ -49,6 +50,7 @@ export interface ValidarMobilia {
     InputNumberModule,
     ToastModule,
     FileUploadModule,
+    DialogModule,
   ],
   template: `
   <p-toast/>
@@ -78,7 +80,8 @@ export interface ValidarMobilia {
               placeholder="Selecione o proprietário."
               class="w-full"/>
               <p-button 
-              icon="pi pi-plus" 
+              icon="pi pi-plus"
+              (click)="abrirModalProprietario()" 
                />
              </div>
             </div>
@@ -93,7 +96,8 @@ export interface ValidarMobilia {
             placeholder="Selecione o corretor."
             class="w-full"/>
             <p-button 
-            icon="pi pi-plus" 
+            icon="pi pi-plus"
+            (click)="abrirModalCorretor()" 
              />
             </div>
           </div>
@@ -331,7 +335,15 @@ export interface ValidarMobilia {
         </p-step-panel>
       </p-step-panels>
     </p-stepper>
-</div>
+  </div>
+
+  <p-dialog header="Cadastrar Corretor" [(visible)]="mostrarModalCorretor" [modal]="true" [closable]="true" [style]="{width: '400px'}">
+    <p>Formulário de cadastro de corretor aqui.</p>
+  </p-dialog>
+
+  <p-dialog header="Cadastrar Proprietário" [(visible)]="mostrarModalProprietario" [modal]="true" [closable]="true" [style]="{width: '400px'}">
+    <p>Formulário de cadastro de proprietário aqui.</p>
+  </p-dialog>
 `,
   providers: [MessageService],
   styles: ``
@@ -350,6 +362,10 @@ export class ImovelCreate {
   finalidades = [...FINALIDADES];
 
   tipoImovel = [...TIPOS_IMOVEL]
+
+  mostrarModalCorretor: boolean = false;
+
+  mostrarModalProprietario: boolean = false;
 
   condominioValidar: ValidarCondominio[] | undefined;
 
@@ -396,7 +412,12 @@ export class ImovelCreate {
       { resposta: 'Não' },
     ]
 
-    this.corretorService.getAll().subscribe({
+    this.buscarCorretores();
+    this.buscarProprietarios();
+  }
+
+  buscarCorretores() {
+     this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
       },
@@ -408,7 +429,9 @@ export class ImovelCreate {
           detail: 'Não foi possível carregar a lista de corretores.' });
       }
     });
+  }
 
+  buscarProprietarios() {
     this.clienteService.getAll().subscribe({
       next: (clientes: ClienteResponse[]) => {
         this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
@@ -421,6 +444,32 @@ export class ImovelCreate {
           detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
       }
     });
+  }
+
+  abrirModalCorretor() {
+    this.mostrarModalCorretor = true;
+  }
+
+  abrirModalProprietario() {
+    this.mostrarModalProprietario = true;
+  }
+
+  cadastrarCorretor() {
+    this.mostrarModalCorretor = false;
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Sucesso', 
+      detail: 'Corretor cadastrado com sucesso!' });
+    this.buscarCorretores();
+  }
+
+  cadastrarProprietario() {
+    this.mostrarModalProprietario = false;
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Sucesso', 
+      detail: 'Proprietário cadastrado com sucesso!' });
+      this.buscarProprietarios();
   }
 
   cadastrarImovel() {
