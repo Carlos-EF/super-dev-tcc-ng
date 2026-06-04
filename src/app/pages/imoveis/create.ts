@@ -18,6 +18,9 @@ import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
 import { ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
 import { CorretorResponse } from '@/models/corretor.model';
+import { DialogModule } from 'primeng/dialog';
+import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
+import { TIPOS_CONTATO } from '@/types/contato.types';
 
 // Trocar no futuro
 
@@ -49,6 +52,7 @@ export interface ValidarMobilia {
     InputNumberModule,
     ToastModule,
     FileUploadModule,
+    DialogModule,
   ],
   template: `
   <p-toast/>
@@ -78,7 +82,8 @@ export interface ValidarMobilia {
               placeholder="Selecione o proprietário."
               class="w-full"/>
               <p-button 
-              icon="pi pi-plus" 
+              icon="pi pi-plus"
+              (click)="abrirModalProprietario()" 
                />
              </div>
             </div>
@@ -93,7 +98,8 @@ export interface ValidarMobilia {
             placeholder="Selecione o corretor."
             class="w-full"/>
             <p-button 
-            icon="pi pi-plus" 
+            icon="pi pi-plus"
+            (click)="abrirModalCorretor()" 
              />
             </div>
           </div>
@@ -331,7 +337,123 @@ export interface ValidarMobilia {
         </p-step-panel>
       </p-step-panels>
     </p-stepper>
-</div>
+  </div>
+
+<p-dialog header="Cadastrar Corretor" [(visible)]="mostrarModalCorretor" [modal]="true" [closable]="true" [style]="{width: '50rem'}">
+  <div class="flex flex-row gap-4">
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          Nome Completo:
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          pInputText
+          placeholder="Digite o nome completo do corretor."
+          class="w-full" />
+      </div>
+
+        <div class="flex flex-col w-full grow gap-2">
+          <label>
+            Código:
+            <span class="text-red-500">*</span>
+          </label>
+          <p-inputnumber
+            class="w-full"
+            [minlength]="5"
+            [maxlength]="10"
+            [showClear]="true"
+            [useGrouping]="false"
+            placeholder="Digite o código de referência do corretor.">
+          </p-inputnumber>
+        </div>
+  </div>
+
+    <div class="flex flex-row gap-4 mt-4">
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          Celular:
+          <span class="text-red-500">*</span>
+        </label>
+        <p-inputmask
+          styleClass="w-full"
+          mask="(99) 99999-9999"
+          placeholder="(00) 00000-0000">
+        </p-inputmask>
+      </div>
+
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          E-mail:
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="email"
+          pInputText
+          placeholder="Digite o e-mail do corretor."
+          class="w-full" />
+      </div>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="cadastrarCorretor()">
+      </p-button>
+    </div>
+</p-dialog>
+
+  <p-dialog header="Cadastrar Proprietário" [(visible)]="mostrarModalProprietario" [modal]="true" [closable]="true" [style]="{width: '50rem'}">
+    <div class="flex flex-wrap basis-0 gap-3">
+        <div class="flex flex-col grow gap-2">
+          <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
+          <input type="text" pInputText placeholder="Digite o nome do cliente." />
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
+          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." />
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="">Celular: <span class="text-red-500"><strong> *</strong></span></label>
+          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
+        </div>
+        
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="">E-mail: <span class="text-red-500"><strong> *</strong></span></label>
+          <input type="email" pInputText placeholder="Digite o e-mail do cliente."/>
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="">Como nos encontrou:</label>
+          <p-select
+          appendTo="body" 
+          [options]="tiposContato" 
+          placeholder="Selecione por onde o cliente veio." 
+          fluid/>
+        </div>
+
+      <div class="flex flex-col grow basis-0 gap-2">
+        <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
+        <p-select
+        appendTo="body" 
+        [options]="tipoCliente" 
+        id="tipo-cliente" 
+        placeholder="Selecione o tipo do cliente."/>
+      </div>
+    </div>
+
+
+       <div class="flex justify-end mt-4">
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="cadastrarProprietario()">
+      </p-button>
+    </div>
+  </p-dialog>
 `,
   providers: [MessageService],
   styles: ``
@@ -349,7 +471,15 @@ export class ImovelCreate {
 
   finalidades = [...FINALIDADES];
 
-  tipoImovel = [...TIPOS_IMOVEL]
+  tipoImovel = [...TIPOS_IMOVEL];
+
+  tiposContato = [...TIPOS_CONTATO];
+
+  tipoCliente = [...TIPO_CLIENTE_MODAL];
+
+  mostrarModalCorretor: boolean = false;
+
+  mostrarModalProprietario: boolean = false;
 
   condominioValidar: ValidarCondominio[] | undefined;
 
@@ -396,7 +526,12 @@ export class ImovelCreate {
       { resposta: 'Não' },
     ]
 
-    this.corretorService.getAll().subscribe({
+    this.buscarCorretores();
+    this.buscarProprietarios();
+  }
+
+  buscarCorretores() {
+     this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
       },
@@ -408,7 +543,9 @@ export class ImovelCreate {
           detail: 'Não foi possível carregar a lista de corretores.' });
       }
     });
+  }
 
+  buscarProprietarios() {
     this.clienteService.getAll().subscribe({
       next: (clientes: ClienteResponse[]) => {
         this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
@@ -421,6 +558,32 @@ export class ImovelCreate {
           detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
       }
     });
+  }
+
+  abrirModalCorretor() {
+    this.mostrarModalCorretor = true;
+  }
+
+  abrirModalProprietario() {
+    this.mostrarModalProprietario = true;
+  }
+
+  cadastrarCorretor() {
+    this.mostrarModalCorretor = false;
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Sucesso', 
+      detail: 'Corretor cadastrado com sucesso!' });
+    this.buscarCorretores();
+  }
+
+  cadastrarProprietario() {
+    this.mostrarModalProprietario = false;
+    this.messageService.add({ 
+      severity: 'success', 
+      summary: 'Sucesso', 
+      detail: 'Proprietário cadastrado com sucesso!' });
+      this.buscarProprietarios();
   }
 
   cadastrarImovel() {
