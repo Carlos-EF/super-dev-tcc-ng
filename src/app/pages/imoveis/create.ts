@@ -337,11 +337,72 @@ export interface ValidarMobilia {
     </p-stepper>
   </div>
 
-  <p-dialog header="Cadastrar Corretor" [(visible)]="mostrarModalCorretor" [modal]="true" [closable]="true" [style]="{width: '400px'}">
-    <p>Formulário de cadastro de corretor aqui.</p>
-  </p-dialog>
+  <p-dialog header="Cadastrar Corretor" [(visible)]="mostrarModalCorretor" [modal]="true" [closable]="true" [style]="{width: '50rem'}">
+<div class="flex flex-row gap-4">
+    <div class="flex flex-col w-full grow gap-2">
+      <label>
+        Nome Completo:
+        <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        pInputText
+        placeholder="Digite o nome completo do corretor."
+        class="w-full" />
+    </div>
 
-  <p-dialog header="Cadastrar Proprietário" [(visible)]="mostrarModalProprietario" [modal]="true" [closable]="true" [style]="{width: '400px'}">
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          Código:
+          <span class="text-red-500">*</span>
+        </label>
+        <p-inputnumber
+          class="w-full"
+          [minlength]="5"
+          [maxlength]="10"
+          [showClear]="true"
+          [useGrouping]="false"
+          placeholder="Digite o código de referência do corretor.">
+        </p-inputnumber>
+      </div>
+  </div>
+
+  <div class="flex flex-row gap-4 mt-4">
+    <div class="flex flex-col w-full grow gap-2">
+      <label>
+        Celular:
+        <span class="text-red-500">*</span>
+      </label>
+      <p-inputmask
+        styleClass="w-full"
+        mask="(99) 99999-9999"
+        placeholder="(00) 00000-0000">
+      </p-inputmask>
+    </div>
+
+    <div class="flex flex-col w-full grow gap-2">
+      <label>
+        E-mail:
+        <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="email"
+        pInputText
+        placeholder="Digite o e-mail do corretor."
+        class="w-full" />
+    </div>
+  </div>
+
+  <div class="flex justify-end mt-4">
+    <p-button
+      label="Salvar"
+      icon="pi pi-check"
+      (click)="cadastrarCorretor()">
+    </p-button>
+  </div>
+</p-dialog>
+
+  <p-dialog header="Cadastrar Proprietário" [(visible)]="mostrarModalProprietario" [modal]="true" [closable]="true" [style]="{width: '450px'}">
     <p>Formulário de cadastro de proprietário aqui.</p>
   </p-dialog>
 `,
