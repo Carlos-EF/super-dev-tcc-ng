@@ -4,8 +4,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
 import { ButtonModule } from 'primeng/button';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { InputGroupModule } from 'primeng/inputgroup';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
@@ -16,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteLocatarioResponse, ClienteProprietarioResponse, ClienteResponse } from '@/models/cliente.model';
+import { ClienteResponse } from '@/models/cliente.model';
 import { CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
@@ -340,7 +338,12 @@ export interface ValidarMobilia {
     </p-stepper>
   </div>
 
-<p-dialog header="Cadastrar Corretor" [(visible)]="mostrarModalCorretor" [modal]="true" [closable]="true" [style]="{width: '50rem'}">
+<p-dialog 
+  header="Cadastrar Corretor" 
+  [(visible)]="mostrarModalCorretor" 
+  [modal]="true" 
+  [closable]="true" 
+  [style]="{width: '50rem'}">
   <div class="flex flex-row gap-4">
       <div class="flex flex-col w-full grow gap-2">
         <label>
@@ -405,7 +408,12 @@ export interface ValidarMobilia {
     </div>
 </p-dialog>
 
-  <p-dialog header="Cadastrar Proprietário" [(visible)]="mostrarModalProprietario" [modal]="true" [closable]="true" [style]="{width: '50rem'}">
+  <p-dialog 
+  header="Cadastrar Proprietário" 
+  [(visible)]="mostrarModalProprietario" 
+  [modal]="true" 
+  [closable]="true" 
+  [style]="{width: '50rem'}">
     <div class="flex flex-wrap basis-0 gap-3">
         <div class="flex flex-col grow gap-2">
           <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
@@ -455,6 +463,116 @@ export interface ValidarMobilia {
       </p-button>
     </div>
   </p-dialog>
+
+  <p-dialog
+  header="Cadastrar Condomínio"
+  [(visible)]="mostrarModalCondominio"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '50rem' }">
+
+  <div class="flex flex-wrap basis-0 gap-3">
+    <div class="flex flex-col w-full gap-2">
+      <label for="campo-nome-condominio">
+        Nome do Condomínio:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        id="campo-nome-condominio"
+        type="text"
+        pInputText
+        placeholder="Digite o nome do condomínio." />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="campo-cep">
+        CEP:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <div class="flex flex-row">
+        <p-inputmask
+        id="campo-cep"
+        mask="99999-999"
+        placeholder="00000-000">
+      </p-inputmask>
+      <p-button
+      icon="pi pi-search"/>
+    </div>
+    </div>
+
+    <div class="flex flex-col grow gap-2">
+      <label for="campo-logradouro">
+        Logradouro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        id="campo-logradouro"
+        type="text"
+        pInputText
+        placeholder="Digite o logradouro." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-numero">
+        Número:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <p-inputnumber
+        id="campo-numero"
+        [useGrouping]="false"
+        placeholder="Número">
+      </p-inputnumber>
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-bairro">
+        Bairro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        id="campo-bairro"
+        type="text"
+        pInputText
+        placeholder="Digite o bairro." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-estado">
+        Estado:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        id="campo-estado"
+        type="text"
+        pInputText
+        placeholder="Digite o estado." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-cidade">
+        Cidade:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        id="campo-cidade"
+        type="text"
+        pInputText
+        placeholder="Digite a cidade." />
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end">
+      <p-button
+        label="Salvar"
+        icon="pi pi-save"
+        severity="success"
+        (click)="cadastrarCondominio()">
+      </p-button>
+    </div>
+  </ng-template>
+
+</p-dialog>
 `,
   providers: [MessageService],
   styles: ``
