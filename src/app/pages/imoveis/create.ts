@@ -173,7 +173,7 @@ export interface ValidarMobilia {
               <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
 
-            <div class="flex flex-col grow gap-2">
+            <div class="flex flex-col gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
               <p-select [options]="condominioValidar" 
               [(ngModel)]="respostaCondominio" 
@@ -181,7 +181,7 @@ export interface ValidarMobilia {
               optionLabel="resposta" 
               optionValue="resposta" 
               [showClear]="true" 
-              placeholder="Diga se o imóvel está em um condomínio" />
+              placeholder="Está em um condomínio?" />
             </div>
 
               @switch (respostaCondominio) {
@@ -192,7 +192,8 @@ export interface ValidarMobilia {
                     <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio."
                     class="grow" />
                     <p-button 
-                    icon="pi pi-plus" 
+                    icon="pi pi-plus"
+                    (click)="abrirModalCondominio()" 
                      />
                   </div>
                 </div>
@@ -481,6 +482,8 @@ export class ImovelCreate {
 
   mostrarModalProprietario: boolean = false;
 
+  mostrarModalCondominio: boolean = false;
+
   condominioValidar: ValidarCondominio[] | undefined;
 
   respostaCondominio: ValidarCondominio | string | undefined;
@@ -566,6 +569,19 @@ export class ImovelCreate {
 
   abrirModalProprietario() {
     this.mostrarModalProprietario = true;
+  }
+
+  abrirModalCondominio() {
+    this.mostrarModalCondominio = true;
+  }
+
+  cadastrarCondominio() {
+    this.mostrarModalCondominio = false;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Condomínio cadastrado com sucesso!'
+    });
   }
 
   cadastrarCorretor() {
