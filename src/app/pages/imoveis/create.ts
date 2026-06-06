@@ -19,6 +19,7 @@ import { CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
+import { StyleClass } from "primeng/styleclass";
 
 // Trocar no futuro
 
@@ -51,7 +52,8 @@ export interface ValidarMobilia {
     ToastModule,
     FileUploadModule,
     DialogModule,
-  ],
+    StyleClass
+],
   template: `
   <p-toast/>
   <div class="card flex justify-center">
@@ -137,10 +139,44 @@ export interface ValidarMobilia {
         <div class="font-semibold text-xl">Localização:</div>
 
            <div class="flex flex-row flex-wrap gap-4">
-            <div class="flex flex-col grow basis-0 gap-2">
+            <div class="flex flex-col gap-2">
+              <label for="campo-pergunta-condominio">Em Condomínio?</label>
+              <p-select [options]="condominioValidar" 
+              [(ngModel)]="respostaCondominio" 
+              [checkmark]="true" 
+              optionLabel="resposta" 
+              optionValue="resposta" 
+              [showClear]="true" 
+              placeholder="Está em um condomínio?" />
+            </div>
+
+              @switch (respostaCondominio) {
+                @case ('Sim') {
+                  <div class="flex flex-col grow gap-2">
+                    <label for="campo-nome-condominio">Nome Condomínio:</label>
+                    <div class="flex flex-row">
+                    <input 
+                    pInputText 
+                    id="campo-nome-condominio" 
+                    type="text" 
+                    placeholder="Digite o nome do condomínio."
+                    class="w-full"
+                    />
+                    <p-button 
+                    icon="pi pi-plus"
+                    (click)="abrirModalCondominio()" 
+                     />
+                  </div>
+                </div>
+                }
+              } 
+
+            <div class="flex flex-col gap-2">
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
-                 <p-inputmask mask="99999-999" [(ngModel)]="cep" placeholder="99999-999" />
+                 <p-inputmask mask="99999-999" 
+                 [(ngModel)]="cep" 
+                 placeholder="99999-999" />
                  <p-button
                  icon="pi pi-search"/>
                 </div>
@@ -170,33 +206,6 @@ export interface ValidarMobilia {
               <label for="campo-bairro">Bairro: <span class="text-red-500"><strong> *</strong></span></label>
               <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
             </div>
-
-            <div class="flex flex-col gap-2">
-              <label for="campo-pergunta-condominio">Em Condomínio?</label>
-              <p-select [options]="condominioValidar" 
-              [(ngModel)]="respostaCondominio" 
-              [checkmark]="true" 
-              optionLabel="resposta" 
-              optionValue="resposta" 
-              [showClear]="true" 
-              placeholder="Está em um condomínio?" />
-            </div>
-
-              @switch (respostaCondominio) {
-                @case ('Sim') {
-                  <div class="flex flex-col grow basis-0 gap-2">
-                    <label for="campo-nome-condominio">Nome Condomínio:</label>
-                    <div class="flex flex-row">
-                    <input pInputText id="campo-nome-condominio" type="text" placeholder="Digite o nome do condomínio."
-                    class="grow" />
-                    <p-button 
-                    icon="pi pi-plus"
-                    (click)="abrirModalCondominio()" 
-                     />
-                  </div>
-                </div>
-                }
-              } 
         
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-complemento">Complemento:</label>
