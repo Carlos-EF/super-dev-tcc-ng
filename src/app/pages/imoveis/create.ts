@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -14,12 +14,11 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteResponse } from '@/models/cliente.model';
-import { CorretorResponse } from '@/models/corretor.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
-import { StyleClass } from "primeng/styleclass";
 
 // Trocar no futuro
 
@@ -44,6 +43,7 @@ export interface ValidarMobilia {
   imports: [
     InputTextModule,
     FormsModule,
+    ReactiveFormsModule,
     SelectModule,
     InputMaskModule,
     ButtonModule,
@@ -52,8 +52,7 @@ export interface ValidarMobilia {
     ToastModule,
     FileUploadModule,
     DialogModule,
-    StyleClass
-],
+  ],
   template: `
   <p-toast/>
   <div class="card flex justify-center">
@@ -347,12 +346,14 @@ export interface ValidarMobilia {
     </p-stepper>
   </div>
 
+<form [formGroup]="corretorForm">
 <p-dialog 
   header="Cadastrar Corretor" 
   [(visible)]="mostrarModalCorretor" 
   [modal]="true" 
   [closable]="true" 
   [style]="{width: '50rem'}">
+
   <div class="flex flex-row gap-4">
       <div class="flex flex-col w-full grow gap-2">
         <label>
@@ -360,6 +361,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <input
+          formControlName='nome'
           type="text"
           pInputText
           placeholder="Digite o nome completo do corretor."
@@ -372,6 +374,7 @@ export interface ValidarMobilia {
             <span class="text-red-500">*</span>
           </label>
           <p-inputnumber
+            formControlName='codigo'
             class="w-full"
             [minlength]="5"
             [maxlength]="10"
@@ -380,7 +383,16 @@ export interface ValidarMobilia {
             placeholder="Digite o código de referência do corretor.">
           </p-inputnumber>
         </div>
-  </div>
+        
+        <div class="flex flex-col basis-0 gap-2">
+          <label for="">CRECI: <span class="text-red-500">*</span></label>
+          <p-inputmask
+            formControlName='creci' 
+            mask="99.999F" 
+            placeholder="00.000F" 
+            formControlName='creci'/>
+        </div>
+</div>
 
     <div class="flex flex-row gap-4 mt-4">
       <div class="flex flex-col w-full grow gap-2">
@@ -389,6 +401,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <p-inputmask
+          formControlName='celular'
           styleClass="w-full"
           mask="(99) 99999-9999"
           placeholder="(00) 00000-0000">
@@ -401,6 +414,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <input
+          formControlName='email'
           type="email"
           pInputText
           placeholder="Digite o e-mail do corretor."
@@ -412,11 +426,13 @@ export interface ValidarMobilia {
       <p-button
         label="Salvar"
         icon="pi pi-check"
-        (click)="cadastrarCorretor()">
+        (click)="salvarCorretor()">
       </p-button>
     </div>
 </p-dialog>
+</form>
 
+  <form [formGroup]="clienteForm">
   <p-dialog 
   header="Cadastrar Proprietário" 
   [(visible)]="mostrarModalProprietario" 
@@ -426,27 +442,28 @@ export interface ValidarMobilia {
     <div class="flex flex-wrap basis-0 gap-3">
         <div class="flex flex-col grow gap-2">
           <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
-          <input type="text" pInputText placeholder="Digite o nome do cliente." />
+          <input type="text" pInputText placeholder="Digite o nome do cliente." formControlName="nome" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
-          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." />
+          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." formControlName="codigo" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="">Celular: <span class="text-red-500"><strong> *</strong></span></label>
-          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
+          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="celular" />
         </div>
         
         <div class="flex flex-col grow basis-0 gap-2">
           <label for="">E-mail: <span class="text-red-500"><strong> *</strong></span></label>
-          <input type="email" pInputText placeholder="Digite o e-mail do cliente."/>
+          <input type="email" pInputText placeholder="Digite o e-mail do cliente." formControlName="email" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="">Como nos encontrou:</label>
           <p-select
+          formControlName="como_encontrou"
           appendTo="body" 
           [options]="tiposContato" 
           placeholder="Selecione por onde o cliente veio." 
@@ -456,6 +473,7 @@ export interface ValidarMobilia {
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
         <p-select
+        formControlName="tipo"
         appendTo="body" 
         [options]="tipoCliente" 
         id="tipo-cliente" 
@@ -468,10 +486,11 @@ export interface ValidarMobilia {
       <p-button
         label="Salvar"
         icon="pi pi-check"
-        (click)="cadastrarProprietario()">
+        (click)="salvarProprietario()">
       </p-button>
     </div>
   </p-dialog>
+</form>
 
   <p-dialog
   header="Cadastrar Condomínio"
@@ -593,6 +612,8 @@ export class ImovelCreate {
 
   private readonly clienteService = inject(ClienteService);
 
+  private readonly formBuilder = inject(FormBuilder);
+
   proprietarios: ClienteResponse[] | undefined;
 
   corretores: CorretorResponse[] | undefined;
@@ -610,6 +631,27 @@ export class ImovelCreate {
   mostrarModalProprietario: boolean = false;
 
   mostrarModalCondominio: boolean = false;
+
+  clienteForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+    celular: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    como_encontrou: ['', [Validators.required]],
+    tipo: ['', [Validators.required]],
+  });
+  corretorForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+    celular: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    creci: ['', [Validators.required]],
+    dataNascimento: [''],
+    rg: [''],
+    cpf: ['']
+  })
+
+  dadosAdicionaisForm = this.formBuilder.group({});
 
   condominioValidar: ValidarCondominio[] | undefined;
 
@@ -657,20 +699,40 @@ export class ImovelCreate {
     ]
 
     this.buscarCorretores();
+
     this.buscarProprietarios();
+
+
+    this.clienteForm
+      .get("tipo")
+      ?.valueChanges
+      .subscribe(tipo => {
+        this.alterarFormularioDadosAdicionais(tipo);
+      });
+  }
+
+
+  alterarFormularioDadosAdicionais(tipo: string | null): void {
+    if (tipo === "Proprietário") {
+      this.dadosAdicionaisForm = this.criarFormProprietario();
+    }
+    else if (tipo === "Locatário") {
+      this.dadosAdicionaisForm = this.criarFormLocatario();
+    }
   }
 
   buscarCorretores() {
-     this.corretorService.getAll().subscribe({
+    this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar corretores:', erro);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar a lista de corretores.' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de corretores.'
+        });
       }
     });
   }
@@ -682,10 +744,27 @@ export class ImovelCreate {
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar clientes:', erro);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".'
+        });
+      }
+    });
+  }
+
+  buscarProprietarioPorId(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        console.log('Cliente cadastrado:', cliente);
+      }
+    });
+  }
+
+  buscarCorretorPorId(id: string) {
+    this.corretorService.getById(id).subscribe({
+      next: (corretor: CorretorResponse) => {
+        console.log('Corretor cadastrado:', corretor);
       }
     });
   }
@@ -702,6 +781,18 @@ export class ImovelCreate {
     this.mostrarModalCondominio = true;
   }
 
+  criarFormProprietario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
+  criarFormLocatario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
   cadastrarCondominio() {
     this.mostrarModalCondominio = false;
     this.messageService.add({
@@ -711,22 +802,88 @@ export class ImovelCreate {
     });
   }
 
-  cadastrarCorretor() {
-    this.mostrarModalCorretor = false;
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'Sucesso', 
-      detail: 'Corretor cadastrado com sucesso!' });
-    this.buscarCorretores();
+  salvarCorretor() {
+    const formCorretor: CorretorCriarRequest = {
+      nome_completo: this.corretorForm.getRawValue().nome!,
+      codigo: this.corretorForm.getRawValue().codigo!,
+      creci: this.corretorForm.getRawValue().creci!,
+      celular: this.corretorForm.getRawValue().celular!,
+      email: this.corretorForm.getRawValue().email!,
+      data_nascimento: this.corretorForm.getRawValue().dataNascimento!,
+      rg: this.corretorForm.getRawValue().rg!,
+      cpf: this.corretorForm.getRawValue().cpf!,
+    };
+
+    this.cadastrarCorretor(formCorretor);
   }
 
-  cadastrarProprietario() {
-    this.mostrarModalProprietario = false;
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'Sucesso', 
-      detail: 'Proprietário cadastrado com sucesso!' });
-      this.buscarProprietarios();
+  cadastrarCorretor(formCorretor: CorretorCriarRequest) {
+    this.corretorService.create(formCorretor).subscribe({
+      next: (corretor: CorretorResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Corretor cadastrado com sucesso!'
+        });
+
+        this.buscarCorretores();
+
+        this.buscarCorretorPorId(corretor.id);
+
+        this.mostrarModalCorretor = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar corretor:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível cadastrar o corretor.'
+        });
+      }
+    });
+  }
+
+  salvarProprietario() {
+    const formCliente: CriarClienteRequest = {
+      nome: this.clienteForm.getRawValue().nome!,
+      codigo: this.clienteForm.getRawValue().codigo!,
+      celular: this.clienteForm.getRawValue().celular!,
+      email: this.clienteForm.getRawValue().email!,
+      tipo: this.clienteForm.getRawValue().tipo!,
+      como_encontrou: this.clienteForm.getRawValue().como_encontrou!
+    };
+
+    const formDadosAdicionais = this.dadosAdicionaisForm.getRawValue() as CriarDadosAdicionais;
+
+    this.cadastrarProprietario(formCliente, formDadosAdicionais);
+  }
+
+  cadastrarProprietario(
+    form: CriarClienteRequest,
+    dadosAdicionais: CriarDadosAdicionais) {
+    this.clienteService.create(form, dadosAdicionais).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso!',
+          detail: 'Proprietário cadastrado com sucesso!'
+        });
+
+        this.buscarProprietarios();
+
+        this.buscarProprietarioPorId(cliente.id);
+
+        this.mostrarModalProprietario = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar proprietário:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Não foi possível cadastrar o proprietário.'
+        });
+      }
+    });
   }
 
   cadastrarImovel() {
@@ -738,10 +895,18 @@ export class ImovelCreate {
       this.uploadedFiles.push(file);
     }
 
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada!' });
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Successo!',
+      detail: 'Foto carregada!'
+    });
   }
 
   onBasicUpload() {
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada com o modo basico.' });
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Successo!',
+      detail: 'Foto carregada com o modo basico.'
+    });
   }
 }

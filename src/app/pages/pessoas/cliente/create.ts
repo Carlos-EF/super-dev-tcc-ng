@@ -1,8 +1,8 @@
-import {  CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
 import { ClienteService } from '@/services/cliente.service';
-import {  TIPOS_CLIENTE } from '@/types/cliente.types';
+import { TIPOS_CLIENTE } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
-import {  TIPOS_IMOVEL } from '@/types/imovel.types';
+import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -213,19 +213,21 @@ export interface Imoveis {
   </div>
 </form>
 `,
-styles: ``
+  styles: ``
 })
 export class ClienteCreate {
   tiposContato = [...TIPOS_CONTATO];
 
- tiposCliente = [...TIPOS_CLIENTE];
+  tiposCliente = [...TIPOS_CLIENTE];
 
   imoveis: Imoveis[] | undefined;
 
   tiposImovel = [...TIPOS_IMOVEL];
 
   private readonly formBuilder = inject(FormBuilder);
+
   private readonly clienteService = inject(ClienteService);
+
   private readonly messageService = inject(MessageService);
 
   clienteForm = this.formBuilder.group({
@@ -262,7 +264,7 @@ export class ClienteCreate {
 
   cadastrar(form: CriarClienteRequest, dadosAdicionais: CriarDadosAdicionais) {
     this.clienteService.create(
-      form, 
+      form,
       dadosAdicionais
     ).subscribe({
       next: () => {
@@ -278,7 +280,7 @@ export class ClienteCreate {
       },
       error: (erro: Error) => {
         console.log(`Ocorreu um erro ao tentar cadastrar o cliente: ${erro}`);
-                this.messageService.add({
+        this.messageService.add({
           severity: "error",
           summary: "FALHA NO CADASTRO!",
           detail: "Ocorreu um erro ao tentar cadastrar o cliente."
@@ -286,7 +288,7 @@ export class ClienteCreate {
       }
     })
   }
-  
+
 
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
@@ -301,7 +303,7 @@ export class ClienteCreate {
     }
   }
 
-  criarFormInteressado() : FormGroup {
+  criarFormInteressado(): FormGroup {
     return this.formBuilder.group({
       procurando: ['', [Validators.required]],
       orcamento: [null, [Validators.required]],
@@ -316,13 +318,13 @@ export class ClienteCreate {
     })
   }
 
-  criarFormProprietario() : FormGroup {
+  criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
       imovel_associado: ['', [Validators.required]]
     })
   }
 
-  criarFormLocatario() : FormGroup {
+  criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
       imovel_associado: ['', [Validators.required]]
     })
@@ -330,14 +332,14 @@ export class ClienteCreate {
 
   ngOnInit() {
     this.imoveis = [
-      {nome: "Imoveis cadastrados"}
+      { nome: "Imoveis cadastrados" }
     ];
 
     this.clienteForm
-    .get("tipo")
-    ?.valueChanges
-    .subscribe(tipo => {
-      this.alterarFormularioDadosAdicionais(tipo);
-    });
+      .get("tipo")
+      ?.valueChanges
+      .subscribe(tipo => {
+        this.alterarFormularioDadosAdicionais(tipo);
+      });
   }
 }
