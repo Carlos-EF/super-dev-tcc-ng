@@ -15,7 +15,7 @@ import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
 import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
-import { CorretorResponse } from '@/models/corretor.model';
+import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
@@ -346,12 +346,14 @@ export interface ValidarMobilia {
     </p-stepper>
   </div>
 
+<form [formGroup]="corretorForm">
 <p-dialog 
   header="Cadastrar Corretor" 
   [(visible)]="mostrarModalCorretor" 
   [modal]="true" 
   [closable]="true" 
   [style]="{width: '50rem'}">
+
   <div class="flex flex-row gap-4">
       <div class="flex flex-col w-full grow gap-2">
         <label>
@@ -359,6 +361,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <input
+          formControlName='nome'
           type="text"
           pInputText
           placeholder="Digite o nome completo do corretor."
@@ -371,6 +374,7 @@ export interface ValidarMobilia {
             <span class="text-red-500">*</span>
           </label>
           <p-inputnumber
+            formControlName='codigo'
             class="w-full"
             [minlength]="5"
             [maxlength]="10"
@@ -379,7 +383,16 @@ export interface ValidarMobilia {
             placeholder="Digite o código de referência do corretor.">
           </p-inputnumber>
         </div>
-  </div>
+        
+        <div class="flex flex-col basis-0 gap-2">
+          <label for="">CRECI: <span class="text-red-500">*</span></label>
+          <p-inputmask
+            formControlName='creci' 
+            mask="99.999F" 
+            placeholder="00.000F" 
+            formControlName='creci'/>
+        </div>
+</div>
 
     <div class="flex flex-row gap-4 mt-4">
       <div class="flex flex-col w-full grow gap-2">
@@ -388,6 +401,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <p-inputmask
+          formControlName='celular'
           styleClass="w-full"
           mask="(99) 99999-9999"
           placeholder="(00) 00000-0000">
@@ -400,6 +414,7 @@ export interface ValidarMobilia {
           <span class="text-red-500">*</span>
         </label>
         <input
+          formControlName='email'
           type="email"
           pInputText
           placeholder="Digite o e-mail do corretor."
@@ -411,10 +426,11 @@ export interface ValidarMobilia {
       <p-button
         label="Salvar"
         icon="pi pi-check"
-        (click)="cadastrarCorretor()">
+        (click)="salvarCorretor()">
       </p-button>
     </div>
 </p-dialog>
+</form>
 
   <form [formGroup]="clienteForm">
   <p-dialog 
@@ -623,6 +639,16 @@ export class ImovelCreate {
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
     como_encontrou: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
+  });
+  corretorForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+    celular: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    creci: ['', [Validators.required]],
+    dataNascimento: [''],
+    rg: [''],
+    cpf: ['']
   })
 
   dadosAdicionaisForm = this.formBuilder.group({});
@@ -735,6 +761,14 @@ export class ImovelCreate {
     });
   }
 
+  buscarCorretorPorId(id: string) {
+    this.corretorService.getById(id).subscribe({
+      next: (corretor: CorretorResponse) => {
+        console.log('Corretor cadastrado:', corretor);
+      }
+    });
+  }
+
   abrirModalCorretor() {
     this.mostrarModalCorretor = true;
   }
@@ -768,14 +802,45 @@ export class ImovelCreate {
     });
   }
 
-  cadastrarCorretor() {
-    this.mostrarModalCorretor = false;
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Corretor cadastrado com sucesso!'
+  salvarCorretor() {
+    const formCorretor: CorretorCriarRequest = {
+      nome_completo: this.corretorForm.getRawValue().nome!,
+      codigo: this.corretorForm.getRawValue().codigo!,
+      creci: this.corretorForm.getRawValue().creci!,
+      celular: this.corretorForm.getRawValue().celular!,
+      email: this.corretorForm.getRawValue().email!,
+      data_nascimento: this.corretorForm.getRawValue().dataNascimento!,
+      rg: this.corretorForm.getRawValue().rg!,
+      cpf: this.corretorForm.getRawValue().cpf!,
+    };
+
+    this.cadastrarCorretor(formCorretor);
+  }
+
+  cadastrarCorretor(formCorretor: CorretorCriarRequest) {
+    this.corretorService.create(formCorretor).subscribe({
+      next: (corretor: CorretorResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Corretor cadastrado com sucesso!'
+        });
+
+        this.buscarCorretores();
+
+        this.buscarCorretorPorId(corretor.id);
+
+        this.mostrarModalCorretor = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar corretor:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível cadastrar o corretor.'
+        });
+      }
     });
-    this.buscarCorretores();
   }
 
   salvarProprietario() {
@@ -794,7 +859,7 @@ export class ImovelCreate {
   }
 
   cadastrarProprietario(
-    form: CriarClienteRequest, 
+    form: CriarClienteRequest,
     dadosAdicionais: CriarDadosAdicionais) {
     this.clienteService.create(form, dadosAdicionais).subscribe({
       next: (cliente: ClienteResponse) => {
@@ -830,16 +895,18 @@ export class ImovelCreate {
       this.uploadedFiles.push(file);
     }
 
-    this.messageService.add({ 
-      severity: 'info', 
-      summary: 'Successo!', 
-      detail: 'Foto carregada!' });
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Successo!',
+      detail: 'Foto carregada!'
+    });
   }
 
   onBasicUpload() {
-    this.messageService.add({ 
-      severity: 'info', 
-      summary: 'Successo!', 
-      detail: 'Foto carregada com o modo basico.' });
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Successo!',
+      detail: 'Foto carregada com o modo basico.'
+    });
   }
 }
