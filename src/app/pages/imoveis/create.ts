@@ -14,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteResponse } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
 import { CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
@@ -52,7 +52,7 @@ export interface ValidarMobilia {
     ToastModule,
     FileUploadModule,
     DialogModule,
-],
+  ],
   template: `
   <p-toast/>
   <div class="card flex justify-center">
@@ -470,7 +470,7 @@ export interface ValidarMobilia {
       <p-button
         label="Salvar"
         icon="pi pi-check"
-        (click)="cadastrarProprietario()">
+        (click)="salvarProprietario()">
       </p-button>
     </div>
   </p-dialog>
@@ -625,6 +625,8 @@ export class ImovelCreate {
     tipo: ['', [Validators.required]],
   })
 
+  dadosAdicionaisForm = this.formBuilder.group({});
+
   condominioValidar: ValidarCondominio[] | undefined;
 
   respostaCondominio: ValidarCondominio | string | undefined;
@@ -671,20 +673,40 @@ export class ImovelCreate {
     ]
 
     this.buscarCorretores();
+
     this.buscarProprietarios();
+
+
+    this.clienteForm
+      .get("tipo")
+      ?.valueChanges
+      .subscribe(tipo => {
+        this.alterarFormularioDadosAdicionais(tipo);
+      });
+  }
+
+
+  alterarFormularioDadosAdicionais(tipo: string | null): void {
+    if (tipo === "Proprietário") {
+      this.dadosAdicionaisForm = this.criarFormProprietario();
+    }
+    else if (tipo === "Locatário") {
+      this.dadosAdicionaisForm = this.criarFormLocatario();
+    }
   }
 
   buscarCorretores() {
-     this.corretorService.getAll().subscribe({
+    this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar corretores:', erro);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar a lista de corretores.' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de corretores.'
+        });
       }
     });
   }
@@ -696,10 +718,19 @@ export class ImovelCreate {
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar clientes:', erro);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".' });
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".'
+        });
+      }
+    });
+  }
+
+  buscarProprietarioPorId(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        console.log('Cliente cadastrado:', cliente);
       }
     });
   }
@@ -716,6 +747,18 @@ export class ImovelCreate {
     this.mostrarModalCondominio = true;
   }
 
+  criarFormProprietario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
+  criarFormLocatario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
   cadastrarCondominio() {
     this.mostrarModalCondominio = false;
     this.messageService.add({
@@ -727,20 +770,55 @@ export class ImovelCreate {
 
   cadastrarCorretor() {
     this.mostrarModalCorretor = false;
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'Sucesso', 
-      detail: 'Corretor cadastrado com sucesso!' });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Corretor cadastrado com sucesso!'
+    });
     this.buscarCorretores();
   }
 
-  cadastrarProprietario() {
-    this.mostrarModalProprietario = false;
-    this.messageService.add({ 
-      severity: 'success', 
-      summary: 'Sucesso', 
-      detail: 'Proprietário cadastrado com sucesso!' });
-      this.buscarProprietarios();
+  salvarProprietario() {
+    const formCliente: CriarClienteRequest = {
+      nome: this.clienteForm.getRawValue().nome!,
+      codigo: this.clienteForm.getRawValue().codigo!,
+      celular: this.clienteForm.getRawValue().celular!,
+      email: this.clienteForm.getRawValue().email!,
+      tipo: this.clienteForm.getRawValue().tipo!,
+      como_encontrou: this.clienteForm.getRawValue().como_encontrou!
+    };
+
+    const formDadosAdicionais = this.dadosAdicionaisForm.getRawValue() as CriarDadosAdicionais;
+
+    this.cadastrarProprietario(formCliente, formDadosAdicionais);
+  }
+
+  cadastrarProprietario(
+    form: CriarClienteRequest, 
+    dadosAdicionais: CriarDadosAdicionais) {
+    this.clienteService.create(form, dadosAdicionais).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso!',
+          detail: 'Proprietário cadastrado com sucesso!'
+        });
+
+        this.buscarProprietarios();
+
+        this.buscarProprietarioPorId(cliente.id);
+
+        this.mostrarModalProprietario = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar proprietário:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Não foi possível cadastrar o proprietário.'
+        });
+      }
+    });
   }
 
   cadastrarImovel() {
@@ -752,10 +830,16 @@ export class ImovelCreate {
       this.uploadedFiles.push(file);
     }
 
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada!' });
+    this.messageService.add({ 
+      severity: 'info', 
+      summary: 'Successo!', 
+      detail: 'Foto carregada!' });
   }
 
   onBasicUpload() {
-    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Foto carregada com o modo basico.' });
+    this.messageService.add({ 
+      severity: 'info', 
+      summary: 'Successo!', 
+      detail: 'Foto carregada com o modo basico.' });
   }
 }
