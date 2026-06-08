@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -19,7 +19,6 @@ import { CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
-import { StyleClass } from "primeng/styleclass";
 
 // Trocar no futuro
 
@@ -44,6 +43,7 @@ export interface ValidarMobilia {
   imports: [
     InputTextModule,
     FormsModule,
+    ReactiveFormsModule,
     SelectModule,
     InputMaskModule,
     ButtonModule,
@@ -52,7 +52,6 @@ export interface ValidarMobilia {
     ToastModule,
     FileUploadModule,
     DialogModule,
-    StyleClass
 ],
   template: `
   <p-toast/>
@@ -417,6 +416,7 @@ export interface ValidarMobilia {
     </div>
 </p-dialog>
 
+  <form [formGroup]="clienteForm">
   <p-dialog 
   header="Cadastrar Proprietário" 
   [(visible)]="mostrarModalProprietario" 
@@ -426,27 +426,28 @@ export interface ValidarMobilia {
     <div class="flex flex-wrap basis-0 gap-3">
         <div class="flex flex-col grow gap-2">
           <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
-          <input type="text" pInputText placeholder="Digite o nome do cliente." />
+          <input type="text" pInputText placeholder="Digite o nome do cliente." formControlName="nome" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
-          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." />
+          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." formControlName="codigo" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="">Celular: <span class="text-red-500"><strong> *</strong></span></label>
-          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" />
+          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="celular" />
         </div>
         
         <div class="flex flex-col grow basis-0 gap-2">
           <label for="">E-mail: <span class="text-red-500"><strong> *</strong></span></label>
-          <input type="email" pInputText placeholder="Digite o e-mail do cliente."/>
+          <input type="email" pInputText placeholder="Digite o e-mail do cliente." formControlName="email" />
         </div>
         
         <div class="flex flex-col gap-2">
           <label for="">Como nos encontrou:</label>
           <p-select
+          formControlName="como_encontrou"
           appendTo="body" 
           [options]="tiposContato" 
           placeholder="Selecione por onde o cliente veio." 
@@ -456,6 +457,7 @@ export interface ValidarMobilia {
       <div class="flex flex-col grow basis-0 gap-2">
         <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
         <p-select
+        formControlName="tipo"
         appendTo="body" 
         [options]="tipoCliente" 
         id="tipo-cliente" 
@@ -472,6 +474,7 @@ export interface ValidarMobilia {
       </p-button>
     </div>
   </p-dialog>
+</form>
 
   <p-dialog
   header="Cadastrar Condomínio"
@@ -593,6 +596,8 @@ export class ImovelCreate {
 
   private readonly clienteService = inject(ClienteService);
 
+  private readonly formBuilder = inject(FormBuilder);
+
   proprietarios: ClienteResponse[] | undefined;
 
   corretores: CorretorResponse[] | undefined;
@@ -610,6 +615,15 @@ export class ImovelCreate {
   mostrarModalProprietario: boolean = false;
 
   mostrarModalCondominio: boolean = false;
+
+  clienteForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
+    celular: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    como_encontrou: ['', [Validators.required]],
+    tipo: ['', [Validators.required]],
+  })
 
   condominioValidar: ValidarCondominio[] | undefined;
 
