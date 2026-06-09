@@ -19,6 +19,7 @@ import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model'
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
+import { CepService } from '@/services/cep.service';
 
 // Trocar no futuro
 
@@ -177,6 +178,7 @@ export interface ValidarMobilia {
                  [(ngModel)]="cep" 
                  placeholder="99999-999" />
                  <p-button
+                 (click)="buscarCep(cep)"
                  icon="pi pi-search"/>
                 </div>
             </div>
@@ -518,11 +520,13 @@ export interface ValidarMobilia {
       </label>
       <div class="flex flex-row">
         <p-inputmask
+        (ngModel)]="cep"
         id="campo-cep"
         mask="99999-999"
         placeholder="00000-000">
       </p-inputmask>
       <p-button
+      (click)="buscarCep(cep)"
       icon="pi pi-search"/>
     </div>
     </div>
@@ -612,6 +616,8 @@ export class ImovelCreate {
 
   private readonly clienteService = inject(ClienteService);
 
+  private readonly cepService = inject(CepService);
+
   private readonly formBuilder = inject(FormBuilder);
 
   proprietarios: ClienteResponse[] | undefined;
@@ -625,6 +631,8 @@ export class ImovelCreate {
   tiposContato = [...TIPOS_CONTATO];
 
   tipoCliente = [...TIPO_CLIENTE_MODAL];
+
+  cep: string = '';
 
   mostrarModalCorretor: boolean = false;
 
@@ -658,8 +666,6 @@ export class ImovelCreate {
   respostaCondominio: ValidarCondominio | string | undefined;
 
   mobiliaValidar: ValidarMobilia[] | undefined;
-
-  cep: string = '';
 
   valorSolicitado?: number;
 
@@ -767,6 +773,32 @@ export class ImovelCreate {
         console.log('Corretor cadastrado:', corretor);
       }
     });
+  }
+
+  buscarCep(cep: string) {
+    var cepLimpo = cep.replace('-', '').trim();
+
+    if (cepLimpo.length === 8) {
+      this.cepService.get(cepLimpo).subscribe({
+        next: (dados) => {
+          console.log(dados);
+        },
+        error: (erro: Error) => {
+          console.error('Erro ao buscar CEP:', erro);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível buscar o CEP. Por favor, tente novamente mais tarde.'
+          });
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'CEP inválido. Por favor, insira um CEP no formato 99999-999.'
+      });
+    }
   }
 
   abrirModalCorretor() {

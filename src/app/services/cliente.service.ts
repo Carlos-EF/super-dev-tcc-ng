@@ -1,4 +1,4 @@
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, DadosAdicionais, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
