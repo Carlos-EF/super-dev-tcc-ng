@@ -1,4 +1,4 @@
-import { ConsultaCepResponse } from '@/models/consulta.cep';
+import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
