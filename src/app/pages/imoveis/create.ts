@@ -692,9 +692,9 @@ export class ImovelCreate {
     celular: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
     creci: ['', [Validators.required]],
-    dataNascimento: [''],
-    rg: [''],
-    cpf: ['']
+    dataNascimento: [null],
+    rg: [null],
+    cpf: [null],
   })
 
   dadosAdicionaisForm = this.formBuilder.group({});
