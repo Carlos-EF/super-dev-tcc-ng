@@ -20,6 +20,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { CepService } from '@/services/cep.service';
+import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 
 // Trocar no futuro
 
@@ -185,27 +186,51 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-logradouro">Logradouro: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-logradouro" type="text" placeholder="Digite o nome da rua." />
+              <input
+              [(ngModel)]="logradouro" 
+              pInputText 
+              id="campo-logradouro" 
+              type="text" 
+              placeholder="Digite o nome da rua." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-numero" type="text" placeholder="Número do imóvel."/>
+              <input 
+              pInputText 
+              id="campo-numero" 
+              type="text" 
+              placeholder="Número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-estado">Estado: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-estado" type="text" placeholder="Digite o nome da estado." />
+              <input
+              [(ngModel)]="estado" 
+              pInputText 
+              id="campo-estado" 
+              type="text" 
+              placeholder="Digite o nome da estado." />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cidade">Cidade: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-cidade" type="text" placeholder="Digite o nome da cidade." />
+              <input
+              [(ngModel)]="cidade" 
+              pInputText 
+              id="campo-cidade" 
+              type="text" 
+              placeholder="Digite o nome da cidade." />
             </div>
             
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-bairro">Bairro: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-bairro" type="text" placeholder="Digite o nome da bairro." />
+              <input
+              [(ngModel)]="bairro" 
+              pInputText 
+              id="campo-bairro" 
+              type="text" 
+              placeholder="Digite o nome da bairro." />
             </div>
         
             <div class="flex flex-col grow basis-0 gap-2">
@@ -520,7 +545,7 @@ export interface ValidarMobilia {
       </label>
       <div class="flex flex-row">
         <p-inputmask
-        (ngModel)]="cep"
+        [(ngModel)]="cep"
         id="campo-cep"
         mask="99999-999"
         placeholder="00000-000">
@@ -537,6 +562,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
+        [(ngModel)]="logradouro"
         id="campo-logradouro"
         type="text"
         pInputText
@@ -561,6 +587,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
+        [(ngModel)]="bairro"
         id="campo-bairro"
         type="text"
         pInputText
@@ -573,6 +600,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
+        [(ngModel)]="estado"
         id="campo-estado"
         type="text"
         pInputText
@@ -585,6 +613,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
+        [(ngModel)]="cidade"
         id="campo-cidade"
         type="text"
         pInputText
@@ -634,6 +663,14 @@ export class ImovelCreate {
 
   cep: string = '';
 
+  bairro: string = '';
+
+  cidade: string = '';
+
+  estado: string = '';
+
+  logradouro: string = '';
+
   mostrarModalCorretor: boolean = false;
 
   mostrarModalProprietario: boolean = false;
@@ -648,6 +685,7 @@ export class ImovelCreate {
     como_encontrou: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
   });
+
   corretorForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
@@ -781,7 +819,7 @@ export class ImovelCreate {
     if (cepLimpo.length === 8) {
       this.cepService.get(cepLimpo).subscribe({
         next: (dados) => {
-          console.log(dados);
+          this.preencherDadosEndereco(dados);
         },
         error: (erro: Error) => {
           console.error('Erro ao buscar CEP:', erro);
@@ -799,6 +837,16 @@ export class ImovelCreate {
         detail: 'CEP inválido. Por favor, insira um CEP no formato 99999-999.'
       });
     }
+  }
+
+  preencherDadosEndereco(dados: ConsultaCepResponse) {
+    this.logradouro = dados.logradouro;
+
+    this.estado = dados.estado;
+
+    this.cidade = dados.localidade;
+
+    this.bairro = dados.bairro;
   }
 
   abrirModalCorretor() {
