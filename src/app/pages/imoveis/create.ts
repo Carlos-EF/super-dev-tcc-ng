@@ -769,6 +769,14 @@ export class ImovelCreate {
     });
   }
 
+  buscarCep(cep: string) {
+    var cepLimpo = cep.replace('-', '').trim();
+
+    if (cepLimpo.length === 8) {
+
+    }
+  }
+
   abrirModalCorretor() {
     this.mostrarModalCorretor = true;
   }
