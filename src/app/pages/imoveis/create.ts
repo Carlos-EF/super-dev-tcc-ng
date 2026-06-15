@@ -176,10 +176,8 @@ export interface ValidarMobilia {
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
                  <p-inputmask mask="99999-999" 
-                 [(ngModel)]="cep" 
                  placeholder="99999-999" />
                  <p-button
-                 (click)="buscarCep(cep)"
                  icon="pi pi-search"/>
                 </div>
             </div>
@@ -187,7 +185,6 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-logradouro">Logradouro: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              [(ngModel)]="logradouro" 
               pInputText 
               id="campo-logradouro" 
               type="text" 
@@ -206,7 +203,6 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-estado">Estado: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              [(ngModel)]="estado" 
               pInputText 
               id="campo-estado" 
               type="text" 
@@ -216,7 +212,6 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cidade">Cidade: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              [(ngModel)]="cidade" 
               pInputText 
               id="campo-cidade" 
               type="text" 
@@ -226,7 +221,6 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-bairro">Bairro: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              [(ngModel)]="bairro" 
               pInputText 
               id="campo-bairro" 
               type="text" 
@@ -554,7 +548,7 @@ export interface ValidarMobilia {
         placeholder="00000-000">
       </p-inputmask>
       <p-button
-      (click)="buscarCep(cep)"
+      (click)="buscarCep(condominioForm.get('cep')?.value || '')"
       icon="pi pi-search"/>
     </div>
     </div>
@@ -664,16 +658,6 @@ export class ImovelCreate {
   tiposContato = [...TIPOS_CONTATO];
 
   tipoCliente = [...TIPO_CLIENTE_MODAL];
-
-  cep: string = '';
-
-  bairro: string = '';
-
-  cidade: string = '';
-
-  estado: string = '';
-
-  logradouro: string = '';
 
   mostrarModalCorretor: boolean = false;
 
@@ -854,13 +838,13 @@ export class ImovelCreate {
   }
 
   preencherDadosEndereco(dados: ConsultaCepResponse) {
-    this.logradouro = dados.logradouro;
-
-    this.estado = dados.estado;
-
-    this.cidade = dados.localidade;
-
-    this.bairro = dados.bairro;
+    return this.condominioForm.patchValue({
+      cep: dados.cep,
+      logradouro: dados.logradouro,
+      bairro: dados.bairro,
+      cidade: dados.localidade,
+      estado: dados.estado,
+    });
   }
 
   abrirModalCorretor() {
