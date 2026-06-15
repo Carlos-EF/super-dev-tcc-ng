@@ -519,6 +519,7 @@ export interface ValidarMobilia {
   </p-dialog>
 </form>
 
+<form [formGroup]="condominioForm">
   <p-dialog
   header="Cadastrar Condomínio"
   [(visible)]="mostrarModalCondominio"
@@ -533,11 +534,13 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
+        formControlName="nome"
         id="campo-nome-condominio"
         type="text"
         pInputText
         placeholder="Digite o nome do condomínio." />
     </div>
+
     <div class="flex flex-col gap-2">
       <label for="campo-cep">
         CEP:
@@ -545,7 +548,7 @@ export interface ValidarMobilia {
       </label>
       <div class="flex flex-row">
         <p-inputmask
-        [(ngModel)]="cep"
+        formControlName="cep"
         id="campo-cep"
         mask="99999-999"
         placeholder="00000-000">
@@ -562,7 +565,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
-        [(ngModel)]="logradouro"
+        formControlName="logradouro"
         id="campo-logradouro"
         type="text"
         pInputText
@@ -577,6 +580,7 @@ export interface ValidarMobilia {
       <p-inputnumber
         id="campo-numero"
         [useGrouping]="false"
+        formControlName="numero"
         placeholder="Número">
       </p-inputnumber>
     </div>
@@ -587,7 +591,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
-        [(ngModel)]="bairro"
+        formControlName="bairro"
         id="campo-bairro"
         type="text"
         pInputText
@@ -600,7 +604,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
-        [(ngModel)]="estado"
+        formControlName="estado"
         id="campo-estado"
         type="text"
         pInputText
@@ -613,7 +617,7 @@ export interface ValidarMobilia {
         <span class="text-red-500"><strong> *</strong></span>
       </label>
       <input
-        [(ngModel)]="cidade"
+        formControlName="cidade"
         id="campo-cidade"
         type="text"
         pInputText
@@ -632,8 +636,8 @@ export interface ValidarMobilia {
       </p-button>
     </div>
   </ng-template>
-
 </p-dialog>
+</form>
 `,
   providers: [MessageService],
   styles: ``
@@ -695,7 +699,17 @@ export class ImovelCreate {
     dataNascimento: [null],
     rg: [null],
     cpf: [null],
-  })
+  });
+
+  condominioForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+    cep: ['', [Validators.required]],
+    logradouro: ['', [Validators.required]],
+    numero: [null, [Validators.required]],
+    bairro: ['', [Validators.required]],
+    cidade: ['', [Validators.required]],
+    estado: ['', [Validators.required]],
+  });
 
   dadosAdicionaisForm = this.formBuilder.group({});
 
