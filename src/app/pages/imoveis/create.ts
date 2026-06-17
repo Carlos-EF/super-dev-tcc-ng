@@ -817,6 +817,7 @@ export class ImovelCreate {
     if (cepLimpo.length === 8) {
       this.cepService.get(cepLimpo).subscribe({
         next: (dados) => {
+          console.log('Dados do CEP:', dados);
           this.preencherDadosEndereco(dados);
         },
         error: (erro: Error) => {
