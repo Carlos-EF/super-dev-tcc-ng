@@ -10,10 +10,8 @@ import { environment } from 'src/environments/environment';
 export class CepService {
   private httpClient = inject(HttpClient);
 
-  private environment = environment;
-
   get(cep: string): Observable<ConsultaCepResponse> {
-    const buscarCepUrl = `${this.environment.apiViaCepUrl}/${cep}/json/`;
+    const buscarCepUrl = `${environment.apiUrl}/cep/${cep}`;
 
     return this.httpClient.get<ConsultaCepResponse>(buscarCepUrl);
   }
