@@ -21,6 +21,8 @@ import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { CepService } from '@/services/cep.service';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
+import { CondominioResponse } from '@/models/condominio.model';
+import { CondominioService } from '@/services/condominio.service';
 
 // Trocar no futuro
 
@@ -77,7 +79,9 @@ export interface ValidarMobilia {
               <label for="campo-proprietario">Proprietário: <span class="text-red-500"><strong> *</strong></span></label>
               <div class="flex flex-row">
               <p-select 
-              [options]="proprietarios" 
+              [options]="proprietarios"
+              optionLabel="nome"
+              optionValue="id" 
               [checkmark]="true" 
               [showClear]="true" 
               placeholder="Selecione o proprietário."
@@ -93,8 +97,10 @@ export interface ValidarMobilia {
             <label for="campo-corretor">Corretor: <span class="text-red-500"><strong> *</strong></span></label>
             <div class="flex flex-row">
             <p-select 
-            [options]="corretores" 
-            [checkmark]="true" 
+            [options]="corretores"
+            [checkmark]="true"
+            optionLabel="nome_completo"
+            optionValue="id"
             [showClear]="true" 
             placeholder="Selecione o corretor."
             class="w-full"/>
@@ -156,13 +162,13 @@ export interface ValidarMobilia {
                   <div class="flex flex-col grow gap-2">
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
                     <div class="flex flex-row">
-                    <input 
-                    pInputText 
-                    id="campo-nome-condominio" 
-                    type="text" 
-                    placeholder="Digite o nome do condomínio."
-                    class="w-full"
-                    />
+                    <p-select
+                    [options]="condominios"
+                    optionLabel="nome"
+                    optionValue="id"
+                    [checkmark]="true"
+                    placeholder="Selecione o condomínio."
+                    >
                     <p-button 
                     icon="pi pi-plus"
                     (click)="abrirModalCondominio()" 
@@ -643,6 +649,8 @@ export class ImovelCreate {
 
   private readonly clienteService = inject(ClienteService);
 
+  private readonly condominioService = inject(CondominioService);
+
   private readonly cepService = inject(CepService);
 
   private readonly formBuilder = inject(FormBuilder);
@@ -650,6 +658,8 @@ export class ImovelCreate {
   proprietarios: ClienteResponse[] | undefined;
 
   corretores: CorretorResponse[] | undefined;
+
+  condominios: CondominioResponse[] | undefined;
 
   finalidades = [...FINALIDADES];
 
@@ -744,6 +754,7 @@ export class ImovelCreate {
 
     this.buscarProprietarios();
 
+    this.buscarCondominios();
 
     this.clienteForm
       .get("tipo")
@@ -767,6 +778,8 @@ export class ImovelCreate {
     this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
+        console.log(corretores);
+        
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar corretores:', erro);
@@ -795,6 +808,22 @@ export class ImovelCreate {
     });
   }
 
+  buscarCondominios() {
+    this.condominioService.getAll().subscribe({
+      next: (condominios: CondominioResponse[]) => {
+        this.condominios = condominios
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar condomínios:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de condomínios.'
+        })
+      }
+    })
+  }
+
   buscarProprietarioPorId(id: string) {
     this.clienteService.getById(id).subscribe({
       next: (cliente: ClienteResponse) => {
@@ -817,7 +846,6 @@ export class ImovelCreate {
     if (cepLimpo.length === 8) {
       this.cepService.get(cepLimpo).subscribe({
         next: (dados) => {
-          console.log('Dados do CEP:', dados);
           this.preencherDadosEndereco(dados);
         },
         error: (erro: Error) => {
