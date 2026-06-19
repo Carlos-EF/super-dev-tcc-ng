@@ -77,7 +77,9 @@ export interface ValidarMobilia {
               <label for="campo-proprietario">Proprietário: <span class="text-red-500"><strong> *</strong></span></label>
               <div class="flex flex-row">
               <p-select 
-              [options]="proprietarios" 
+              [options]="proprietarios"
+              optionLabel="nome"
+              optionValue="id" 
               [checkmark]="true" 
               [showClear]="true" 
               placeholder="Selecione o proprietário."
@@ -93,8 +95,10 @@ export interface ValidarMobilia {
             <label for="campo-corretor">Corretor: <span class="text-red-500"><strong> *</strong></span></label>
             <div class="flex flex-row">
             <p-select 
-            [options]="corretores" 
-            [checkmark]="true" 
+            [options]="corretores"
+            [checkmark]="true"
+            optionLabel="nome_completo"
+            optionValue="id"
             [showClear]="true" 
             placeholder="Selecione o corretor."
             class="w-full"/>
@@ -767,6 +771,8 @@ export class ImovelCreate {
     this.corretorService.getAll().subscribe({
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
+        console.log(corretores);
+        
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar corretores:', erro);
@@ -817,7 +823,6 @@ export class ImovelCreate {
     if (cepLimpo.length === 8) {
       this.cepService.get(cepLimpo).subscribe({
         next: (dados) => {
-          console.log('Dados do CEP:', dados);
           this.preencherDadosEndereco(dados);
         },
         error: (erro: Error) => {
