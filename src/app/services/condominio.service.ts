@@ -1,4 +1,4 @@
-import { CondominioResponse, CriarCondominioRequest } from '@/models/condominio.model';
+import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest as EditarCondominioRequest } from '@/models/condominio.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -30,5 +30,26 @@ export class CondominioService {
     return this.httpClient.post<CondominioResponse>(
       this.url,
       form);
+  }
+
+  update(
+    id: string,
+    form: EditarCondominioRequest
+  ): Observable<CondominioResponse> {
+    const urlComId = `${this.url}/${id}`;
+
+    return this.httpClient.put<CondominioResponse>(
+      urlComId,
+      form
+    )
+  }
+
+
+  delete(
+    id: string
+  ): Observable<void> {
+    const urlComId = `${this.url}/${id}`;
+
+    return this.httpClient.delete<void>(urlComId);
   }
 }
