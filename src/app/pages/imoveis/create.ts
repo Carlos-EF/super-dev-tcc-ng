@@ -21,7 +21,7 @@ import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { CepService } from '@/services/cep.service';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
-import { CondominioResponse } from '@/models/condominio.model';
+import { CondominioResponse, CriarCondominioRequest } from '@/models/condominio.model';
 import { CondominioService } from '@/services/condominio.service';
 
 // Trocar no futuro
@@ -168,16 +168,15 @@ export interface ValidarMobilia {
                     optionValue="id"
                     [checkmark]="true"
                     placeholder="Selecione o condomínio."
-                    >
+                    />
                     <p-button 
                     icon="pi pi-plus"
                     (click)="abrirModalCondominio()" 
-                     />
+                    />
+                    </div>
                   </div>
-                </div>
-                }
-              } 
-
+              }
+            }
             <div class="flex flex-col gap-2">
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
@@ -632,7 +631,7 @@ export interface ValidarMobilia {
         label="Salvar"
         icon="pi pi-save"
         severity="success"
-        (click)="cadastrarCondominio()">
+        (click)="salvarCondominio()">
       </p-button>
     </div>
   </ng-template>
@@ -779,7 +778,7 @@ export class ImovelCreate {
       next: (corretores: CorretorResponse[]) => {
         this.corretores = corretores;
         console.log(corretores);
-        
+
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar corretores:', erro);
@@ -838,6 +837,14 @@ export class ImovelCreate {
         console.log('Corretor cadastrado:', corretor);
       }
     });
+  }
+
+  buscarCondominioPorId(id: string) {
+    this.condominioService.getById(id).subscribe({
+      next: (condominio: CondominioResponse) => {
+        console.log('Condomínio cadastrado:', condominio);
+      }
+    })
   }
 
   buscarCep(cep: string) {
@@ -900,13 +907,36 @@ export class ImovelCreate {
     })
   }
 
-  cadastrarCondominio() {
-    this.mostrarModalCondominio = false;
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sucesso',
-      detail: 'Condomínio cadastrado com sucesso!'
-    });
+  salvarCondominio() {
+    const formCondominio: CriarCondominioRequest = {
+      nome: this.condominioForm.getRawValue().nome!,
+      cep: this.condominioForm.getRawValue().cep!,
+      logradouro: this.condominioForm.getRawValue().logradouro!,
+      numero: this.condominioForm.getRawValue().numero!,
+      bairro: this.condominioForm.getRawValue().bairro!,
+      estado: this.condominioForm.getRawValue().estado!,
+      cidade: this.condominioForm.getRawValue().cidade!,
+    }
+
+    this.cadastrarCondominio(formCondominio);
+  }
+
+  cadastrarCondominio(formCondominio: CriarCondominioRequest) {
+    this.condominioService.create(formCondominio).subscribe({
+      next: (condominio: CondominioResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Condomínio cadastrado com sucesso!'
+        });
+
+        this.buscarCondominios();
+
+        this.buscarCondominioPorId(condominio.id);
+
+        this.mostrarModalCondominio = false;
+      }
+    })
   }
 
   salvarCorretor() {
