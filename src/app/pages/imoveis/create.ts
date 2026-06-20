@@ -163,6 +163,7 @@ export interface ValidarMobilia {
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
                     <div class="flex flex-row">
                     <p-select
+                    class="w-full"
                     [options]="condominios"
                     optionLabel="nome"
                     optionValue="id"
