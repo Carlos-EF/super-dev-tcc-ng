@@ -534,6 +534,7 @@ export interface ValidarMobilia {
   </p-dialog>
 </form>
 
+@if (condominioSelecionado == '') {
 <form [formGroup]="condominioForm">
   <p-dialog
   header="Cadastrar Condomínio"
@@ -653,6 +654,128 @@ export interface ValidarMobilia {
   </ng-template>
 </p-dialog>
 </form>
+}
+@else {
+  <form [formGroup]="condominioParaEditarForm">
+  <p-dialog
+  header="Cadastrar Condomínio"
+  [(visible)]="mostrarModalCondominio"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '50rem' }">
+
+  <div class="flex flex-wrap basis-0 gap-3">
+    <div class="flex flex-col w-full gap-2">
+      <label for="campo-nome-condominio">
+        Nome do Condomínio:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="nome"
+        id="campo-nome-condominio"
+        type="text"
+        pInputText
+        placeholder="Digite o nome do condomínio." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-cep">
+        CEP:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <div class="flex flex-row">
+        <p-inputmask
+        formControlName="cep"
+        id="campo-cep"
+        mask="99999-999"
+        placeholder="00000-000">
+      </p-inputmask>
+      <p-button
+      (click)="buscarCep(condominioForm.get('cep')?.value || '')"
+      icon="pi pi-search"/>
+    </div>
+    </div>
+
+    <div class="flex flex-col grow gap-2">
+      <label for="campo-logradouro">
+        Logradouro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="logradouro"
+        id="campo-logradouro"
+        type="text"
+        pInputText
+        placeholder="Digite o logradouro." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-numero">
+        Número:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <p-inputnumber
+        id="campo-numero"
+        [useGrouping]="false"
+        formControlName="numero"
+        placeholder="Número">
+      </p-inputnumber>
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-bairro">
+        Bairro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="bairro"
+        id="campo-bairro"
+        type="text"
+        pInputText
+        placeholder="Digite o bairro." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-estado">
+        Estado:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="estado"
+        id="campo-estado"
+        type="text"
+        pInputText
+        placeholder="Digite o estado." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-cidade">
+        Cidade:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="cidade"
+        id="campo-cidade"
+        type="text"
+        pInputText
+        placeholder="Digite a cidade." />
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end">
+      <p-button
+        label="Salvar"
+        icon="pi pi-save"
+        severity="success"
+        (click)="salvarCondominio()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+</form>
+}
 `,
   providers: [MessageService],
   styles: ``
@@ -690,8 +813,6 @@ export class ImovelCreate {
 
   mostrarModalCondominio: boolean = false;
 
-  idParaEditarCondominio: string = '';
-
   condominioSelecionado: string = '';
 
   clienteForm = this.formBuilder.group({
@@ -715,6 +836,16 @@ export class ImovelCreate {
   });
 
   condominioForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+    cep: ['', [Validators.required]],
+    logradouro: ['', [Validators.required]],
+    numero: this.formBuilder.control<number | null>(null),
+    bairro: ['', [Validators.required]],
+    cidade: ['', [Validators.required]],
+    estado: ['', [Validators.required]],
+  });
+
+  condominioParaEditarForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
@@ -862,7 +993,9 @@ export class ImovelCreate {
   buscarCondominioPorId(id: string) {
     this.condominioService.getById(id).subscribe({
       next: (condominio: CondominioResponse) => {
-        return condominio;
+        if (condominio.id == this.condominioSelecionado) {
+          this.preencherDadosParaEditarCondominio(condominio);
+        }
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar o condomínio', erro);
@@ -968,8 +1101,7 @@ export class ImovelCreate {
   }
 
   preencherDadosParaEditarCondominio(condominio: CondominioResponse) {
-    debugger
-    this.condominioForm.patchValue({
+    this.condominioParaEditarForm.patchValue({
       nome: condominio.nome,
       cep: condominio.cep,
       logradouro: condominio.logradouro,
