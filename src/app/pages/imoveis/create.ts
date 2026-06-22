@@ -24,16 +24,6 @@ import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CondominioResponse, CriarCondominioRequest } from '@/models/condominio.model';
 import { CondominioService } from '@/services/condominio.service';
 
-// Trocar no futuro
-
-export interface Finalidades {
-  nome: string
-}
-
-export interface TiposImoveis {
-  nome: string
-}
-
 export interface ValidarCondominio {
   resposta: string
 }
@@ -162,18 +152,43 @@ export interface ValidarMobilia {
                   <div class="flex flex-col grow gap-2">
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
                     <div class="flex flex-row">
-                    <p-select
-                    class="w-full"
-                    [options]="condominios"
-                    optionLabel="nome"
-                    optionValue="id"
-                    [checkmark]="true"
-                    placeholder="Selecione o condomínio."
-                    />
-                    <p-button 
-                    icon="pi pi-plus"
-                    (click)="abrirModalCondominio()" 
-                    />
+                      @if (condominioSelecionado != '') {
+                        <p-button
+                        icon="pi pi-pencil"
+                        severity="warn"
+                        (click)="buscarCondominioPorId(
+                          condominioSelecionado)"
+                        />
+                        <p-select
+                        class="w-full"
+                        [options]="condominios"
+                        optionLabel="nome"
+                        [(ngModel)]='condominioSelecionado'
+                        optionValue="id"
+                        [checkmark]="true"
+                        placeholder="Selecione o condomínio."
+                        />
+                        <p-button 
+                        icon="pi pi-plus"
+                        (click)="abrirModalCondominio()" 
+                        />
+                      }
+                      @else 
+                      {
+                      <p-select
+                        class="w-full"
+                        [options]="condominios"
+                        optionLabel="nome"
+                        [(ngModel)]='condominioSelecionado'
+                        optionValue="id"
+                        [checkmark]="true"
+                        placeholder="Selecione o condomínio."
+                        />
+                        <p-button 
+                        icon="pi pi-plus"
+                        (click)="abrirModalCondominio()" 
+                        />
+                      }
                     </div>
                   </div>
               }
@@ -675,6 +690,10 @@ export class ImovelCreate {
 
   mostrarModalCondominio: boolean = false;
 
+  idParaEditarCondominio: string = '';
+
+  condominioSelecionado: string = '';
+
   clienteForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
@@ -699,7 +718,7 @@ export class ImovelCreate {
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
-    numero: [null, [Validators.required]],
+    numero: this.formBuilder.control<number | null>(null),
     bairro: ['', [Validators.required]],
     cidade: ['', [Validators.required]],
     estado: ['', [Validators.required]],
@@ -843,7 +862,15 @@ export class ImovelCreate {
   buscarCondominioPorId(id: string) {
     this.condominioService.getById(id).subscribe({
       next: (condominio: CondominioResponse) => {
-        console.log('Condomínio cadastrado:', condominio);
+        return condominio;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar o condomínio', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao buscar o condomínio selecionado.'
+        });
       }
     })
   }
@@ -938,6 +965,21 @@ export class ImovelCreate {
         this.mostrarModalCondominio = false;
       }
     })
+  }
+
+  preencherDadosParaEditarCondominio(condominio: CondominioResponse) {
+    debugger
+    this.condominioForm.patchValue({
+      nome: condominio.nome,
+      cep: condominio.cep,
+      logradouro: condominio.logradouro,
+      numero: condominio.numero,
+      bairro: condominio.bairro,
+      estado: condominio.estado,
+      cidade: condominio.cidade,
+    })
+
+    this.abrirModalCondominio();
   }
 
   salvarCorretor() {
