@@ -21,7 +21,7 @@ import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { CepService } from '@/services/cep.service';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
-import { CondominioResponse, CriarCondominioRequest } from '@/models/condominio.model';
+import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { CondominioService } from '@/services/condominio.service';
 
 export interface ValidarCondominio {
@@ -1078,17 +1078,32 @@ export class ImovelCreate {
   }
 
   salvarCondominio() {
-    const formCondominio: CriarCondominioRequest = {
-      nome: this.condominioForm.getRawValue().nome!,
-      cep: this.condominioForm.getRawValue().cep!,
-      logradouro: this.condominioForm.getRawValue().logradouro!,
-      numero: this.condominioForm.getRawValue().numero!,
-      bairro: this.condominioForm.getRawValue().bairro!,
-      estado: this.condominioForm.getRawValue().estado!,
-      cidade: this.condominioForm.getRawValue().cidade!,
-    }
+    if (this.condominioSelecionado != '') {
+      const formCondominioParaEditar: EditarCondominioResquest = {
+        nome: this.condominioParaEditarForm.getRawValue().nome!,
+        cep: this.condominioParaEditarForm.getRawValue().cep!,
+        logradouro: this.condominioParaEditarForm.getRawValue().logradouro!,
+        numero: this.condominioParaEditarForm.getRawValue().numero!,
+        bairro: this.condominioParaEditarForm.getRawValue().bairro!,
+        estado: this.condominioParaEditarForm.getRawValue().estado!,
+        cidade: this.condominioParaEditarForm.getRawValue().cidade!,
+      }
 
-    this.cadastrarCondominio(formCondominio);
+      this.editarCondominio(this.condominioSelecionado, formCondominioParaEditar);
+    }else {
+
+      const formCondominio: CriarCondominioRequest = {
+        nome: this.condominioForm.getRawValue().nome!,
+        cep: this.condominioForm.getRawValue().cep!,
+        logradouro: this.condominioForm.getRawValue().logradouro!,
+        numero: this.condominioForm.getRawValue().numero!,
+        bairro: this.condominioForm.getRawValue().bairro!,
+        estado: this.condominioForm.getRawValue().estado!,
+        cidade: this.condominioForm.getRawValue().cidade!,
+      }
+      
+      this.cadastrarCondominio(formCondominio);
+    }
   }
 
   cadastrarCondominio(formCondominio: CriarCondominioRequest) {
@@ -1105,6 +1120,23 @@ export class ImovelCreate {
         this.buscarCondominioPorId(condominio.id);
 
         this.mostrarModalCondominio = false;
+      }
+    })
+  }
+
+
+  editarCondominio(id: string, formCondominioParaEditar: EditarCondominioResquest) {
+    this.condominioService.update(id, formCondominioParaEditar).subscribe({
+      next: (condominioEditado: CondominioResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Condomínio alterado com sucesso!',
+        });
+
+        this.buscarCondominios();
+
+        this.mostrarModalCondominioParaEditar = false;
       }
     })
   }
