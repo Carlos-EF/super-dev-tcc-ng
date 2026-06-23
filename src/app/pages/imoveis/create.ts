@@ -8,7 +8,7 @@ import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
@@ -21,7 +21,7 @@ import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { CepService } from '@/services/cep.service';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
-import { CondominioResponse, CriarCondominioRequest } from '@/models/condominio.model';
+import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { CondominioService } from '@/services/condominio.service';
 
 export interface ValidarCondominio {
@@ -174,6 +174,12 @@ export interface ValidarMobilia {
                               <p-button 
                               icon="pi pi-plus"
                               (click)="abrirModalCondominio()" 
+                              />
+                              <p-button
+                              icon="pi pi-trash"
+                              severity="danger"
+                              (click)="confirmarApagarCondominio(
+                                condominioSelecionado)"
                               />
                           } @else {
                               <p-select
@@ -783,14 +789,12 @@ export interface ValidarMobilia {
 })
 export class ImovelCreate {
   private readonly messageService = inject(MessageService);
-
   private readonly corretorService = inject(CorretorService);
-
   private readonly clienteService = inject(ClienteService);
-
   private readonly condominioService = inject(CondominioService);
-
   private readonly cepService = inject(CepService);
+  private readonly confirmationService = inject(ConfirmationService);
+
 
   private readonly formBuilder = inject(FormBuilder);
 
@@ -1078,17 +1082,32 @@ export class ImovelCreate {
   }
 
   salvarCondominio() {
-    const formCondominio: CriarCondominioRequest = {
-      nome: this.condominioForm.getRawValue().nome!,
-      cep: this.condominioForm.getRawValue().cep!,
-      logradouro: this.condominioForm.getRawValue().logradouro!,
-      numero: this.condominioForm.getRawValue().numero!,
-      bairro: this.condominioForm.getRawValue().bairro!,
-      estado: this.condominioForm.getRawValue().estado!,
-      cidade: this.condominioForm.getRawValue().cidade!,
-    }
+    if (this.condominioSelecionado != '') {
+      const formCondominioParaEditar: EditarCondominioResquest = {
+        nome: this.condominioParaEditarForm.getRawValue().nome!,
+        cep: this.condominioParaEditarForm.getRawValue().cep!,
+        logradouro: this.condominioParaEditarForm.getRawValue().logradouro!,
+        numero: this.condominioParaEditarForm.getRawValue().numero!,
+        bairro: this.condominioParaEditarForm.getRawValue().bairro!,
+        estado: this.condominioParaEditarForm.getRawValue().estado!,
+        cidade: this.condominioParaEditarForm.getRawValue().cidade!,
+      }
 
-    this.cadastrarCondominio(formCondominio);
+      this.editarCondominio(this.condominioSelecionado, formCondominioParaEditar);
+    } else {
+
+      const formCondominio: CriarCondominioRequest = {
+        nome: this.condominioForm.getRawValue().nome!,
+        cep: this.condominioForm.getRawValue().cep!,
+        logradouro: this.condominioForm.getRawValue().logradouro!,
+        numero: this.condominioForm.getRawValue().numero!,
+        bairro: this.condominioForm.getRawValue().bairro!,
+        estado: this.condominioForm.getRawValue().estado!,
+        cidade: this.condominioForm.getRawValue().cidade!,
+      }
+
+      this.cadastrarCondominio(formCondominio);
+    }
   }
 
   cadastrarCondominio(formCondominio: CriarCondominioRequest) {
@@ -1109,6 +1128,52 @@ export class ImovelCreate {
     })
   }
 
+
+  editarCondominio(id: string, formCondominioParaEditar: EditarCondominioResquest) {
+    this.condominioService.update(id, formCondominioParaEditar).subscribe({
+      next: (condominioEditado: CondominioResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Condomínio alterado com sucesso!',
+        });
+
+        this.buscarCondominios();
+
+        this.mostrarModalCondominioParaEditar = false;
+      }
+    })
+  }
+
+  confirmarApagarCondominio(id: string) {
+    this.confirmationService.confirm({
+      message: 'Deseja realmente apagar o condomínio?',
+      header: 'Confirmar Ação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, continuar',
+      rejectLabel: 'Não, cancelar',
+      accept: () => {
+        this.apagarCondominio(id);
+      },
+      reject: () => {
+      }
+    });
+  }
+
+  apagarCondominio(id: string) {
+    this.condominioService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          summary: 'Sucesso',
+          severity: 'success',
+          detail: 'Condomínio apagado com sucesso!'
+        });
+
+        this.buscarCondominios();
+      }
+    })
+  }
+
   preencherDadosParaEditarCondominio(condominio: CondominioResponse) {
     this.condominioParaEditarForm.patchValue({
       nome: condominio.nome,
@@ -1122,6 +1187,7 @@ export class ImovelCreate {
 
     this.abrirModalCondominioParaEditar();
   }
+
 
   salvarCorretor() {
     const formCorretor: CorretorCriarRequest = {
