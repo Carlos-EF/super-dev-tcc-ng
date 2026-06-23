@@ -8,7 +8,7 @@ import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { FileUploadModule } from 'primeng/fileupload';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
@@ -174,6 +174,12 @@ export interface ValidarMobilia {
                               <p-button 
                               icon="pi pi-plus"
                               (click)="abrirModalCondominio()" 
+                              />
+                              <p-button
+                              icon="pi pi-trash"
+                              severity="danger"
+                              (click)="confirmarApagarCondominio(
+                                condominioSelecionado)"
                               />
                           } @else {
                               <p-select
@@ -783,14 +789,12 @@ export interface ValidarMobilia {
 })
 export class ImovelCreate {
   private readonly messageService = inject(MessageService);
-
   private readonly corretorService = inject(CorretorService);
-
   private readonly clienteService = inject(ClienteService);
-
   private readonly condominioService = inject(CondominioService);
-
   private readonly cepService = inject(CepService);
+  private readonly confirmationService = inject(ConfirmationService);
+
 
   private readonly formBuilder = inject(FormBuilder);
 
@@ -1090,7 +1094,7 @@ export class ImovelCreate {
       }
 
       this.editarCondominio(this.condominioSelecionado, formCondominioParaEditar);
-    }else {
+    } else {
 
       const formCondominio: CriarCondominioRequest = {
         nome: this.condominioForm.getRawValue().nome!,
@@ -1101,7 +1105,7 @@ export class ImovelCreate {
         estado: this.condominioForm.getRawValue().estado!,
         cidade: this.condominioForm.getRawValue().cidade!,
       }
-      
+
       this.cadastrarCondominio(formCondominio);
     }
   }
@@ -1141,6 +1145,35 @@ export class ImovelCreate {
     })
   }
 
+  confirmarApagarCondominio(id: string) {
+    this.confirmationService.confirm({
+      message: 'Deseja realmente apagar o condomínio?',
+      header: 'Confirmar Ação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, continuar',
+      rejectLabel: 'Não, cancelar',
+      accept: () => {
+        this.apagarCondominio(id);
+      },
+      reject: () => {
+      }
+    });
+  }
+
+  apagarCondominio(id: string) {
+    this.condominioService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          summary: 'Sucesso',
+          severity: 'success',
+          detail: 'Condomínio apagado com sucesso!'
+        });
+
+        this.buscarCondominios();
+      }
+    })
+  }
+
   preencherDadosParaEditarCondominio(condominio: CondominioResponse) {
     this.condominioParaEditarForm.patchValue({
       nome: condominio.nome,
@@ -1154,6 +1187,7 @@ export class ImovelCreate {
 
     this.abrirModalCondominioParaEditar();
   }
+
 
   salvarCorretor() {
     const formCorretor: CorretorCriarRequest = {
