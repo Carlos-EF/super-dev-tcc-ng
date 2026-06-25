@@ -23,14 +23,8 @@ import { CepService } from '@/services/cep.service';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { CondominioService } from '@/services/condominio.service';
-
-export interface ValidarCondominio {
-  resposta: string
-}
-
-export interface ValidarMobilia {
-  resposta: string
-}
+import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
+import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 
 @Component({
   selector: 'app-create',
@@ -156,17 +150,16 @@ export interface ValidarMobilia {
            <div class="flex flex-row flex-wrap gap-4">
             <div class="flex flex-col gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
-              <p-select [options]="condominioValidar"
+              <p-select 
+              [options]="condominioValidar"
               formControlName="em_condominio" 
               [checkmark]="true" 
-              optionLabel="resposta" 
-              optionValue="resposta" 
               [showClear]="true" 
               placeholder="Está em um condomínio?" />
             </div>
 
-              @switch (condominioForm.get('em_condominio')?.getRawValue()) {
-                @case (true) {
+              @switch (imovelForm.get('em_condominio')?.getRawValue()) {
+                @case ('Sim') {
                   <div class="flex flex-col grow gap-2">
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
                     <div class="flex flex-row">
@@ -851,6 +844,10 @@ export class ImovelCreate {
 
   tipoCliente = [...TIPO_CLIENTE_MODAL];
 
+  condominioValidar = [...ESTA_EM_CONDOMINIO];
+
+  mobiliaValidar = [...ESTA_MOBILIADO];
+
   mostrarModalCorretor: boolean = false;
 
   mostrarModalProprietario: boolean = false;
@@ -866,7 +863,7 @@ export class ImovelCreate {
     corretor: ['', [Validators.required]],
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
-    em_condominio: [false, [Validators.required]],
+    em_condominio: ['', [Validators.required]],
     condominio: [''],
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
@@ -884,7 +881,7 @@ export class ImovelCreate {
     quantidade_vagas: this.formBuilder.control<number | null>(null),
     quantidade_andares: this.formBuilder.control<number | null>(null),
     quantidade_salas: this.formBuilder.control<number | null>(null),
-    esta_mobiliado: [false, [Validators.required]]
+    esta_mobiliado: ['', [Validators.required]]
   })
 
   clienteForm = this.formBuilder.group({
@@ -929,30 +926,6 @@ export class ImovelCreate {
 
   dadosAdicionaisForm = this.formBuilder.group({});
 
-  condominioValidar: ValidarCondominio[] | undefined;
-
-  respostaCondominio: ValidarCondominio | string | undefined;
-
-  mobiliaValidar: ValidarMobilia[] | undefined;
-
-  valorSolicitado?: number;
-
-  valorCondominio?: number;
-
-  valorIptu?: number;
-
-  quantidadeQuartos?: number;
-
-  quantidadeBanheiros?: number;
-
-  quantidadeSuites?: number;
-
-  quantidadeSalas?: number;
-
-  quantidadeAndares?: number;
-
-  quantidadeVagas?: number;
-
   uploadedFiles: any[] = [];
 
   constructor(
@@ -962,16 +935,6 @@ export class ImovelCreate {
   }
 
   ngOnInit() {
-    this.condominioValidar = [
-      { resposta: 'Sim' },
-      { resposta: 'Não' },
-    ];
-
-    this.mobiliaValidar = [
-      { resposta: 'Sim' },
-      { resposta: 'Não' },
-    ]
-
     this.buscarCorretores();
 
     this.buscarProprietarios();
@@ -984,6 +947,27 @@ export class ImovelCreate {
       .subscribe(tipo => {
         this.alterarFormularioDadosAdicionais(tipo);
       });
+
+      this.imovelForm.get('condominio')?.valueChanges.subscribe(
+        condominio => {
+          if (condominio) {
+            this.condominioSelecionado = condominio;
+          }
+        }
+      );
+  }
+
+
+  transformarStringEmBool(resposta: string): boolean {
+    var escolhaTransformada: boolean = false;
+    
+    if (resposta == 'Sim') {
+      escolhaTransformada = true
+    } else if (resposta == 'Não') {
+      escolhaTransformada = false
+    }
+
+    return escolhaTransformada;
   }
 
 
