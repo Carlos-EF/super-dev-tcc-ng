@@ -1051,6 +1051,8 @@ export class ImovelCreate {
       next: (condominio: CondominioResponse) => {
         if (condominio.id == this.condominioSelecionado) {
           this.preencherDadosParaEditarCondominio(condominio);
+        } else {
+          this.preecherDadosComNovoCondominio(condominio);
         }
       },
       error: (erro: Error) => {
@@ -1237,6 +1239,11 @@ export class ImovelCreate {
     this.abrirModalCondominioParaEditar();
   }
 
+  preecherDadosComNovoCondominio(condominio: CondominioResponse) {
+    this.imovelForm.patchValue({
+      condominio: condominio.id
+    })
+  }
 
   salvarCorretor() {
     const formCorretor: CorretorCriarRequest = {
