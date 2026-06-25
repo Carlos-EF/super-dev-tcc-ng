@@ -823,7 +823,29 @@ export class ImovelCreate {
   condominioSelecionado: string = '';
 
   imovelForm = this.formBuilder.group({
-    
+    proprietario: ['', [Validators.required]],
+    corretor: ['', [Validators.required]],
+    finalidade: ['', [Validators.required]],
+    tipo: ['', [Validators.required]],
+    em_condominio: [false, [Validators.required]],
+    condominio: [''],
+    cep: ['', [Validators.required]],
+    logradouro: ['', [Validators.required]],
+    numero: this.formBuilder.control<number | null>(null),
+    estado: ['', [Validators.required]],
+    cidade: ['', [Validators.required]],
+    bairro: ['', [Validators.required]],
+    complemento: ['', [Validators.required]],
+    valor: this.formBuilder.control<number | null>(null),
+    valor_condominio: this.formBuilder.control<number | null>(null),
+    iptu: this.formBuilder.control<number | null>(null),
+    quantidade_quartos: this.formBuilder.control<number | null>(null),
+    quantidade_suites: this.formBuilder.control<number | null>(null),
+    quantidade_banheiros: this.formBuilder.control<number | null>(null),
+    quantidade_vagas: this.formBuilder.control<number | null>(null),
+    quantidade_andares: this.formBuilder.control<number | null>(null),
+    quantidade_salas: this.formBuilder.control<number | null>(null),
+    esta_mobiliado: [false, [Validators.required]]
   })
 
   clienteForm = this.formBuilder.group({
