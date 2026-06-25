@@ -858,6 +858,10 @@ export class ImovelCreate {
 
   condominioSelecionado: string = '';
 
+  corretorSelecionado: string = '';
+
+  proprietarioSelecionado: string = '';
+
   imovelForm = this.formBuilder.group({
     proprietario: ['', [Validators.required]],
     corretor: ['', [Validators.required]],
@@ -955,6 +959,22 @@ export class ImovelCreate {
           }
         }
       );
+
+      this.imovelForm.get('corretor')?.valueChanges.subscribe(
+        corretor => {
+          if (corretor) {
+            this.corretorSelecionado = corretor;
+          }
+        }
+      );
+
+      this.imovelForm.get('proprietario')?.valueChanges.subscribe(
+        proprietario => {
+          if (proprietario) {
+            this.proprietarioSelecionado = proprietario;
+          }
+        }
+      );
   }
 
 
@@ -1033,7 +1053,7 @@ export class ImovelCreate {
   buscarProprietarioPorId(id: string) {
     this.clienteService.getById(id).subscribe({
       next: (cliente: ClienteResponse) => {
-        console.log('Cliente cadastrado:', cliente);
+        this.preecherDadosComNovoProprietario(cliente);
       }
     });
   }
@@ -1041,7 +1061,7 @@ export class ImovelCreate {
   buscarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
       next: (corretor: CorretorResponse) => {
-        console.log('Corretor cadastrado:', corretor);
+        this.preecherDadosComNovoCorretor(corretor);
       }
     });
   }
@@ -1242,6 +1262,17 @@ export class ImovelCreate {
   preecherDadosComNovoCondominio(condominio: CondominioResponse) {
     this.imovelForm.patchValue({
       condominio: condominio.id
+    })
+  }
+
+  preecherDadosComNovoProprietario(proprietario: ClienteResponse) {
+    this.imovelForm.patchValue({
+      proprietario: proprietario.id
+    })
+  }
+  preecherDadosComNovoCorretor(corretor: CorretorResponse) {
+    this.imovelForm.patchValue({
+      corretor: corretor.id
     })
   }
 
