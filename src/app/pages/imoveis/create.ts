@@ -1072,7 +1072,7 @@ export class ImovelCreate {
         if (condominio.id == this.condominioSelecionado) {
           this.preencherDadosParaEditarCondominio(condominio);
         } else {
-          this.preecherDadosComNovoCondominio(condominio);
+          this.preencherLocalizacaoComCondominio(condominio);
         }
       },
       error: (erro: Error) => {
@@ -1203,6 +1203,7 @@ export class ImovelCreate {
   editarCondominio(id: string, formCondominioParaEditar: EditarCondominioResquest) {
     this.condominioService.update(id, formCondominioParaEditar).subscribe({
       next: (condominioEditado: CondominioResponse) => {
+        this.preencherLocalizacaoComCondominio(condominioEditado);
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso',
@@ -1259,9 +1260,15 @@ export class ImovelCreate {
     this.abrirModalCondominioParaEditar();
   }
 
-  preecherDadosComNovoCondominio(condominio: CondominioResponse) {
+  preencherLocalizacaoComCondominio(condominio: CondominioResponse) {
     this.imovelForm.patchValue({
-      condominio: condominio.id
+      condominio: condominio.id,
+      cep: condominio.cep,
+      logradouro: condominio.logradouro,
+      numero: condominio.numero,
+      bairro: condominio.bairro,
+      estado: condominio.estado,
+      cidade: condominio.cidade,
     })
   }
 
