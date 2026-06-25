@@ -822,6 +822,10 @@ export class ImovelCreate {
 
   condominioSelecionado: string = '';
 
+  imovelForm = this.formBuilder.group({
+    
+  })
+
   clienteForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
