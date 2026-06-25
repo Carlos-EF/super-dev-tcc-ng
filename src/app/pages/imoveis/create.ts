@@ -49,6 +49,7 @@ export interface ValidarMobilia {
   ],
   template: `
   <p-toast/>
+  <form [formGroup]="imovelForm">
   <div class="card flex justify-center">
     <p-stepper [value]="1" class="grow basis-0 gap-2 surface-0">
       <p-step-list>
@@ -75,6 +76,7 @@ export interface ValidarMobilia {
               [checkmark]="true" 
               [showClear]="true" 
               placeholder="Selecione o proprietário."
+              formControlName="proprietario"
               class="w-full"/>
               <p-button 
               icon="pi pi-plus"
@@ -93,6 +95,7 @@ export interface ValidarMobilia {
             optionValue="id"
             [showClear]="true" 
             placeholder="Selecione o corretor."
+            formControlName="corretor"
             class="w-full"/>
             <p-button 
             icon="pi pi-plus"
@@ -113,17 +116,32 @@ export interface ValidarMobilia {
           <div class="flex flex-wrap gap-6">
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
-              <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do imóvel." />
+              <input pInputText 
+              id="campo-codigo" 
+              type="text" 
+              placeholder="Digite o código de referência do imóvel."
+              formControlName="codigo"
+               />
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-finalidade">Finalidade: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="finalidades" [checkmark]="true" [showClear]="true" placeholder="Selecione a finalidade do imóvel."  />
+             <p-select 
+             [options]="finalidades" 
+             [checkmark]="true" 
+             [showClear]="true" 
+             formControlName="finalidade"
+             placeholder="Selecione a finalidade do imóvel."  />
            </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
              <label for="campo-tipo-imovel">Tipo do Imóvel: <span class="text-red-500"><strong> *</strong></span></label>
-             <p-select [options]="tipoImovel"  [checkmark]="true"  [showClear]="true" placeholder="Selecione o tipo do imóvel."  />
+             <p-select 
+             [options]="tipoImovel"  
+             [checkmark]="true"  
+             formControlName="tipo"
+             [showClear]="true" 
+             placeholder="Selecione o tipo do imóvel."  />
            </div>
         </div>
       </div>
@@ -138,8 +156,8 @@ export interface ValidarMobilia {
            <div class="flex flex-row flex-wrap gap-4">
             <div class="flex flex-col gap-2">
               <label for="campo-pergunta-condominio">Em Condomínio?</label>
-              <p-select [options]="condominioValidar" 
-              [(ngModel)]="respostaCondominio" 
+              <p-select [options]="condominioValidar"
+              formControlName="em_condominio" 
               [checkmark]="true" 
               optionLabel="resposta" 
               optionValue="resposta" 
@@ -147,8 +165,8 @@ export interface ValidarMobilia {
               placeholder="Está em um condomínio?" />
             </div>
 
-              @switch (respostaCondominio) {
-                @case ('Sim') {
+              @switch (condominioForm.get('em_condominio')?.getRawValue()) {
+                @case (true) {
                   <div class="flex flex-col grow gap-2">
                     <label for="campo-nome-condominio">Nome Condomínio:</label>
                     <div class="flex flex-row">
@@ -164,7 +182,7 @@ export interface ValidarMobilia {
                               <p-select
                               class="w-full"
                               [options]="condominios"
-                              [(ngModel)]='condominioSelecionado'
+                              formControlName="condominio"
                               optionLabel="nome"
                               optionValue="id"
                               [showClear]="true"
@@ -185,8 +203,8 @@ export interface ValidarMobilia {
                               <p-select
                               class="w-full"
                               [options]="condominios"
-                              [(ngModel)]='condominioSelecionado'
                               optionLabel="nome"
+                              formControlName="condominio"
                               optionValue="id"
                               [checkmark]="true"
                               placeholder="Selecione o condomínio."
@@ -206,7 +224,9 @@ export interface ValidarMobilia {
             <div class="flex flex-col gap-2">
               <label for="campo-cep">CEP: <span class="text-red-500"><strong> *</strong></span></label>
                <div class="flex flex-row">
-                 <p-inputmask mask="99999-999" 
+                 <p-inputmask
+                 formControlName="cep"
+                 mask="99999-999" 
                  placeholder="99999-999" />
                  <p-button
                  icon="pi pi-search"/>
@@ -217,6 +237,7 @@ export interface ValidarMobilia {
               <label for="campo-logradouro">Logradouro: <span class="text-red-500"><strong> *</strong></span></label>
               <input
               pInputText 
+              formControlName="logradouro"
               id="campo-logradouro" 
               type="text" 
               placeholder="Digite o nome da rua." />
@@ -224,17 +245,17 @@ export interface ValidarMobilia {
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
-              <input 
-              pInputText 
-              id="campo-numero" 
-              type="text" 
+              <p-input-number 
+              formControlName="numero"
+              id="campo-numero"  
               placeholder="Número do imóvel."/>
             </div>
 
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-estado">Estado: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              pInputText 
+              pInputText
+              formControlName="estado" 
               id="campo-estado" 
               type="text" 
               placeholder="Digite o nome da estado." />
@@ -243,7 +264,8 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-cidade">Cidade: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              pInputText 
+              pInputText
+              formControlName="cidade" 
               id="campo-cidade" 
               type="text" 
               placeholder="Digite o nome da cidade." />
@@ -252,7 +274,8 @@ export interface ValidarMobilia {
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-bairro">Bairro: <span class="text-red-500"><strong> *</strong></span></label>
               <input
-              pInputText 
+              pInputText
+              formControlName="bairro" 
               id="campo-bairro" 
               type="text" 
               placeholder="Digite o nome da bairro." />
@@ -260,7 +283,12 @@ export interface ValidarMobilia {
         
             <div class="flex flex-col grow basis-0 gap-2">
               <label for="campo-complemento">Complemento:</label>
-              <input pInputText id="campo-complemento" type="text" placeholder="Ex.: Apartamento 101." />
+              <input
+              formControlName="complemento" 
+              pInputText 
+              id="campo-complemento" 
+              type="text" 
+              placeholder="Ex.: Apartamento 101." />
             </div>
         </div>
       </div>
@@ -279,18 +307,20 @@ export interface ValidarMobilia {
             <div class="flex flex-wrap gap-6 w-full">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor">Valor Solicitado: <span class="text-red-500"><strong> *</strong></span></label>
-                <p-inputnumber [(ngModel)]="valorSolicitado"
+                <p-inputnumber
+                formControlName="valor"
                 placeholder="Digite o valor solicitado no imóvel."
                 mode="currency"
                 currency="BRL"
                 locale="pt-BR" />
               </div>
 
-              @switch (respostaCondominio) {
-                @case ('Sim') {
+              @switch (imovelForm.get('em_condominio')?.getRawValue()) {
+                @case (true) {
                   <div class="flex flex-col grow basis-0 gap-2">
                     <label for="campo-valor-condominio">Condomínio:</label>
-                    <p-inputnumber [(ngModel)]="valorCondominio"
+                    <p-inputnumber
+                    formControlName="valor_condominio"
                     placeholder="Digite o valor do condomínio."
                     mode="currency"
                     currency="BRL"
@@ -301,7 +331,8 @@ export interface ValidarMobilia {
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
-                <p-inputnumber [(ngModel)]="valorIptu"
+                <p-inputnumber
+                formControlName="iptu"
                 placeholder="Digite o valor do IPTU."
                 mode="currency"
                 currency="BRL"
@@ -313,37 +344,43 @@ export interface ValidarMobilia {
             <div class="flex flex-wrap gap-6">
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-quartos">Quantidade de Quartos:</label>
-                <p-inputnumber [(ngModel)]="quantidadeQuartos"
+                <p-inputnumber
+                formControlName="quantidade_quartos"
                 placeholder="Digite a quantidade de quartos." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-suites">Sendo Suítes:</label>
-                <p-inputnumber [(ngModel)]="quantidadeSuites"
+                <p-inputnumber
+                formControlName="quantidade_suites"
                 placeholder="Digite a quantidade de suítes." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-banheiros">Quantidade de Banheiros:</label>
-                <p-inputnumber [(ngModel)]="quantidadeBanheiros"
+                <p-inputnumber
+                formControlName="quantidade_banheiros"
                 placeholder="Digite a quantidade de banheiros." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-vagas">Vagas de Garagem:</label>
-                <p-inputnumber [(ngModel)]="quantidadeVagas"
+                <p-inputnumber
+                formControlName="quantidade_vagas"
                 placeholder="Digite a quantidade de vagas de garagem." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-andares">Andares:</label>
-                <p-inputnumber [(ngModel)]="quantidadeAndares"
+                <p-inputnumber
+                formControlName="quantidade_andares"
                 placeholder="Digite a quantidade de andares." />
               </div>
 
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-salas">Quantidade de Salas:</label>
-                <p-inputnumber [(ngModel)]="quantidadeSalas"
+                <p-inputnumber
+                formControlName="quantidade_salas"
                 placeholder="Digite a quantidade de salas." />
               </div>
 
@@ -354,7 +391,8 @@ export interface ValidarMobilia {
              [checkmark]="true" 
              optionLabel="resposta" 
              optionValue="resposta" 
-             [showClear]="true" 
+             [showClear]="true"
+             formControlName="esta_mobiliado" 
              placeholder="Selecione uma opção."
              appendTo="body"  />
               </div>
@@ -397,6 +435,7 @@ export interface ValidarMobilia {
       </p-step-panels>
     </p-stepper>
   </div>
+</form>
 
 <form [formGroup]="corretorForm">
 <p-dialog 
