@@ -952,35 +952,35 @@ export class ImovelCreate {
         this.alterarFormularioDadosAdicionais(tipo);
       });
 
-      this.imovelForm.get('condominio')?.valueChanges.subscribe(
-        condominio => {
-          if (condominio) {
-            this.condominioSelecionado = condominio;
-          }
+    this.imovelForm.get('condominio')?.valueChanges.subscribe(
+      condominio => {
+        if (condominio) {
+          this.condominioSelecionado = condominio;
+          this.preencherLocalizacaoComCondominioPorId(condominio);
         }
-      );
+      }
+    );
 
-      this.imovelForm.get('corretor')?.valueChanges.subscribe(
-        corretor => {
-          if (corretor) {
-            this.corretorSelecionado = corretor;
-          }
+    this.imovelForm.get('corretor')?.valueChanges.subscribe(
+      corretor => {
+        if (corretor) {
+          this.corretorSelecionado = corretor;
         }
-      );
+      }
+    );
 
-      this.imovelForm.get('proprietario')?.valueChanges.subscribe(
-        proprietario => {
-          if (proprietario) {
-            this.proprietarioSelecionado = proprietario;
-          }
+    this.imovelForm.get('proprietario')?.valueChanges.subscribe(
+      proprietario => {
+        if (proprietario) {
+          this.proprietarioSelecionado = proprietario;
         }
-      );
+      }
+    );
   }
-
 
   transformarStringEmBool(resposta: string): boolean {
     var escolhaTransformada: boolean = false;
-    
+
     if (resposta == 'Sim') {
       escolhaTransformada = true
     } else if (resposta == 'Não') {
@@ -989,7 +989,6 @@ export class ImovelCreate {
 
     return escolhaTransformada;
   }
-
 
   alterarFormularioDadosAdicionais(tipo: string | null): void {
     if (tipo === "Proprietário") {
@@ -1269,6 +1268,29 @@ export class ImovelCreate {
       bairro: condominio.bairro,
       estado: condominio.estado,
       cidade: condominio.cidade,
+    })
+  }
+
+  preencherLocalizacaoComCondominioPorId(id: string) {
+    this.condominioService.getById(id).subscribe({
+      next: (condominio: CondominioResponse) => {
+        this.imovelForm.patchValue({
+          cep: condominio.cep,
+          logradouro: condominio.logradouro,
+          numero: condominio.numero,
+          bairro: condominio.bairro,
+          estado: condominio.estado,
+          cidade: condominio.cidade,
+        })
+      },
+      error:(erro: Error) => {
+        console.log('Ocorreu um erro ao tentar preecher dados de localização:', erro);
+        this.messageService.add({
+          severity:'error',
+          summary:'ERRO',
+          detail: 'Ocorreu um erro ao tentar preencher os dados de localização.'
+        })
+      }
     })
   }
 
