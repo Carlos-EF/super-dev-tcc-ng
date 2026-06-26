@@ -14,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteLocatarioRequest, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
@@ -1061,6 +1061,22 @@ export class ImovelCreate {
     });
   }
 
+  buscarProprietarioPorIdParaEditar(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        const clienteParaEditar: EditarClienteRequest = {
+          nome: cliente.nome,
+          celular: cliente.celular,
+          email: cliente.email,
+          como_encontrou: cliente.como_encontrou,
+          tipo: cliente.tipo
+        };
+
+        this.editarDadosAdicionaisProprietario(cliente.id, clienteParaEditar, cliente.dados_adicionais);
+      }
+    });
+  }
+
 
   buscarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
@@ -1394,6 +1410,25 @@ export class ImovelCreate {
     });
   }
 
+  editarDadosAdicionaisProprietario(
+    id: string,
+    form: EditarClienteRequest,
+    dadosAdicionais: EditarDadosAdicionais) {
+    this.clienteService.update(id, form, dadosAdicionais).subscribe({
+      next: (cliente: ClienteResponse) => {
+        console.log(`Dado alterado do cliente ${cliente.nome} com sucesso!`);
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar proprietário:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Não foi possível cadastrar o proprietário.'
+        });
+      }
+    });
+  }
+
   salvarImovel() {
     const formImovel: CriarImovelRequest = {
       id_proprietario: this.imovelForm.getRawValue().proprietario!,
@@ -1421,6 +1456,8 @@ export class ImovelCreate {
       quantidade_salas: this.imovelForm.getRawValue().quantidade_salas!,
       esta_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
     };
+
+    this.buscarProprietarioPorIdParaEditar(this.imovelForm.getRawValue().proprietario!);
 
     this.cadastrarImovel(formImovel);
   }
