@@ -1,4 +1,4 @@
-import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
+import { CriarImovelRequest, EditarImovelRequest, ImovelResponse } from '@/models/imovel.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -30,5 +30,17 @@ export class ImovelService {
 
   create(form: CriarImovelRequest): Observable<ImovelResponse> {
     return this.httpClient.post<ImovelResponse>(this.url, form);
+  }
+
+  update(
+    id: string,
+    form: EditarImovelRequest
+  ): Observable<ImovelResponse> {
+    const urlComId = `${this.url}/${id}`;
+
+    return this.httpClient.put<ImovelResponse>(
+      urlComId,
+      form
+    )
   }
 }
