@@ -14,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteLocatarioRequest, EditarClienteProprietarioRequest, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
@@ -25,6 +25,8 @@ import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } 
 import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
+import { ImovelService } from '@/services/imovel.service';
+import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -421,7 +423,7 @@ import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 
             <div class="flex pt-6 justify-between">
               <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
-              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="cadastrarImovel()" />
+              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="salvarImovel()" />
             </div>
           </ng-template>
         </p-step-panel>
@@ -825,6 +827,7 @@ export class ImovelCreate {
   private readonly clienteService = inject(ClienteService);
   private readonly condominioService = inject(CondominioService);
   private readonly cepService = inject(CepService);
+  private readonly imovelService = inject(ImovelService);
   private readonly confirmationService = inject(ConfirmationService);
 
 
@@ -865,6 +868,7 @@ export class ImovelCreate {
   imovelForm = this.formBuilder.group({
     proprietario: ['', [Validators.required]],
     corretor: ['', [Validators.required]],
+    codigo: ['', [Validators.required]],
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
     em_condominio: ['', [Validators.required]],
@@ -1056,6 +1060,7 @@ export class ImovelCreate {
       }
     });
   }
+
 
   buscarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
@@ -1283,11 +1288,11 @@ export class ImovelCreate {
           cidade: condominio.cidade,
         })
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar preecher dados de localização:', erro);
         this.messageService.add({
-          severity:'error',
-          summary:'ERRO',
+          severity: 'error',
+          summary: 'ERRO',
           detail: 'Ocorreu um erro ao tentar preencher os dados de localização.'
         })
       }
@@ -1389,8 +1394,106 @@ export class ImovelCreate {
     });
   }
 
-  cadastrarImovel() {
-    this.router.navigate(['/pages/imoveis'])
+  buscarDadosClienteParaCadastrarImovel(
+    idImovel: string,
+    idCliente: string) {
+    this.clienteService.getById(idCliente).subscribe({
+      next: (cliente: ClienteResponse) => {
+        if (cliente.tipo == 'Locatário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+
+          const dadosAdicionais: EditarClienteLocatarioRequest = {
+            imovel_associado: idImovel
+          }
+
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        } else if (cliente.tipo == 'Proprietário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+          
+          const dadosAdicionais: EditarClienteProprietarioRequest = {
+            imovel_associado: idImovel
+          }
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        }
+      }
+    })
+  }
+
+  editarDadosAdicionaisCliente(
+    id: string,
+    formEditar: EditarClienteRequest,
+    dadosAdicionais: EditarDadosAdicionais
+  ) {
+
+  }
+
+  salvarImovel() {
+    const formImovel: CriarImovelRequest = {
+      id_proprietario: this.imovelForm.getRawValue().proprietario!,
+      id_corretor: this.imovelForm.getRawValue().corretor!,
+      codigo: this.imovelForm.getRawValue().codigo!,
+      finalidade: this.imovelForm.getRawValue().finalidade!,
+      tipo: this.imovelForm.getRawValue().tipo!,
+      em_condominio: this.transformarStringEmBool(this.imovelForm.getRawValue().em_condominio!),
+      condominio: this.imovelForm.getRawValue().condominio!,
+      cep: this.imovelForm.getRawValue().cep!,
+      logradouro: this.imovelForm.getRawValue().logradouro!,
+      numero: this.imovelForm.getRawValue().numero!,
+      estado: this.imovelForm.getRawValue().estado!,
+      cidade: this.imovelForm.getRawValue().cidade!,
+      bairro: this.imovelForm.getRawValue().bairro!,
+      complemento: this.imovelForm.getRawValue().complemento!,
+      valor: this.imovelForm.getRawValue().valor!,
+      valor_condominio: this.imovelForm.getRawValue().valor_condominio!,
+      iptu: this.imovelForm.getRawValue().iptu!,
+      quantidade_quartos: this.imovelForm.getRawValue().quantidade_quartos!,
+      quantidade_suites: this.imovelForm.getRawValue().quantidade_suites!,
+      quantidade_banheiros: this.imovelForm.getRawValue().quantidade_banheiros!,
+      quantidade_vagas: this.imovelForm.getRawValue().quantidade_vagas!,
+      quantidade_andares: this.imovelForm.getRawValue().quantidade_andares!,
+      quantidade_salas: this.imovelForm.getRawValue().quantidade_salas!,
+      esta_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
+    };
+
+    this.cadastrarImovel(formImovel);
+  }
+
+  cadastrarImovel(form: CriarImovelRequest) {
+    this.imovelService.create(form).subscribe({
+      next: (imovel: ImovelResponse) => {
+        const idImovel = imovel.id;
+
+        this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.id_proprietario);
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Imóvel cadastrado com sucesso!'
+        })
+
+        this.router.navigate(['/pages/imoveis'])
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO!',
+          detail: 'Ocorreu um erro ao tentar cadastrar o imóvel.'
+        })
+      }
+    })
   }
 
   onUpload(event: any) {
