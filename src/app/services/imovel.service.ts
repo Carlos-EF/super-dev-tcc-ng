@@ -21,4 +21,10 @@ export class ImovelService {
 
     return this.httpClient.get<ImovelResponse>(urlComId);
   }
+
+  delete(id: string): Observable<void> {
+    const urlComId = `${this.url}/${id}`;
+
+    return this.httpClient.delete<void>(urlComId);
+  }
 }
