@@ -14,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { CorretorService } from '@/services/corretor.service';
 import { ClienteService } from '@/services/cliente.service';
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteLocatarioRequest, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteLocatarioRequest, EditarClienteProprietarioRequest, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { DialogModule } from 'primeng/dialog';
 import { TIPO_CLIENTE_MODAL } from '@/types/cliente.types';
@@ -1061,22 +1061,6 @@ export class ImovelCreate {
     });
   }
 
-  buscarProprietarioPorIdParaEditar(id: string) {
-    this.clienteService.getById(id).subscribe({
-      next: (cliente: ClienteResponse) => {
-        const clienteParaEditar: EditarClienteRequest = {
-          nome: cliente.nome,
-          celular: cliente.celular,
-          email: cliente.email,
-          como_encontrou: cliente.como_encontrou,
-          tipo: cliente.tipo
-        };
-
-        this.editarDadosAdicionaisProprietario(cliente.id, clienteParaEditar, cliente.dados_adicionais);
-      }
-    });
-  }
-
 
   buscarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
@@ -1410,23 +1394,49 @@ export class ImovelCreate {
     });
   }
 
-  editarDadosAdicionaisProprietario(
-    id: string,
-    form: EditarClienteRequest,
-    dadosAdicionais: EditarDadosAdicionais) {
-    this.clienteService.update(id, form, dadosAdicionais).subscribe({
+  buscarDadosClienteParaCadastrarImovel(
+    idImovel: string,
+    idCliente: string) {
+    this.clienteService.getById(idCliente).subscribe({
       next: (cliente: ClienteResponse) => {
-        console.log(`Dado alterado do cliente ${cliente.nome} com sucesso!`);
-      },
-      error: (erro: Error) => {
-        console.error('Erro ao cadastrar proprietário:', erro);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro!',
-          detail: 'Não foi possível cadastrar o proprietário.'
-        });
+        if (cliente.tipo == 'Locatário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+
+          const dadosAdicionais: EditarClienteLocatarioRequest = {
+            imovel_associado: idImovel
+          }
+
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        } else if (cliente.tipo == 'Proprietário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+          
+          const dadosAdicionais: EditarClienteProprietarioRequest = {
+            imovel_associado: idImovel
+          }
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        }
       }
-    });
+    })
+  }
+
+  editarDadosAdicionaisCliente(
+    id: string,
+    formEditar: EditarClienteRequest,
+    dadosAdicionais: EditarDadosAdicionais
+  ) {
+
   }
 
   salvarImovel() {
@@ -1457,20 +1467,22 @@ export class ImovelCreate {
       esta_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
     };
 
-    this.buscarProprietarioPorIdParaEditar(this.imovelForm.getRawValue().proprietario!);
-
     this.cadastrarImovel(formImovel);
   }
 
   cadastrarImovel(form: CriarImovelRequest) {
     this.imovelService.create(form).subscribe({
       next: (imovel: ImovelResponse) => {
+        const idImovel = imovel.id;
+
+        this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.id_proprietario);
+
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Imóvel cadastrado com sucesso!'
         })
-        
+
         this.router.navigate(['/pages/imoveis'])
       },
       error: (erro: Error) => {
