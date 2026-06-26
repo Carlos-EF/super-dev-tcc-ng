@@ -15,4 +15,10 @@ export class ImovelService {
   getAll(): Observable<ImovelResponse[]> {
     return this.httpClient.get<ImovelResponse[]>(this.url);
   }
+
+  getById(id: string): Observable<ImovelResponse> {
+    const urlComId = `${this.url}/${id}`;
+
+    return this.httpClient.get<ImovelResponse>(urlComId);
+  }
 }
