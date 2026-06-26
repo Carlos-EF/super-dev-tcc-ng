@@ -25,6 +25,8 @@ import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } 
 import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
+import { ImovelService } from '@/services/imovel.service';
+import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -421,7 +423,7 @@ import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 
             <div class="flex pt-6 justify-between">
               <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
-              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="cadastrarImovel()" />
+              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="salvarImovel()" />
             </div>
           </ng-template>
         </p-step-panel>
@@ -825,6 +827,7 @@ export class ImovelCreate {
   private readonly clienteService = inject(ClienteService);
   private readonly condominioService = inject(CondominioService);
   private readonly cepService = inject(CepService);
+  private readonly imovelService = inject(ImovelService);
   private readonly confirmationService = inject(ConfirmationService);
 
 
@@ -867,7 +870,7 @@ export class ImovelCreate {
     corretor: ['', [Validators.required]],
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
-    em_condominio: ['', [Validators.required]],
+    em_condominio: [false, [Validators.required]],
     condominio: [''],
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
@@ -885,7 +888,7 @@ export class ImovelCreate {
     quantidade_vagas: this.formBuilder.control<number | null>(null),
     quantidade_andares: this.formBuilder.control<number | null>(null),
     quantidade_salas: this.formBuilder.control<number | null>(null),
-    esta_mobiliado: ['', [Validators.required]]
+    esta_mobiliado: [false, [Validators.required]]
   })
 
   clienteForm = this.formBuilder.group({
@@ -1056,6 +1059,7 @@ export class ImovelCreate {
       }
     });
   }
+
 
   buscarCorretorPorId(id: string) {
     this.corretorService.getById(id).subscribe({
@@ -1283,11 +1287,11 @@ export class ImovelCreate {
           cidade: condominio.cidade,
         })
       },
-      error:(erro: Error) => {
+      error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar preecher dados de localização:', erro);
         this.messageService.add({
-          severity:'error',
-          summary:'ERRO',
+          severity: 'error',
+          summary: 'ERRO',
           detail: 'Ocorreu um erro ao tentar preencher os dados de localização.'
         })
       }
@@ -1389,8 +1393,28 @@ export class ImovelCreate {
     });
   }
 
-  cadastrarImovel() {
-    this.router.navigate(['/pages/imoveis'])
+  salvarImovel() {}
+
+  cadastrarImovel(form: CriarImovelRequest) {
+    this.imovelService.create(form).subscribe({
+      next: (imovel: ImovelResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'SUCESSO!',
+          detail: 'Imóvel cadastrado com sucesso!'
+        })
+        
+        this.router.navigate(['/pages/imoveis'])
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO!',
+          detail: 'Ocorreu um erro ao tentar cadastrar o imóvel.'
+        })
+      }
+    })
   }
 
   onUpload(event: any) {
