@@ -868,9 +868,10 @@ export class ImovelCreate {
   imovelForm = this.formBuilder.group({
     proprietario: ['', [Validators.required]],
     corretor: ['', [Validators.required]],
+    codigo: ['', [Validators.required]],
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
-    em_condominio: [false, [Validators.required]],
+    em_condominio: ['', [Validators.required]],
     condominio: [''],
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
@@ -888,7 +889,7 @@ export class ImovelCreate {
     quantidade_vagas: this.formBuilder.control<number | null>(null),
     quantidade_andares: this.formBuilder.control<number | null>(null),
     quantidade_salas: this.formBuilder.control<number | null>(null),
-    esta_mobiliado: [false, [Validators.required]]
+    esta_mobiliado: ['', [Validators.required]]
   })
 
   clienteForm = this.formBuilder.group({
@@ -1393,7 +1394,36 @@ export class ImovelCreate {
     });
   }
 
-  salvarImovel() {}
+  salvarImovel() {
+    const formImovel: CriarImovelRequest = {
+      id_proprietario: this.imovelForm.getRawValue().proprietario!,
+      id_corretor: this.imovelForm.getRawValue().corretor!,
+      codigo: this.imovelForm.getRawValue().codigo!,
+      finalidade: this.imovelForm.getRawValue().finalidade!,
+      tipo: this.imovelForm.getRawValue().tipo!,
+      em_condominio: this.transformarStringEmBool(this.imovelForm.getRawValue().em_condominio!),
+      condominio: this.imovelForm.getRawValue().condominio!,
+      cep: this.imovelForm.getRawValue().cep!,
+      logradouro: this.imovelForm.getRawValue().logradouro!,
+      numero: this.imovelForm.getRawValue().numero!,
+      estado: this.imovelForm.getRawValue().estado!,
+      cidade: this.imovelForm.getRawValue().cidade!,
+      bairro: this.imovelForm.getRawValue().bairro!,
+      complemento: this.imovelForm.getRawValue().complemento!,
+      valor: this.imovelForm.getRawValue().valor!,
+      valor_condominio: this.imovelForm.getRawValue().valor_condominio!,
+      iptu: this.imovelForm.getRawValue().iptu!,
+      quantidade_quartos: this.imovelForm.getRawValue().quantidade_quartos!,
+      quantidade_suites: this.imovelForm.getRawValue().quantidade_suites!,
+      quantidade_banheiros: this.imovelForm.getRawValue().quantidade_banheiros!,
+      quantidade_vagas: this.imovelForm.getRawValue().quantidade_vagas!,
+      quantidade_andares: this.imovelForm.getRawValue().quantidade_andares!,
+      quantidade_salas: this.imovelForm.getRawValue().quantidade_salas!,
+      esta_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
+    };
+
+    this.cadastrarImovel(formImovel);
+  }
 
   cadastrarImovel(form: CriarImovelRequest) {
     this.imovelService.create(form).subscribe({
