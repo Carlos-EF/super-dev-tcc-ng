@@ -1427,6 +1427,16 @@ export class ImovelCreate {
           }
           this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
         }
+      },
+      error: (erro: Error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO',
+          detail: 'Ocorreu um erro ao tentar associar o imóvel ao proprietário.'
+        })
+
+        console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário. (Fase de busca pelo cliente no banco):', erro);
+        
       }
     })
   }
@@ -1436,7 +1446,17 @@ export class ImovelCreate {
     formEditar: EditarClienteRequest,
     dadosAdicionais: EditarDadosAdicionais
   ) {
-
+    this.clienteService.update(
+      id, formEditar, dadosAdicionais
+    ).subscribe({
+      next: (cliente: ClienteResponse) => {
+        console.log(cliente);
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário:', erro);
+        
+      }
+    })
   }
 
   salvarImovel() {
