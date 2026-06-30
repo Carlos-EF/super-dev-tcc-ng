@@ -1,6 +1,6 @@
 export interface CriarImovelRequest {
-    id_proprietario: string;
-    id_corretor: string;
+    proprietario: string;
+    corretor: string;
     codigo: string;
     finalidade: string;
     tipo: string;
@@ -22,12 +22,12 @@ export interface CriarImovelRequest {
     quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
-    esta_mobiliado: boolean;
+    eh_mobiliado: boolean;
 }
 
 export interface EditarImovelRequest {
-    id_proprietario: string;
-    id_corretor: string;
+    proprietario: string;
+    corretor: string;
     finalidade: string;
     tipo: string;
     em_condominio: boolean;
@@ -48,13 +48,13 @@ export interface EditarImovelRequest {
     quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
-    esta_mobiliado: boolean;
+    eh_mobiliado: boolean;
 }
 
 export interface ImovelResponse {
     id: string;
-    id_proprietario: string;
-    id_corretor: string;
+    proprietario: string;
+    corretor: string;
     finalidade: string;
     tipo: string;
     em_condominio: boolean;
@@ -75,5 +75,5 @@ export interface ImovelResponse {
     quantidade_vagas: number;
     quantidade_andares: number;
     quantidade_salas: number;
-    esta_mobiliado: boolean;
+    eh_mobiliado: boolean;
 }
