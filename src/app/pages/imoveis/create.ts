@@ -242,7 +242,8 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
               <label for="campo-numero">Número: <span class="text-red-500"><strong> *</strong></span></label>
               <p-input-number 
               formControlName="numero"
-              id="campo-numero"  
+              id="campo-numero"
+              [useGrouping]="false"  
               placeholder="Número do imóvel."/>
             </div>
 
@@ -311,9 +312,9 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
               </div>
 
               @switch (imovelForm.get('em_condominio')?.getRawValue()) {
-                @case (true) {
+                @case ('Sim') {
                   <div class="flex flex-col grow basis-0 gap-2">
-                    <label for="campo-valor-condominio">Condomínio:</label>
+                    <label for="campo-valor-condominio">Valor do Condomínio:</label>
                     <p-inputnumber
                     formControlName="valor_condominio"
                     placeholder="Digite o valor do condomínio."
@@ -384,11 +385,9 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
              <p-select 
              [options]="mobiliaValidar" 
              [checkmark]="true" 
-             optionLabel="resposta" 
-             optionValue="resposta" 
              [showClear]="true"
              formControlName="esta_mobiliado" 
-             placeholder="Selecione uma opção."
+             placeholder="Está mobiliado?"
              appendTo="body"  />
               </div>
             </div>
@@ -1461,8 +1460,8 @@ export class ImovelCreate {
 
   salvarImovel() {
     const formImovel: CriarImovelRequest = {
-      id_proprietario: this.imovelForm.getRawValue().proprietario!,
-      id_corretor: this.imovelForm.getRawValue().corretor!,
+      proprietario: this.imovelForm.getRawValue().proprietario!,
+      corretor: this.imovelForm.getRawValue().corretor!,
       codigo: this.imovelForm.getRawValue().codigo!,
       finalidade: this.imovelForm.getRawValue().finalidade!,
       tipo: this.imovelForm.getRawValue().tipo!,
@@ -1484,7 +1483,7 @@ export class ImovelCreate {
       quantidade_vagas: this.imovelForm.getRawValue().quantidade_vagas!,
       quantidade_andares: this.imovelForm.getRawValue().quantidade_andares!,
       quantidade_salas: this.imovelForm.getRawValue().quantidade_salas!,
-      esta_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
+      eh_mobiliado: this.transformarStringEmBool(this.imovelForm.getRawValue().esta_mobiliado!),
     };
 
     this.cadastrarImovel(formImovel);
@@ -1495,15 +1494,15 @@ export class ImovelCreate {
       next: (imovel: ImovelResponse) => {
         const idImovel = imovel.id;
 
-        this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.id_proprietario);
+        this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.proprietario);
+
+        this.router.navigate(['/pages/imoveis']);
 
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Imóvel cadastrado com sucesso!'
         })
-
-        this.router.navigate(['/pages/imoveis'])
       },
       error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
