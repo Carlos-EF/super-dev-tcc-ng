@@ -1,5 +1,6 @@
 import { ClienteResponse } from '@/models/cliente.model';
 import { CondominioResponse } from '@/models/condominio.model';
+import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CorretorResponse } from '@/models/corretor.model';
 import { CepService } from '@/services/cep.service';
 import { ClienteService } from '@/services/cliente.service';
@@ -13,7 +14,7 @@ import { FINALIDADES } from '@/types/finalidade.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -128,6 +129,8 @@ export class ImovelEdit {
     tipo: ['', [Validators.required]],
   });
 
+  dadosAdicionaisForm = this.formBuilder.group({});
+
   corretorForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: [null, [Validators.required, Validators.minLength(5), Validators.maxLength(10)]],
@@ -159,14 +162,27 @@ export class ImovelEdit {
     estado: ['', [Validators.required]],
   });
 
-  dadosAdicionaisForm = this.formBuilder.group({});
-
   idParaEditar: string = '';
 
   constructor(
     private router: Router,
   ) {
     this.idParaEditar = this.activatedRoute.snapshot.paramMap.get('id')!;
+  }
+
+  ngOnInit() {
+    this.buscarCorretores();
+
+    this.buscarProprietarios();
+
+    this.buscarCondominios();
+
+    this.clienteForm
+      .get("tipo")
+      ?.valueChanges
+      .subscribe(tipo => {
+        this.alterarFormularioDadosAdicionais(tipo);
+      });
   }
 
   buscarCorretores() {
@@ -218,4 +234,78 @@ export class ImovelEdit {
       }
     })
   }
+
+  buscarCep(cep: string) {
+    var cepLimpo = cep.replace('-', '').trim();
+
+    if (cepLimpo.length === 8) {
+      this.cepService.get(cepLimpo).subscribe({
+        next: (dados) => {
+          this.preencherDadosEndereco(dados);
+        },
+        error: (erro: Error) => {
+          console.error('Erro ao buscar CEP:', erro);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível buscar o CEP. Por favor, tente novamente mais tarde.'
+          });
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'CEP inválido. Por favor, insira um CEP no formato 99999-999.'
+      });
+    }
+  }
+
+  preencherDadosEndereco(dados: ConsultaCepResponse) {
+    return this.condominioForm.patchValue({
+      cep: dados.cep,
+      logradouro: dados.logradouro,
+      bairro: dados.bairro,
+      cidade: dados.localidade,
+      estado: dados.estado,
+    });
+  }
+
+  alterarFormularioDadosAdicionais(tipo: string | null): void {
+    if (tipo === "Proprietário") {
+      this.dadosAdicionaisForm = this.criarFormProprietario();
+    }
+    else if (tipo === "Locatário") {
+      this.dadosAdicionaisForm = this.criarFormLocatario();
+    }
+  }
+
+  criarFormProprietario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
+  criarFormLocatario(): FormGroup {
+    return this.formBuilder.group({
+      imovel_associado: ['', [Validators.required]]
+    })
+  }
+
+  abrirModalCorretor() {
+    this.mostrarModalCorretor = true;
+  }
+
+  abrirModalProprietario() {
+    this.mostrarModalProprietario = true;
+  }
+
+  abrirModalCondominio() {
+    this.mostrarModalCondominio = true;
+  }
+
+  abrirModalCondominioParaEditar() {
+    this.mostrarModalCondominioParaEditar = true;
+  }
+
 }
