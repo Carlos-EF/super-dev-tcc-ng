@@ -1,19 +1,12 @@
-import { Component } from '@angular/core';
+import { ImovelResponse } from '@/models/imovel.model';
+import { ImovelService } from '@/services/imovel.service';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
-
-export interface ImovelResponse {
-  fotoCapa: string;
-  codigoImovel: string;
-  tipoImovel: string;
-  finalidade: string;
-  endereco: string;
-  valor: number;
-  caracteristicas: string[];
-}
+import { EditButton } from "@/layout/component/action buttons/edit-button";
 
 @Component({
   selector: 'app-list',
@@ -23,7 +16,8 @@ export interface ImovelResponse {
     ImageModule,
     TagModule,
     CardModule,
-],
+    EditButton
+  ],
   template: `
     <div class="flex justify-end">
       <p-button
@@ -41,33 +35,36 @@ export interface ImovelResponse {
       <div class="flex flex-row w-full">
       <div class="flex justify-between w-full">
         <div class="border-r-2 mt-2 mr-3 p-4 pl-2">
-          <p-image src="{{imovel.fotoCapa}}" width="220"/>
+          <!-- <p-image src="{{imovel.fotoCapa}}" width="220"/> -->
         </div>
 
         <div class="mt-2 mr-3 w-full">
           <div class="flex gap-2 items-center">
             <p-tag
             class="max-h-min mt-2"
-            value="{{imovel.codigoImovel}}" 
+            value="{{imovel.codigo}}" 
             [rounded]="true"/>
-            <h3><strong class="m-0 text-2x1">{{imovel.tipoImovel}} para {{imovel.finalidade.toLowerCase()}}</strong></h3>
+            <h3><strong class="m-0 text-2x1">{{imovel.tipo}} para {{imovel.finalidade.toLowerCase()}}</strong></h3>
           </div>
-        <div><h5>{{imovel.endereco}}</h5></div>
+        <div><h5>{{imovel.logradouro}}, {{imovel.numero}} - {{imovel.bairro}}, {{imovel.cidade}} - {{imovel.estado}}</h5></div>
         
         <div><h2><strong class="text-primary">{{formatarValorParaReais(imovel.valor)}}</strong></h2></div>
         
-        <div class="flex gap-5 flex-wrap flex-row">
+        <!-- <div class="flex gap-5 flex-wrap flex-row">
           @for (caracteristica of imovel.caracteristicas; track caracteristica) {
             <p-tag 
             value="{{caracteristica}}"
             severity="primary"
             class="mb-2" />
           } 
-        </div>
+        </div> -->
       </div>
       
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+          <edit-button
+          routerLink="editar/{{imovel.id}}"
+          />
         </div>
       </div>
     </div>
@@ -79,33 +76,26 @@ export interface ImovelResponse {
   styles: ``
 })
 export class ImovelList {
-  imoveis:ImovelResponse[];
-  
-  constructor() {
-    this.imoveis = [
-      {
-        fotoCapa: "https://www.salles.imb.br/admin/fotos_destaque/13232908_1604013343248088_6302168264450648482_n.jpg",
-        codigoImovel: "505268",
-        endereco:"Rua dos Caçadores, 202, Velha - Blumenau",
-        tipoImovel: "Casa",
-        finalidade: "Venda",
-        valor: 1200000,
-        caracteristicas: ["2 quartos", "1 banheiro"]
-      },
-      {
-        fotoCapa: "https://blog.setin.com.br/wp-content/uploads/2024/12/tipos-de-apartamentos-quais-sao.jpg",
-        codigoImovel: "505269",
-        endereco:"Rua Max Maul, 280, apartamento 202, Itoupavazinha - Blumenau",
-        tipoImovel: "Apartamento",
-        finalidade: "Locação",
-        valor: 100000,
-        caracteristicas: ["2 quartos", "1 suíte", "1 vaga"]
+  private readonly imovelService = inject(ImovelService);
+
+  imoveis: ImovelResponse[] = [];
+
+  constructor() { }
+
+  ngOnInit() {
+    this.buscarImoveis();
+  }
+
+  buscarImoveis() {
+    this.imovelService.getAll().subscribe({
+      next: (imoveis: ImovelResponse[]) => {
+        this.imoveis = imoveis;
       }
-    ]
+    });
   }
 
   formatarValorParaReais(valor: number): string {
-     const formatador = new Intl.NumberFormat('pt-BR', {
+    const formatador = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     });

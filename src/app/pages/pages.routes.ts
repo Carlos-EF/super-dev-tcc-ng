@@ -6,10 +6,12 @@ import { CorretorCreate } from './pessoas/corretor/create';
 import { ClienteCreate } from './pessoas/cliente/create';
 import { CorretorEdit } from './pessoas/corretor/edit';
 import { ClienteEdit } from './pessoas/cliente/edit';
+import { ImovelEdit } from './imoveis/edit';
 
 export default [
     { path: 'imoveis', component: ImovelList},
     { path: 'imoveis/cadastrar', component: ImovelCreate},
+    { path: 'imoveis/editar/:id', component: ImovelEdit},
     { path: 'pessoas', component: PessoasList},
     { path: 'pessoas/corretor/cadastrar', component: CorretorCreate},
     { path: 'pessoas/corretor/editar/:id', component: CorretorEdit},
