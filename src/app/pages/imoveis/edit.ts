@@ -168,4 +168,54 @@ export class ImovelEdit {
   ) {
     this.idParaEditar = this.activatedRoute.snapshot.paramMap.get('id')!;
   }
+
+  buscarCorretores() {
+    this.corretorService.getAll().subscribe({
+      next: (corretores: CorretorResponse[]) => {
+        this.corretores = corretores;
+        console.log(corretores);
+
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar corretores:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de corretores.'
+        });
+      }
+    });
+  }
+
+  buscarProprietarios() {
+    this.clienteService.getAll().subscribe({
+      next: (clientes: ClienteResponse[]) => {
+        this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar clientes:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de clientes do tipo "Proprietário" e "Locatário".'
+        });
+      }
+    });
+  }
+
+  buscarCondominios() {
+    this.condominioService.getAll().subscribe({
+      next: (condominios: CondominioResponse[]) => {
+        this.condominios = condominios
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar condomínios:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar a lista de condomínios.'
+        })
+      }
+    })
+  }
 }
