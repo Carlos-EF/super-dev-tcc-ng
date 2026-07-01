@@ -2,6 +2,7 @@ import { ClienteResponse } from '@/models/cliente.model';
 import { CondominioResponse } from '@/models/condominio.model';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CorretorResponse } from '@/models/corretor.model';
+import { ImovelResponse } from '@/models/imovel.model';
 import { CepService } from '@/services/cep.service';
 import { ClienteService } from '@/services/cliente.service';
 import { CondominioService } from '@/services/condominio.service';
@@ -168,6 +169,8 @@ export class ImovelEdit {
     private router: Router,
   ) {
     this.idParaEditar = this.activatedRoute.snapshot.paramMap.get('id')!;
+
+    this.buscarImovelParaEditar();
   }
 
   ngOnInit() {
@@ -183,6 +186,71 @@ export class ImovelEdit {
       .subscribe(tipo => {
         this.alterarFormularioDadosAdicionais(tipo);
       });
+  }
+
+  buscarImovelParaEditar() {
+    this.imovelService.getById(this.idParaEditar).subscribe({
+      next: (imovel: ImovelResponse) => {
+        this.imovelParaEditarForm.patchValue({
+          proprietario: imovel.proprietario,
+          corretor: imovel.corretor,
+          condominio: imovel.condominio,
+          codigo: imovel.codigo,
+          finalidade: imovel.finalidade,
+          tipo: imovel.tipo,
+          em_condominio: this.transformarBoolEmString(imovel.em_condominio),
+          cep: imovel.cep,
+          logradouro: imovel.logradouro,
+          numero: imovel.numero,
+          estado: imovel.estado,
+          cidade: imovel.cidade,
+          bairro: imovel.bairro,
+          complemento: imovel.complemento,
+          valor: imovel.valor,
+          valor_condominio: imovel.valor_condominio,
+          iptu: imovel.iptu,
+          quantidade_quartos: imovel.quantidade_quartos,
+          quantidade_suites: imovel.quantidade_suites,
+          quantidade_banheiros: imovel.quantidade_banheiros,
+          quantidade_vagas: imovel.quantidade_vagas,
+          quantidade_andares: imovel.quantidade_andares,
+          quantidade_salas: imovel.quantidade_salas,
+          esta_mobiliado: this.transformarBoolEmString(imovel.eh_mobiliado)
+        });
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar imóvel para editar:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível carregar os dados do imóvel para edição.'
+        });
+      }
+    });
+  }
+
+  transformarStringEmBool(resposta: string): boolean {
+    var escolhaTransformada: boolean = false;
+
+    if (resposta == 'Sim') {
+      escolhaTransformada = true
+    } else if (resposta == 'Não') {
+      escolhaTransformada = false
+    }
+
+    return escolhaTransformada;
+  }
+
+  transformarBoolEmString(resposta: boolean): string {
+    var escolhaTransformada: string = '';
+
+    if (resposta === true) {
+      escolhaTransformada = 'Sim';
+    } else if (resposta === false) {
+      escolhaTransformada = 'Não';
+    }
+
+    return escolhaTransformada;
   }
 
   buscarCorretores() {
