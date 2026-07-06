@@ -601,7 +601,7 @@ export class ImovelEdit {
     this.imovelService.getById(id).subscribe({
       next: (imovel: ImovelResponse) => {
         this.imovelParaEditarForm.patchValue({
-          proprietario: this.proprietarioSelecionado,
+          proprietario: imovel.proprietario,
           corretor: imovel.corretor,
           condominio: imovel.condominio,
           codigo: imovel.codigo,
@@ -617,7 +617,7 @@ export class ImovelEdit {
           complemento: imovel.complemento,
           valor: imovel.valor,
           valor_condominio: imovel.valor_condominio,
-          iptu: imovel.iptu,
+          iptu: imovel.valor_iptu,
           quantidade_quartos: imovel.quantidade_quartos,
           quantidade_suites: imovel.quantidade_suites,
           quantidade_banheiros: imovel.quantidade_banheiros,

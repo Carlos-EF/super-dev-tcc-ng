@@ -15,7 +15,7 @@ export interface CriarImovelRequest {
     complemento: string;
     valor: number;
     valor_condominio: number;
-    iptu: number;
+    valor_iptu: number;
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
@@ -41,7 +41,7 @@ export interface EditarImovelRequest {
     complemento: string;
     valor: number;
     valor_condominio: number;
-    iptu: number;
+    valor_iptu: number;
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
@@ -69,7 +69,7 @@ export interface ImovelResponse {
     complemento: string;
     valor: number;
     valor_condominio: number;
-    iptu: number;
+    valor_iptu: number;
     quantidade_quartos: number;
     quantidade_suites: number;
     quantidade_banheiros: number;
