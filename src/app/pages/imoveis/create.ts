@@ -328,7 +328,7 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
               <div class="flex flex-col grow basis-0 gap-2">
                 <label for="campo-valor-iptu">IPTU:</label>
                 <p-inputnumber
-                formControlName="iptu"
+                formControlName="valor_iptu"
                 placeholder="Digite o valor do IPTU."
                 mode="currency"
                 currency="BRL"
@@ -881,7 +881,7 @@ export class ImovelCreate {
     complemento: ['', [Validators.required]],
     valor: this.formBuilder.control<number | null>(null),
     valor_condominio: this.formBuilder.control<number | null>(null),
-    iptu: this.formBuilder.control<number | null>(null),
+    valor_iptu: this.formBuilder.control<number | null>(null),
     quantidade_quartos: this.formBuilder.control<number | null>(null),
     quantidade_suites: this.formBuilder.control<number | null>(null),
     quantidade_banheiros: this.formBuilder.control<number | null>(null),
@@ -1023,7 +1023,7 @@ export class ImovelCreate {
   buscarProprietarios() {
     this.clienteService.getAll().subscribe({
       next: (clientes: ClienteResponse[]) => {
-        this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado');
+        this.proprietarios = clientes.filter(cliente => cliente.tipo != 'Interessado' && cliente.tipo != 'Corretor');
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar clientes:', erro);
@@ -1476,7 +1476,7 @@ export class ImovelCreate {
       complemento: this.imovelForm.getRawValue().complemento!,
       valor: this.imovelForm.getRawValue().valor!,
       valor_condominio: this.imovelForm.getRawValue().valor_condominio!,
-      iptu: this.imovelForm.getRawValue().iptu!,
+      valor_iptu: this.imovelForm.getRawValue().valor_iptu!,
       quantidade_quartos: this.imovelForm.getRawValue().quantidade_quartos!,
       quantidade_suites: this.imovelForm.getRawValue().quantidade_suites!,
       quantidade_banheiros: this.imovelForm.getRawValue().quantidade_banheiros!,
