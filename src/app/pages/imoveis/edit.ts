@@ -1,7 +1,7 @@
-import { ClienteResponse } from '@/models/cliente.model';
-import { CondominioResponse } from '@/models/condominio.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
-import { CorretorResponse } from '@/models/corretor.model';
+import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
 import { ImovelResponse } from '@/models/imovel.model';
 import { CepService } from '@/services/cep.service';
 import { ClienteService } from '@/services/cliente.service';
@@ -171,9 +171,9 @@ import { ToastModule } from 'primeng/toast';
                               <p-button
                               icon="pi pi-pencil"
                               severity="warn"
+                              (click)="buscarCondominioPorId(
+                                condominioSelecionado)"
                               />
-                              /* (click)="buscarCondominioPorId(
-                                condominioSelecionado)" */
                               <p-select
                               class="w-full"
                               [options]="condominios"
@@ -191,9 +191,9 @@ import { ToastModule } from 'primeng/toast';
                               <p-button
                               icon="pi pi-trash"
                               severity="danger"
+                              (click)="confirmarApagarCondominio(
+                                condominioSelecionado)"
                               />
-                              /* (click)="confirmarApagarCondominio(
-                                condominioSelecionado)" */
                           } @else {
                               <p-select
                               class="w-full"
@@ -430,6 +430,392 @@ import { ToastModule } from 'primeng/toast';
     </p-stepper>
   </div>
 </form>
+
+<form [formGroup]="corretorForm">
+<p-dialog 
+  header="Cadastrar Corretor" 
+  [(visible)]="mostrarModalCorretor" 
+  [modal]="true" 
+  [closable]="true" 
+  [style]="{width: '50rem'}">
+
+  <div class="flex flex-row gap-4">
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          Nome Completo:
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          formControlName='nome'
+          type="text"
+          pInputText
+          placeholder="Digite o nome completo do corretor."
+          class="w-full" />
+      </div>
+
+        <div class="flex flex-col w-full grow gap-2">
+          <label>
+            Código:
+            <span class="text-red-500">*</span>
+          </label>
+          <p-inputnumber
+            formControlName='codigo'
+            class="w-full"
+            [minlength]="5"
+            [maxlength]="10"
+            [showClear]="true"
+            [useGrouping]="false"
+            placeholder="Digite o código de referência do corretor.">
+          </p-inputnumber>
+        </div>
+        
+        <div class="flex flex-col basis-0 gap-2">
+          <label for="">CRECI: <span class="text-red-500">*</span></label>
+          <p-inputmask
+            formControlName='creci' 
+            mask="99.999F" 
+            placeholder="00.000F" 
+            formControlName='creci'/>
+        </div>
+</div>
+
+    <div class="flex flex-row gap-4 mt-4">
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          Celular:
+          <span class="text-red-500">*</span>
+        </label>
+        <p-inputmask
+          formControlName='celular'
+          styleClass="w-full"
+          mask="(99) 99999-9999"
+          placeholder="(00) 00000-0000">
+        </p-inputmask>
+      </div>
+
+      <div class="flex flex-col w-full grow gap-2">
+        <label>
+          E-mail:
+          <span class="text-red-500">*</span>
+        </label>
+        <input
+          formControlName='email'
+          type="email"
+          pInputText
+          placeholder="Digite o e-mail do corretor."
+          class="w-full" />
+      </div>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="salvarCorretor()">
+      </p-button>
+    </div>
+</p-dialog>
+</form>
+
+  <form [formGroup]="clienteForm">
+  <p-dialog 
+  header="Cadastrar Proprietário" 
+  [(visible)]="mostrarModalProprietario" 
+  [modal]="true" 
+  [closable]="true" 
+  [style]="{width: '50rem'}">
+    <div class="flex flex-wrap basis-0 gap-3">
+        <div class="flex flex-col grow gap-2">
+          <label for="">Nome Completo: <span class="text-red-500"><strong> *</strong></span></label>
+          <input type="text" pInputText placeholder="Digite o nome do cliente." formControlName="nome" />
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="campo-codigo">Código: <span class="text-red-500"><strong> *</strong></span></label>
+          <input pInputText id="campo-codigo" type="text" placeholder="Digite o código de referência do cliente." formControlName="codigo" />
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="">Celular: <span class="text-red-500"><strong> *</strong></span></label>
+          <p-inputmask mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="celular" />
+        </div>
+        
+        <div class="flex flex-col grow basis-0 gap-2">
+          <label for="">E-mail: <span class="text-red-500"><strong> *</strong></span></label>
+          <input type="email" pInputText placeholder="Digite o e-mail do cliente." formControlName="email" />
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label for="">Como nos encontrou:</label>
+          <p-select
+          formControlName="como_encontrou"
+          appendTo="body" 
+          [options]="tiposContato" 
+          placeholder="Selecione por onde o cliente veio." 
+          fluid/>
+        </div>
+
+      <div class="flex flex-col grow basis-0 gap-2">
+        <label for="">Tipo do Cliente: <span class="text-red-500"><strong> *</strong></span></label>
+        <p-select
+        formControlName="tipo"
+        appendTo="body" 
+        [options]="tipoCliente" 
+        id="tipo-cliente" 
+        placeholder="Selecione o tipo do cliente."/>
+      </div>
+    </div>
+
+
+       <div class="flex justify-end mt-4">
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        (click)="salvarProprietario()">
+      </p-button>
+    </div>
+  </p-dialog>
+</form>
+
+<form [formGroup]="condominioForm">
+  <p-dialog
+  header="Cadastrar Condomínio"
+  [(visible)]="mostrarModalCondominio"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '50rem' }">
+
+<div class="flex flex-wrap basis-0 gap-3">
+  <div class="flex flex-col w-full gap-2">
+    <label for="campo-nome-condominio">
+      Nome do Condomínio:
+      <span class="text-red-500"><strong> *</strong></span>
+    </label>
+      <input
+        formControlName="nome"
+        id="campo-nome-condominio"
+        type="text"
+        pInputText
+        placeholder="Digite o nome do condomínio." />
+    </div>
+    
+    <div class="flex flex-col gap-2">
+      <label for="campo-cep">
+        CEP:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <div class="flex flex-row">
+        <p-inputmask
+        formControlName="cep"
+        id="campo-cep"
+        mask="99999-999"
+        placeholder="00000-000">
+      </p-inputmask>
+      <p-button
+      (click)="buscarCep(condominioForm.get('cep')?.value || '')"
+      icon="pi pi-search"/>
+    </div>
+    </div>
+    
+    <div class="flex flex-col grow gap-2">
+      <label for="campo-logradouro">
+        Logradouro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="logradouro"
+        id="campo-logradouro"
+        type="text"
+        pInputText
+        placeholder="Digite o logradouro." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-numero">
+        Número:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <p-inputnumber
+        id="campo-numero"
+        [useGrouping]="false"
+        formControlName="numero"
+        placeholder="Número">
+      </p-inputnumber>
+    </div>
+    
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-bairro">
+        Bairro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="bairro"
+        id="campo-bairro"
+        type="text"
+        pInputText
+        placeholder="Digite o bairro." />
+    </div>
+    
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-estado">
+        Estado:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="estado"
+        id="campo-estado"
+        type="text"
+        pInputText
+        placeholder="Digite o estado." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-cidade">
+        Cidade:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="cidade"
+        id="campo-cidade"
+        type="text"
+        pInputText
+        placeholder="Digite a cidade." />
+    </div>
+    
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end">
+      <p-button
+        label="Salvar"
+        icon="pi pi-save"
+        severity="success"
+        (click)="salvarCondominio()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+</form>
+
+  <form [formGroup]="condominioParaEditarForm">
+  <p-dialog
+  header="Editar Condomínio"
+  [(visible)]="mostrarModalCondominioParaEditar"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '50rem' }">
+
+  <div class="flex flex-wrap basis-0 gap-3">
+    <div class="flex flex-col w-full gap-2">
+      <label for="campo-nome-condominio">
+        Nome do Condomínio:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="nome"
+        id="campo-nome-condominio"
+        type="text"
+        pInputText
+        placeholder="Digite o nome do condomínio." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-cep">
+        CEP:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <div class="flex flex-row">
+        <p-inputmask
+        formControlName="cep"
+        id="campo-cep"
+        mask="99999-999"
+        placeholder="00000-000">
+      </p-inputmask>
+      <p-button
+      (click)="buscarCep(condominioParaEditarForm.get('cep')?.value || '')"
+      icon="pi pi-search"/>
+    </div>
+    </div>
+
+    <div class="flex flex-col grow gap-2">
+      <label for="campo-logradouro">
+        Logradouro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="logradouro"
+        id="campo-logradouro"
+        type="text"
+        pInputText
+        placeholder="Digite o logradouro." />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="campo-numero">
+        Número:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <p-inputnumber
+        id="campo-numero"
+        [useGrouping]="false"
+        formControlName="numero"
+        placeholder="Número">
+      </p-inputnumber>
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-bairro">
+        Bairro:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="bairro"
+        id="campo-bairro"
+        type="text"
+        pInputText
+        placeholder="Digite o bairro." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-estado">
+        Estado:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="estado"
+        id="campo-estado"
+        type="text"
+        pInputText
+        placeholder="Digite o estado." />
+    </div>
+
+    <div class="flex flex-col grow basis-0 gap-2">
+      <label for="campo-cidade">
+        Cidade:
+        <span class="text-red-500"><strong> *</strong></span>
+      </label>
+      <input
+        formControlName="cidade"
+        id="campo-cidade"
+        type="text"
+        pInputText
+        placeholder="Digite a cidade." />
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end">
+      <p-button
+        label="Salvar"
+        icon="pi pi-save"
+        severity="success"
+        (click)="salvarCondominio()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+</form>
   `,
   styles: ``
 })
@@ -628,7 +1014,7 @@ export class ImovelEdit {
         });
 
         console.log(imovel);
-        
+
       },
       error: (erro: Error) => {
         console.error('Erro ao buscar imóvel para editar:', erro);
@@ -786,6 +1172,259 @@ export class ImovelEdit {
 
   abrirModalCondominioParaEditar() {
     this.mostrarModalCondominioParaEditar = true;
+  }
+
+  confirmarApagarCondominio(id: string) {
+    this.confirmationService.confirm({
+      message: 'Deseja realmente apagar o condomínio?',
+      header: 'Confirmar Ação',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, continuar',
+      rejectLabel: 'Não, cancelar',
+      accept: () => {
+        this.apagarCondominio(id);
+      },
+      reject: () => {
+      }
+    });
+  }
+
+  apagarCondominio(id: string) {
+    this.condominioService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          summary: 'Sucesso',
+          severity: 'success',
+          detail: 'Condomínio apagado com sucesso!'
+        });
+
+        this.buscarCondominios();
+      }
+    })
+  }
+
+  buscarCondominioPorId(id: string) {
+    this.condominioService.getById(id).subscribe({
+      next: (condominio: CondominioResponse) => {
+        if (condominio.id == this.condominioSelecionado) {
+          this.preencherDadosParaEditarCondominio(condominio);
+        } else {
+          this.preencherLocalizacaoComCondominio(condominio);
+        }
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar o condomínio', erro);
+
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao buscar o condomínio selecionado.'
+        });
+      }
+    })
+  }
+
+  preencherDadosParaEditarCondominio(condominio: CondominioResponse) {
+    this.condominioParaEditarForm.patchValue({
+      nome: condominio.nome,
+      cep: condominio.cep,
+      logradouro: condominio.logradouro,
+      numero: condominio.numero,
+      bairro: condominio.bairro,
+      estado: condominio.estado,
+      cidade: condominio.cidade,
+    })
+
+    this.abrirModalCondominioParaEditar();
+  }
+
+  preencherLocalizacaoComCondominio(condominio: CondominioResponse) {
+    this.imovelParaEditarForm.patchValue({
+      condominio: condominio.id,
+      cep: condominio.cep,
+      logradouro: condominio.logradouro,
+      numero: condominio.numero,
+      bairro: condominio.bairro,
+      estado: condominio.estado,
+      cidade: condominio.cidade,
+    })
+  }
+
+  salvarCorretor() {
+    const formCorretor: CorretorCriarRequest = {
+      nome_completo: this.corretorForm.getRawValue().nome!,
+      codigo: this.corretorForm.getRawValue().codigo!,
+      creci: this.corretorForm.getRawValue().creci!,
+      celular: this.corretorForm.getRawValue().celular!,
+      email: this.corretorForm.getRawValue().email!,
+      data_nascimento: this.corretorForm.getRawValue().dataNascimento!,
+      rg: this.corretorForm.getRawValue().rg!,
+      cpf: this.corretorForm.getRawValue().cpf!,
+    };
+
+    this.cadastrarCorretor(formCorretor);
+  }
+
+  cadastrarCorretor(formCorretor: CorretorCriarRequest) {
+    this.corretorService.create(formCorretor).subscribe({
+      next: (corretor: CorretorResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Corretor cadastrado com sucesso!'
+        });
+
+        this.buscarCorretores();
+
+        this.buscarCorretorPorId(corretor.id);
+
+        this.mostrarModalCorretor = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar corretor:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Não foi possível cadastrar o corretor.'
+        });
+      }
+    });
+  }
+
+  buscarProprietarioPorId(id: string) {
+    this.clienteService.getById(id).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.preecherDadosComNovoProprietario(cliente);
+      }
+    });
+  }
+
+
+  buscarCorretorPorId(id: string) {
+    this.corretorService.getById(id).subscribe({
+      next: (corretor: CorretorResponse) => {
+        this.preecherDadosComNovoCorretor(corretor);
+      }
+    });
+  }
+
+  preecherDadosComNovoProprietario(proprietario: ClienteResponse) {
+    this.imovelParaEditarForm.patchValue({
+      proprietario: proprietario.id
+    })
+  }
+
+  preecherDadosComNovoCorretor(corretor: CorretorResponse) {
+    this.imovelParaEditarForm.patchValue({
+      corretor: corretor.id
+    })
+  }
+
+  salvarCondominio() {
+    if (this.condominioSelecionado != '') {
+      const formCondominioParaEditar: EditarCondominioResquest = {
+        nome: this.condominioParaEditarForm.getRawValue().nome!,
+        cep: this.condominioParaEditarForm.getRawValue().cep!,
+        logradouro: this.condominioParaEditarForm.getRawValue().logradouro!,
+        numero: this.condominioParaEditarForm.getRawValue().numero!,
+        bairro: this.condominioParaEditarForm.getRawValue().bairro!,
+        estado: this.condominioParaEditarForm.getRawValue().estado!,
+        cidade: this.condominioParaEditarForm.getRawValue().cidade!,
+      }
+
+      this.editarCondominio(this.condominioSelecionado, formCondominioParaEditar);
+    } else {
+
+      const formCondominio: CriarCondominioRequest = {
+        nome: this.condominioForm.getRawValue().nome!,
+        cep: this.condominioForm.getRawValue().cep!,
+        logradouro: this.condominioForm.getRawValue().logradouro!,
+        numero: this.condominioForm.getRawValue().numero!,
+        bairro: this.condominioForm.getRawValue().bairro!,
+        estado: this.condominioForm.getRawValue().estado!,
+        cidade: this.condominioForm.getRawValue().cidade!,
+      }
+
+      this.cadastrarCondominio(formCondominio);
+    }
+  }
+
+  cadastrarCondominio(formCondominio: CriarCondominioRequest) {
+    this.condominioService.create(formCondominio).subscribe({
+      next: (condominio: CondominioResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Condomínio cadastrado com sucesso!'
+        });
+
+        this.buscarCondominios();
+
+        this.buscarCondominioPorId(condominio.id);
+
+        this.mostrarModalCondominio = false;
+      }
+    })
+  }
+
+  editarCondominio(id: string, formCondominioParaEditar: EditarCondominioResquest) {
+    this.condominioService.update(id, formCondominioParaEditar).subscribe({
+      next: (condominioEditado: CondominioResponse) => {
+        this.preencherLocalizacaoComCondominio(condominioEditado);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Condomínio alterado com sucesso!',
+        });
+
+        this.buscarCondominios();
+
+        this.mostrarModalCondominioParaEditar = false;
+      }
+    })
+  }
+
+  salvarProprietario() {
+    const formCliente: CriarClienteRequest = {
+      nome: this.clienteForm.getRawValue().nome!,
+      codigo: this.clienteForm.getRawValue().codigo!,
+      celular: this.clienteForm.getRawValue().celular!,
+      email: this.clienteForm.getRawValue().email!,
+      tipo: this.clienteForm.getRawValue().tipo!,
+      como_encontrou: this.clienteForm.getRawValue().como_encontrou!
+    };
+
+    const formDadosAdicionais = this.dadosAdicionaisForm.getRawValue() as CriarDadosAdicionais;
+
+    this.cadastrarProprietario(formCliente, formDadosAdicionais);
+  }
+
+  cadastrarProprietario(
+    form: CriarClienteRequest,
+    dadosAdicionais: CriarDadosAdicionais) {
+    this.clienteService.create(form, dadosAdicionais).subscribe({
+      next: (cliente: ClienteResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso!',
+          detail: 'Proprietário cadastrado com sucesso!'
+        });
+
+        this.buscarProprietarios();
+
+        this.buscarProprietarioPorId(cliente.id);
+
+        this.mostrarModalProprietario = false;
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao cadastrar proprietário:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Não foi possível cadastrar o proprietário.'
+        });
+      }
+    });
   }
 
   onUpload(event: any) {
