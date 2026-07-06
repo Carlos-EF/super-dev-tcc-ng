@@ -2,7 +2,7 @@ import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/mo
 import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
-import { ImovelResponse } from '@/models/imovel.model';
+import { EditarImovelRequest, ImovelResponse } from '@/models/imovel.model';
 import { CepService } from '@/services/cep.service';
 import { ClienteService } from '@/services/cliente.service';
 import { CondominioService } from '@/services/condominio.service';
@@ -422,7 +422,7 @@ import { ToastModule } from 'primeng/toast';
 
             <div class="flex pt-6 justify-between">
               <p-button label="Voltar" severity="secondary" icon="pi pi-arrow-left" (onClick)="activateCallback(2)" />
-              <!-- <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="salvarImovel()" /> -->
+              <p-button label="Salvar" icon="pi pi-file" iconPos="right" (onClick)="salvarImovel()" />
             </div>
           </ng-template>
         </p-step-panel>
@@ -1422,6 +1422,58 @@ export class ImovelEdit {
           severity: 'error',
           summary: 'Erro!',
           detail: 'Não foi possível cadastrar o proprietário.'
+        });
+      }
+    });
+  }
+
+  salvarImovel() {
+    const formImovel: EditarImovelRequest = {
+      proprietario: this.imovelParaEditarForm.getRawValue().proprietario!,
+      corretor: this.imovelParaEditarForm.getRawValue().corretor!,
+      finalidade: this.imovelParaEditarForm.getRawValue().finalidade!,
+      tipo: this.imovelParaEditarForm.getRawValue().tipo!,
+      em_condominio: this.transformarStringEmBool(this.imovelParaEditarForm.getRawValue().em_condominio!),
+      condominio: this.imovelParaEditarForm.getRawValue().condominio!,
+      cep: this.imovelParaEditarForm.getRawValue().cep!,
+      logradouro: this.imovelParaEditarForm.getRawValue().logradouro!,
+      numero: this.imovelParaEditarForm.getRawValue().numero!,
+      estado: this.imovelParaEditarForm.getRawValue().estado!,
+      cidade: this.imovelParaEditarForm.getRawValue().cidade!,
+      bairro: this.imovelParaEditarForm.getRawValue().bairro!,
+      complemento: this.imovelParaEditarForm.getRawValue().complemento!,
+      valor: this.imovelParaEditarForm.getRawValue().valor!,
+      valor_condominio: this.imovelParaEditarForm.getRawValue().valor_condominio!,
+      valor_iptu: this.imovelParaEditarForm.getRawValue().iptu!,
+      quantidade_quartos: this.imovelParaEditarForm.getRawValue().quantidade_quartos!,
+      quantidade_suites: this.imovelParaEditarForm.getRawValue().quantidade_suites!,
+      quantidade_banheiros: this.imovelParaEditarForm.getRawValue().quantidade_banheiros!,
+      quantidade_vagas: this.imovelParaEditarForm.getRawValue().quantidade_vagas!,
+      quantidade_andares: this.imovelParaEditarForm.getRawValue().quantidade_andares!,
+      quantidade_salas: this.imovelParaEditarForm.getRawValue().quantidade_salas!,
+      eh_mobiliado: this.transformarStringEmBool(this.imovelParaEditarForm.getRawValue().esta_mobiliado!)
+    };
+
+    this.editarImovel(this.idParaEditar, formImovel);
+  }
+
+  editarImovel(id: string, formImovel: EditarImovelRequest) {
+    this.imovelService.update(id, formImovel).subscribe({
+      next: (imovelEditado: ImovelResponse) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso!',
+          detail: 'Imóvel editado com sucesso!'
+        });
+
+        this.router.navigate(['/pages/imoveis']);
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao editar imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro!',
+          detail: 'Não foi possível editar o imóvel.'
         });
       }
     });
