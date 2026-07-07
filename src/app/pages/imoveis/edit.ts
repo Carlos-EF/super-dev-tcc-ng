@@ -962,9 +962,10 @@ export class ImovelEdit {
       condominio => {
         if (condominio) {
           this.condominioSelecionado = condominio;
+
+          this.preencherLocalizacaoComCondominioPorId(this.condominioSelecionado);
         }
-      }
-    );
+      });
 
     this.imovelParaEditarForm.get('corretor')?.valueChanges.subscribe(
       corretor => {
@@ -978,6 +979,23 @@ export class ImovelEdit {
       proprietario => {
         if (proprietario) {
           this.proprietarioSelecionado = proprietario;
+        }
+      }
+    );
+
+    this.imovelParaEditarForm.get('condominio')?.valueChanges.subscribe(
+      condominio => {
+        if (!condominio) {
+          this.imovelParaEditarForm.patchValue({
+            cep: '',
+            logradouro: '',
+            numero: null,
+            bairro: '',
+            cidade: '',
+            estado: '',
+            complemento: '',
+            valor_condominio: null
+          });
         }
       }
     );
@@ -1220,6 +1238,29 @@ export class ImovelEdit {
           summary: 'Erro',
           detail: 'Ocorreu um erro ao buscar o condomínio selecionado.'
         });
+      }
+    })
+  }
+
+  preencherLocalizacaoComCondominioPorId(id: string) {
+    this.condominioService.getById(id).subscribe({
+      next: (condominio: CondominioResponse) => {
+        this.imovelParaEditarForm.patchValue({
+          cep: condominio.cep,
+          logradouro: condominio.logradouro,
+          numero: condominio.numero,
+          bairro: condominio.bairro,
+          estado: condominio.estado,
+          cidade: condominio.cidade,
+        })
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar preecher dados de localização:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO',
+          detail: 'Ocorreu um erro ao tentar preencher os dados de localização.'
+        })
       }
     })
   }

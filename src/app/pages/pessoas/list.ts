@@ -715,13 +715,14 @@ export class PessoasList {
 
   abrirModalMaisDetalhes(id: string, tipo: string) {
     if (tipo === "Corretor") {
+      this.clienteSelecionado = null;
       this.carregarCorretorPorId(id);
-      this.visible = true;
     }
     else {
+      this.corretorSelecionado = null;
       this.buscarClientePorId(id);
-      this.visible = true;
     }
+    this.visible = true;
   }
 
   carregarCorretorPorId(id: string) {
