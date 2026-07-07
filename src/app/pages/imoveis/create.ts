@@ -959,7 +959,25 @@ export class ImovelCreate {
       condominio => {
         if (condominio) {
           this.condominioSelecionado = condominio;
+
           this.preencherLocalizacaoComCondominioPorId(condominio);
+        }
+      }
+    );
+
+    this.imovelForm.get('condominio')?.valueChanges.subscribe(
+      condominio => {
+        if (!condominio) {
+          this.imovelForm.patchValue({
+            cep: '',
+            logradouro: '',
+            numero: null,
+            bairro: '',
+            cidade: '',
+            estado: '',
+            complemento: '',
+            valor_condominio: null
+          });
         }
       }
     );
@@ -1420,7 +1438,7 @@ export class ImovelCreate {
             email: cliente.email,
             tipo: cliente.tipo
           }
-          
+
           const dadosAdicionais: EditarClienteProprietarioRequest = {
             imovel_associado: idImovel
           }
@@ -1435,7 +1453,7 @@ export class ImovelCreate {
         })
 
         console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário. (Fase de busca pelo cliente no banco):', erro);
-        
+
       }
     })
   }
@@ -1453,7 +1471,7 @@ export class ImovelCreate {
       },
       error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário:', erro);
-        
+
       }
     })
   }
@@ -1496,13 +1514,13 @@ export class ImovelCreate {
 
         this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.proprietario);
 
-        this.router.navigate(['/pages/imoveis']);
-
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Imóvel cadastrado com sucesso!'
         })
+
+        this.router.navigate(['/pages/imoveis']);
       },
       error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
