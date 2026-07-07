@@ -1,5 +1,7 @@
 import { CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { ImovelResponse } from '@/models/imovel.model';
 import { ClienteService } from '@/services/cliente.service';
+import { ImovelService } from '@/services/imovel.service';
 import { TIPOS_CLIENTE } from '@/types/cliente.types';
 import { TIPOS_CONTATO } from '@/types/contato.types';
 import { TIPOS_IMOVEL } from '@/types/imovel.types';
@@ -14,10 +16,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 
-
-export interface Imoveis {
-  nome: string;
-}
 
 @Component({
   selector: 'app-create',
@@ -164,7 +162,7 @@ export interface Imoveis {
               
               <label for="">Imóvel do Responsável:</label>
               <div class="flex flex-row">
-                <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid formControlName="imovel_associado" />
+                <p-select [options]="imoveis" optionLabel="codigo" optionValue="id" placeholder="Selecione o imóvel." fluid formControlName="imovel_associado" />
                 <p-button
                 severity="primary"
                 icon="pi pi-plus" />
@@ -189,7 +187,7 @@ export interface Imoveis {
               
           <label for="">Imóvel do Responsável:</label>
           <div class="flex flex-row">
-            <p-select [options]="imoveis" optionLabel="nome" optionValue="nome" placeholder="Selecione o imóvel." fluid formControlName="imovel_associado" />
+            <p-select [options]="imoveis" optionLabel="codigo" optionValue="id" placeholder="Selecione o imóvel." fluid formControlName="imovel_associado" />
             <p-button
             severity="primary"
             icon="pi pi-plus" />
@@ -220,13 +218,15 @@ export class ClienteCreate {
 
   tiposCliente = [...TIPOS_CLIENTE];
 
-  imoveis: Imoveis[] | undefined;
+  imoveis: ImovelResponse[] | undefined;
 
   tiposImovel = [...TIPOS_IMOVEL];
 
   private readonly formBuilder = inject(FormBuilder);
 
   private readonly clienteService = inject(ClienteService);
+
+  private readonly imovelService = inject(ImovelService);
 
   private readonly messageService = inject(MessageService);
 
@@ -245,6 +245,22 @@ export class ClienteCreate {
     private router: Router
   ) {
 
+  }
+
+  carregarImoveis() {
+    this.imovelService.getAll().subscribe({
+      next: (imoveis: ImovelResponse[]) => {
+        this.imoveis = imoveis;
+      },
+      error: (erro: Error) => {
+        console.log(`Ocorreu um erro ao tentar carregar os imóveis: ${erro}`);
+        this.messageService.add({
+          severity: "error",
+          summary: "FALHA AO CARREGAR IMÓVEIS!",
+          detail: "Ocorreu um erro ao tentar carregar os imóveis."
+        });
+      }
+    })
   }
 
   salvar() {
@@ -320,20 +336,18 @@ export class ClienteCreate {
 
   criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
   criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
   ngOnInit() {
-    this.imoveis = [
-      { nome: "Imoveis cadastrados" }
-    ];
+    this.carregarImoveis();
 
     this.clienteForm
       .get("tipo")

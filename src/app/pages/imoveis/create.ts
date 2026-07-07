@@ -1163,13 +1163,13 @@ export class ImovelCreate {
 
   criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
   criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
@@ -1369,6 +1369,7 @@ export class ImovelCreate {
   }
 
   salvarProprietario() {
+    debugger;
     const formCliente: CriarClienteRequest = {
       nome: this.clienteForm.getRawValue().nome!,
       codigo: this.clienteForm.getRawValue().codigo!,
