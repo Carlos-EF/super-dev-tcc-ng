@@ -8,7 +8,7 @@ import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 import { EditButton } from "@/layout/component/action buttons/edit-button";
 import { StatusButton } from "@/layout/component/action buttons/status-button";
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-list',
@@ -67,7 +67,7 @@ import { MessageService } from 'primeng/api';
         <div class="flex border-l-2 mt-2 mr-3 items-center">
           <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
             <status-button
-            (click)='inativarImovel(imovel.id)'
+            (click)='confirmarInativacao(imovel.id)'
             status="{{imovel.status}}"            
              />
             <edit-button
@@ -79,7 +79,7 @@ import { MessageService } from 'primeng/api';
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
           <status-button
-            (click)='ativarImovel(imovel.id)'
+            (click)='confirmarAtivacao(imovel.id)'
             status="{{imovel.status}}"            
              />
           <edit-button
@@ -98,8 +98,8 @@ import { MessageService } from 'primeng/api';
 })
 export class ImovelList {
   private readonly imovelService = inject(ImovelService);
-
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   imoveis: ImovelResponse[] = [];
 
@@ -114,6 +114,52 @@ export class ImovelList {
       next: (imoveis: ImovelResponse[]) => {
         this.imoveis = imoveis;
       }
+    });
+  }
+
+  confirmarInativacao(id: string) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: 'Tem certeza que deseja inativar este imóvel?',
+      rejectLabel: 'Cancelar',
+      icon: 'pi pi-info-circle',
+           rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Inativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.inativarImovel(id);
+      },
+      reject: () => { }
+    });
+  }
+
+  confirmarAtivacao(id: string) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: 'Tem certeza que deseja ativar este imóvel?',
+      rejectLabel: 'Cancelar',
+      icon: 'pi pi-info-circle',
+           rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Ativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.ativarImovel(id);
+      },
+      reject: () => { }
     });
   }
 
