@@ -43,4 +43,14 @@ export class ImovelService {
       form
     )
   }
+
+  activate(id: string): Observable<void> {
+    const urlComId = `${this.url}/${id}/ativar`;
+    return this.httpClient.put<void>(urlComId, {});
+  }
+
+  inactivate(id: string): Observable<void> {
+    const urlComId = `${this.url}/${id}/inativar`;
+    return this.httpClient.put<void>(urlComId, {});
+  }
 }

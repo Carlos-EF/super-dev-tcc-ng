@@ -53,6 +53,7 @@ export interface EditarImovelRequest {
 
 export interface ImovelResponse {
     id: string;
+    status: string;
     codigo: string;
     proprietario: string;
     corretor: string;

@@ -7,6 +7,8 @@ import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 import { EditButton } from "@/layout/component/action buttons/edit-button";
+import { StatusButton } from "@/layout/component/action buttons/status-button";
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-list',
@@ -16,8 +18,9 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
     ImageModule,
     TagModule,
     CardModule,
-    EditButton
-  ],
+    EditButton,
+    StatusButton
+],
   template: `
     <div class="flex justify-end">
       <p-button
@@ -60,13 +63,27 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
         </div> -->
       </div>
       
+      @if (imovel.status == 'ATIVO') {
+        <div class="flex border-l-2 mt-2 mr-3 items-center">
+          <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+            <status-button
+            (click)='inativarImovel(imovel.id)'            
+             />
+            <edit-button
+            routerLink="editar/{{imovel.id}}"
+            />
+          </div>
+        </div>
+      } @else {
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+          
           <edit-button
           routerLink="editar/{{imovel.id}}"
           />
         </div>
       </div>
+      }
     </div>
   </div>
 </div>
@@ -77,6 +94,8 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
 })
 export class ImovelList {
   private readonly imovelService = inject(ImovelService);
+
+  private readonly messageService = inject(MessageService);
 
   imoveis: ImovelResponse[] = [];
 
@@ -90,6 +109,28 @@ export class ImovelList {
     this.imovelService.getAll().subscribe({
       next: (imoveis: ImovelResponse[]) => {
         this.imoveis = imoveis;
+      }
+    });
+  }
+
+  inativarImovel(id: string) {
+    this.imovelService.inactivate(id).subscribe({
+      next: () => {
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'Sucesso', 
+          detail: 'Imóvel inativado com sucesso!' 
+        });
+
+        this.buscarImoveis();
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao inativar o imóvel:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Ocorreu um erro ao inativar o imóvel.' 
+        });
       }
     });
   }
