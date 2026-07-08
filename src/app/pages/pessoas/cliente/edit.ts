@@ -409,13 +409,13 @@ export class ClienteEdit {
 
   criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
   criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
