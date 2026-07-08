@@ -67,7 +67,8 @@ import { MessageService } from 'primeng/api';
         <div class="flex border-l-2 mt-2 mr-3 items-center">
           <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
             <status-button
-            (click)='inativarImovel(imovel.id)'            
+            (click)='inativarImovel(imovel.id)'
+            status="{{imovel.status}}"            
              />
             <edit-button
             routerLink="editar/{{imovel.id}}"
@@ -77,7 +78,10 @@ import { MessageService } from 'primeng/api';
       } @else {
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-          
+          <status-button
+            (click)='ativarImovel(imovel.id)'
+            status="{{imovel.status}}"            
+             />
           <edit-button
           routerLink="editar/{{imovel.id}}"
           />
@@ -130,6 +134,28 @@ export class ImovelList {
           severity: 'error', 
           summary: 'Erro', 
           detail: 'Ocorreu um erro ao inativar o imóvel.' 
+        });
+      }
+    });
+  }
+
+  ativarImovel(id: string) {
+    this.imovelService.activate(id).subscribe({
+      next: () => {
+        this.messageService.add({ 
+          severity: 'success', 
+          summary: 'Sucesso', 
+          detail: 'Imóvel ativado com sucesso!' 
+        });
+
+        this.buscarImoveis();
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao ativar o imóvel:', erro);
+        this.messageService.add({ 
+          severity: 'error', 
+          summary: 'Erro', 
+          detail: 'Ocorreu um erro ao ativar o imóvel.' 
         });
       }
     });
