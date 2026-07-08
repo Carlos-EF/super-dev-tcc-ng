@@ -158,11 +158,15 @@ import { ClienteService } from '@/services/cliente.service';
                   </p>
 
                   <p>
-                    <strong>
-                      {{
-                        obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
-                      }}
-                    </strong>
+                    @if (cliente.dados_adicionais == null) {
+                      <strong>Dado não cadastrado.</strong>
+                    } @else {
+                      <strong>
+                        {{
+                          obterDadosAdicionaisCliente(cliente.tipo, cliente.dados_adicionais)
+                        }}
+                      </strong>
+                    }
                   </p>
                 }
               </div>
@@ -649,15 +653,15 @@ import { ClienteService } from '@/services/cliente.service';
         <div class="grid grid-cols-2 gap-4">
           <div>
             <strong>Imóvel Associado:</strong>
-            @if ((clienteSelecionado.dados_adicionais).imovel_associado) {
-              <p>
-                {{
-                  (clienteSelecionado.dados_adicionais).imovel_associado
-                }}
-              </p>
-            } @else {
+            @if ((clienteSelecionado.dados_adicionais) == null) {
               <p class="text-gray-400">
                 Dado não cadastrado.
+              </p>
+            } @else {
+              <p>
+                {{
+                  obterImovelAssociadoCliente(clienteSelecionado.dados_adicionais)
+                }}
               </p>
             }
           </div>
@@ -1074,7 +1078,7 @@ export class PessoasList {
   }
 
   obterDadosAdicionaisCliente(tipo: string,
-    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse): number | string {
+    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse): number | string | null {
     if (tipo === "Interessado") {
       const valor = this.obterOrcamentoCliente(dados_adicionais as ClienteInteressadoResponse);
       return this.formatarValor(valor);
@@ -1087,7 +1091,10 @@ export class PessoasList {
     return dados_adicionais.orcamento;
   }
 
-  obterImovelAssociadoCliente(dados_adicionais: ClienteLocatarioResponse | ClienteProprietarioResponse): string {
+  obterImovelAssociadoCliente(dados_adicionais: ClienteLocatarioResponse | ClienteProprietarioResponse): string | null {
+    if (!dados_adicionais.imovel_associado) {
+      return null;
+    }
     return dados_adicionais.imovel_associado;
   }
 

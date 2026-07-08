@@ -9,7 +9,7 @@ export interface ClienteResponse {
     como_encontrou: string;
     dados_adicionais: ClienteInteressadoResponse | 
     ClienteProprietarioResponse | 
-    ClienteLocatarioResponse;
+    ClienteLocatarioResponse | null;
 }
 
 export interface CriarClienteRequest {

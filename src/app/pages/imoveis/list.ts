@@ -7,6 +7,9 @@ import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 import { EditButton } from "@/layout/component/action buttons/edit-button";
+import { StatusButton } from "@/layout/component/action buttons/status-button";
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DeleteButton } from "@/layout/component/action buttons/delete-button";
 
 @Component({
   selector: 'app-list',
@@ -16,8 +19,10 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
     ImageModule,
     TagModule,
     CardModule,
-    EditButton
-  ],
+    EditButton,
+    StatusButton,
+    DeleteButton
+],
   template: `
     <div class="flex justify-end">
       <p-button
@@ -60,13 +65,31 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
         </div> -->
       </div>
       
+      @if (imovel.status == 'ATIVO') {
+        <div class="flex border-l-2 mt-2 mr-3 items-center">
+          <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+            <status-button
+            (click)='confirmarInativacao(imovel.id)'
+            status="{{imovel.status}}"            
+             />
+            <edit-button
+            routerLink="editar/{{imovel.id}}"
+            />
+          </div>
+        </div>
+      } @else {
       <div class="flex border-l-2 mt-2 mr-3 items-center">
         <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-          <edit-button
-          routerLink="editar/{{imovel.id}}"
+          <status-button
+            (click)='confirmarAtivacao(imovel.id)'
+            status="{{imovel.status}}"            
+             />
+          <delete-button
+            (click)='confirmarApagar(imovel.id)'
           />
         </div>
       </div>
+      }
     </div>
   </div>
 </div>
@@ -77,6 +100,8 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
 })
 export class ImovelList {
   private readonly imovelService = inject(ImovelService);
+  private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
 
   imoveis: ImovelResponse[] = [];
 
@@ -90,6 +115,141 @@ export class ImovelList {
     this.imovelService.getAll().subscribe({
       next: (imoveis: ImovelResponse[]) => {
         this.imoveis = imoveis;
+      }
+    });
+  }
+
+  confirmarInativacao(id: string) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: 'Tem certeza que deseja inativar este imóvel?',
+      rejectLabel: 'Cancelar',
+      icon: 'pi pi-info-circle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Inativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.inativarImovel(id);
+      },
+      reject: () => { }
+    });
+  }
+
+  confirmarAtivacao(id: string) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: 'Tem certeza que deseja ativar este imóvel?',
+      rejectLabel: 'Cancelar',
+      icon: 'pi pi-info-circle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Ativar',
+        severity: 'primary',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.ativarImovel(id);
+      },
+      reject: () => { }
+    });
+  }
+
+  confirmarApagar(id: string) {
+    this.confirmationService.confirm({
+      header: 'ATENÇÂO!',
+      message: 'Tem certeza que deseja apagar este imóvel?',
+      rejectLabel: 'Cancelar',
+      icon: 'pi pi-info-circle',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Apagar',
+        severity: 'danger',
+        icon: 'pi pi-check'
+      },
+      accept: () => {
+        this.apagarImovel(id);
+      },
+      reject: () => { }
+    });
+  }
+
+  apagarImovel(id: string) {
+    this.imovelService.delete(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Imóvel apagado com sucesso!'
+        });
+
+        this.buscarImoveis();
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao apagar o imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao apagar o imóvel.'
+        });
+      }
+    });
+  }
+
+  inativarImovel(id: string) {
+    this.imovelService.inactivate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Imóvel inativado com sucesso!'
+        });
+
+        this.buscarImoveis();
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao inativar o imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao inativar o imóvel.'
+        });
+      }
+    });
+  }
+
+  ativarImovel(id: string) {
+    this.imovelService.activate(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Imóvel ativado com sucesso!'
+        });
+
+        this.buscarImoveis();
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao ativar o imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao ativar o imóvel.'
+        });
       }
     });
   }
