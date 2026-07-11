@@ -42,17 +42,27 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
       [class]="{
       'opacity-50': imovel.status === 'INATIVO'
        }">
-       
-        <div class="flex gap-2 items-center mb-2">
+
+        <div class="flex items-center gap-3">
           <p-tag
             [value]="imovel.codigo"
             [rounded]="true" />
 
-          <h3 class="m-0">
-            <strong>
-              {{imovel.tipo}} para {{imovel.finalidade.toLowerCase()}}
-            </strong>
-          </h3>
+          <span class="text-xl font-semibold">
+              {{imovel.tipo.toLocaleUpperCase()}} PARA {{imovel.finalidade.toUpperCase()}}
+          </span>
+
+          @if (imovel.eh_mobiliado == true) {
+            <p-tag
+            value="mobiliado"
+            severity="success"
+              />
+          } @else {
+            <p-tag
+            value="não mobiliado"
+            severity="warn"
+              />
+          }
         </div>
 
         <h5 class="mb-3">
@@ -68,7 +78,65 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
         </h2>
 
         <div class="flex flex-wrap gap-2">
+          @if (imovel.quantidade_quartos == 1) {
+            <p-tag
+              value="{{imovel.quantidade_quartos}} quarto"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_quartos > 1) {
+            <p-tag
+              value="{{imovel.quantidade_quartos}} quartos"
+              [rounded]="true" />
+          }
 
+          @if (imovel.quantidade_suites == 1) {
+            <p-tag
+              value="{{imovel.quantidade_suites}} suite"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_suites > 1) {
+            <p-tag
+              value="{{imovel.quantidade_suites}} suites"
+              [rounded]="true" />
+          }
+
+          @if (imovel.quantidade_banheiros == 1) {
+            <p-tag
+              value="{{imovel.quantidade_banheiros}} banheiro"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_banheiros > 1) {
+            <p-tag
+              value="{{imovel.quantidade_banheiros}} banheiros"
+              [rounded]="true" />
+          }
+
+          @if (imovel.quantidade_vagas == 1) {
+            <p-tag
+              value="{{imovel.quantidade_vagas}} vaga"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_vagas > 1) {
+            <p-tag
+              value="{{imovel.quantidade_vagas}} vagas"
+              [rounded]="true" />
+          }
+
+          @if (imovel.quantidade_andares == 1) {
+            <p-tag
+              value="{{imovel.quantidade_andares}} andar"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_andares > 1) {
+            <p-tag
+              value="{{imovel.quantidade_andares}} andares"
+              [rounded]="true" />
+          }
+
+          @if (imovel.quantidade_salas == 1) {
+            <p-tag
+              value="{{imovel.quantidade_salas}} sala"
+              [rounded]="true" />
+          } @else if (imovel.quantidade_salas > 1) {
+            <p-tag
+              value="{{imovel.quantidade_salas}} salas"
+              [rounded]="true" />
+          }            
         </div>
       </div>
 
