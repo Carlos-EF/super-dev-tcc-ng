@@ -22,7 +22,7 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
     EditButton,
     StatusButton,
     DeleteButton
-],
+  ],
   template: `
     <div class="flex justify-end">
       <p-button
@@ -55,15 +55,80 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
         
         <div><h2><strong class="text-primary">{{formatarValorParaReais(imovel.valor)}}</strong></h2></div>
         
-        <!-- <div class="flex gap-5 flex-wrap flex-row">
-          @for (caracteristica of imovel.caracteristicas; track caracteristica) {
+        <div class="flex gap-2 flex-wrap flex-row">
+        @if (imovel.quantidade_quartos != null) {
             <p-tag 
-            value="{{caracteristica}}"
+            value="{{imovel.quantidade_quartos}} Quartos"
             severity="primary"
             class="mb-2" />
-          } 
-        </div> -->
+      } @else if (imovel.quantidade_quartos == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_quartos}} Quarto"
+          severity="primary"
+          class="mb-2" />
+      }
+
+        @if (imovel.quantidade_suites != null) {
+            <p-tag 
+            value="{{imovel.quantidade_suites}} Suites"
+            severity="primary"
+            class="mb-2" />
+      } @else if (imovel.quantidade_suites == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_suites}} Suíte"
+          severity="primary"
+          class="mb-2" />
+      }
+
+        @if (imovel.quantidade_banheiros != null) {
+            <p-tag 
+            value="{{imovel.quantidade_banheiros}} Banheiros"
+            severity="primary"
+            class="mb-2" />
+      } @else if (imovel.quantidade_banheiros == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_banheiros}} Banheiro"
+          severity="primary"
+          class="mb-2" />
+      }
+
+        @if (imovel.quantidade_vagas != null) {
+            <p-tag 
+            value="{{imovel.quantidade_vagas}} Vagas"
+            severity="primary"
+            class="mb-2" />
+      } @else if (imovel.quantidade_vagas == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_vagas}} Vaga"
+          severity="primary"
+          class="mb-2" />
+      }
+
+        @if (imovel.quantidade_andares != null) {
+            <p-tag 
+            value="{{imovel.quantidade_andares}} Andares"
+            severity="primary"
+            class="mb-2" />
+      } @else if (imovel.quantidade_andares == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_andares}} Andar"
+          severity="primary"
+          class="mb-2" />
+      }
+      
+        @if (imovel.quantidade_salas != null) {
+            <p-tag 
+            value="{{imovel.quantidade_salas}} Salas"
+            severity="primary"
+            class="mb-2" />
+      } @else if (imovel.quantidade_salas == 1) {
+          <p-tag 
+          value="{{imovel.quantidade_salas}} Sala"
+          severity="primary"
+          class="mb-2" />
+      }
       </div>
+    </div>
       
       @if (imovel.status == 'ATIVO') {
         <div class="flex border-l-2 mt-2 mr-3 items-center">
