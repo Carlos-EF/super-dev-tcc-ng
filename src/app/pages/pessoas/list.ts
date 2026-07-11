@@ -1078,7 +1078,7 @@ export class PessoasList {
   }
 
   obterDadosAdicionaisCliente(tipo: string,
-    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse): number | string | null {
+    dados_adicionais: ClienteInteressadoResponse | ClienteLocatarioResponse | ClienteProprietarioResponse | null): number | string | null {
     if (tipo === "Interessado") {
       const valor = this.obterOrcamentoCliente(dados_adicionais as ClienteInteressadoResponse);
       return this.formatarValor(valor);
