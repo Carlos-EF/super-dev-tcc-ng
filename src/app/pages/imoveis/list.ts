@@ -1,6 +1,6 @@
 import { ImovelResponse } from '@/models/imovel.model';
 import { ImovelService } from '@/services/imovel.service';
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -21,145 +21,86 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
     CardModule,
     EditButton,
     StatusButton,
-    DeleteButton
+    DeleteButton,
   ],
   template: `
-    <div class="flex justify-end">
-      <p-button
-      icon="pi pi-plus"
-      label="Cadastrar"
-      severity="success"
-      routerLink="cadastrar"/>
-    </div>
-    
-    <!-- Para fazer o modelo de listagem -->
-    @for(imovel of imoveis; track imovel) {
-  <p-card class="p-0 mt-3 mb-3 border-primary border-r-2 border-l-2">
-    <div class="bg-surface-900 mt-3 pb-2 pl-2 w-full">
+  @for (imovel of imoveis(); track imovel.id) {
+<p-card
+  class="p-0 mt-3 mb-3 border-r-2 border-l-2"
+  [class]="{
+    'border-primary': imovel.status === 'ATIVO',
+    'border-gray-900': imovel.status === 'INATIVO'
+  }">
 
-      <div class="flex flex-row w-full">
-      <div class="flex justify-between w-full">
-        <div class="border-r-2 mt-2 mr-3 p-4 pl-2">
-          <!-- <p-image src="{{imovel.fotoCapa}}" width="220"/> -->
-        </div>
-
-        <div class="mt-2 mr-3 w-full">
-          <div class="flex gap-2 items-center">
-            <p-tag
-            class="max-h-min mt-2"
-            value="{{imovel.codigo}}" 
-            [rounded]="true"/>
-            <h3><strong class="m-0 text-2x1">{{imovel.tipo}} para {{imovel.finalidade.toLowerCase()}}</strong></h3>
-          </div>
-        <div><h5>{{imovel.logradouro}}, {{imovel.numero}} - {{imovel.bairro}}, {{imovel.cidade}} - {{imovel.estado}}</h5></div>
-        
-        <div><h2><strong class="text-primary">{{formatarValorParaReais(imovel.valor)}}</strong></h2></div>
-        
-        <div class="flex gap-2 flex-wrap flex-row">
-        @if (imovel.quantidade_quartos != null) {
-            <p-tag 
-            value="{{imovel.quantidade_quartos}} Quartos"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_quartos == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_quartos}} Quarto"
-          severity="primary"
-          class="mb-2" />
-      }
-
-        @if (imovel.quantidade_suites != null) {
-            <p-tag 
-            value="{{imovel.quantidade_suites}} Suites"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_suites == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_suites}} Suíte"
-          severity="primary"
-          class="mb-2" />
-      }
-
-        @if (imovel.quantidade_banheiros != null) {
-            <p-tag 
-            value="{{imovel.quantidade_banheiros}} Banheiros"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_banheiros == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_banheiros}} Banheiro"
-          severity="primary"
-          class="mb-2" />
-      }
-
-        @if (imovel.quantidade_vagas != null) {
-            <p-tag 
-            value="{{imovel.quantidade_vagas}} Vagas"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_vagas == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_vagas}} Vaga"
-          severity="primary"
-          class="mb-2" />
-      }
-
-        @if (imovel.quantidade_andares != null) {
-            <p-tag 
-            value="{{imovel.quantidade_andares}} Andares"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_andares == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_andares}} Andar"
-          severity="primary"
-          class="mb-2" />
-      }
-      
-        @if (imovel.quantidade_salas != null) {
-            <p-tag 
-            value="{{imovel.quantidade_salas}} Salas"
-            severity="primary"
-            class="mb-2" />
-      } @else if (imovel.quantidade_salas == 1) {
-          <p-tag 
-          value="{{imovel.quantidade_salas}} Sala"
-          severity="primary"
-          class="mb-2" />
-      }
+  <div class="flex flex-col gap-2 p-3">
+    <div class="flex items-stretch w-full">
+      <div class="w-64 border-r-2 pr-4 mr-4 flex items-center justify-center flex-shrink-0">
+        <!-- <p-image src="{{imovel.fotoCapa}}" width="220" /> -->
       </div>
-    </div>
-      
-      @if (imovel.status == 'ATIVO') {
-        <div class="flex border-l-2 mt-2 mr-3 items-center">
-          <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
-            <status-button
-            (click)='confirmarInativacao(imovel.id)'
-            status="{{imovel.status}}"            
-             />
-            <edit-button
-            routerLink="editar/{{imovel.id}}"
-            />
-          </div>
+
+      <div class="flex=1 w-full bg-surface-900 mt-3 p-3"
+      [class]="{
+      'opacity-50': imovel.status === 'INATIVO'
+       }">
+       
+        <div class="flex gap-2 items-center mb-2">
+          <p-tag
+            [value]="imovel.codigo"
+            [rounded]="true" />
+
+          <h3 class="m-0">
+            <strong>
+              {{imovel.tipo}} para {{imovel.finalidade.toLowerCase()}}
+            </strong>
+          </h3>
         </div>
-      } @else {
-      <div class="flex border-l-2 mt-2 mr-3 items-center">
-        <div class="flex flex-col justify-between w-full items-end ml-5 gap-4">
+
+        <h5 class="mb-3">
+          {{imovel.logradouro}}, {{imovel.numero}}
+          - {{imovel.bairro}},
+          {{imovel.cidade}} - {{imovel.estado}}
+        </h5>
+
+        <h2 class="mb-4">
+          <strong class="text-primary">
+            {{formatarValorParaReais(imovel.valor)}}
+          </strong>
+        </h2>
+
+        <div class="flex flex-wrap gap-2">
+
+        </div>
+      </div>
+
+      <div class="border-l-2 pl-4 ml-4 w-24 flex flex-col items-center justify-center gap-3 flex-shrink-0">
+        @if (imovel.status == 'ATIVO') {
           <status-button
-            (click)='confirmarAtivacao(imovel.id)'
-            status="{{imovel.status}}"            
-             />
+            (click)="confirmarInativacao(imovel.id)"
+            [status]="imovel.status">
+          </status-button>
+    
+          <edit-button
+            routerLink="editar/{{imovel.id}}">
+          </edit-button>
+    
           <delete-button
-            (click)='confirmarApagar(imovel.id)'
-          />
-        </div>
+            (click)="confirmarApagar(imovel.id)">
+          </delete-button>
+        } @else {
+          <status-button
+            (click)="confirmarAtivacao(imovel.id)"
+            [status]="imovel.status">
+          </status-button>
+    
+          <delete-button
+            (click)="confirmarApagar(imovel.id)">
+          </delete-button>
+        }
       </div>
-      }
     </div>
   </div>
-</div>
 </p-card>
-      }
+}
   `,
   styles: ``
 })
@@ -168,7 +109,7 @@ export class ImovelList {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
 
-  imoveis: ImovelResponse[] = [];
+  imoveis = model<ImovelResponse[]>([]);
 
   constructor() { }
 
@@ -179,7 +120,7 @@ export class ImovelList {
   buscarImoveis() {
     this.imovelService.getAll().subscribe({
       next: (imoveis: ImovelResponse[]) => {
-        this.imoveis = imoveis;
+        this.imoveis.set(imoveis);
       }
     });
   }
