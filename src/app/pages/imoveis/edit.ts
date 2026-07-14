@@ -870,7 +870,7 @@ export class ImovelEdit {
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
     em_condominio: ['', [Validators.required]],
-    condominio: [''],
+    condominio: this.formBuilder.control<string | null>(null),
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
     numero: this.formBuilder.control<number | null>(null),

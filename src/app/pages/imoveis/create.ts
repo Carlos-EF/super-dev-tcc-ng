@@ -224,6 +224,7 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
                  mask="99999-999" 
                  placeholder="99999-999" />
                  <p-button
+                 (click)="buscarCepParaFormularioImovel(this.imovelForm.get('cep')?.value || '')"
                  icon="pi pi-search"/>
                 </div>
             </div>
@@ -871,7 +872,7 @@ export class ImovelCreate {
     finalidade: ['', [Validators.required]],
     tipo: ['', [Validators.required]],
     em_condominio: ['', [Validators.required]],
-    condominio: [''],
+    condominio: this.formBuilder.control<string | null>(null),
     cep: ['', [Validators.required]],
     logradouro: ['', [Validators.required]],
     numero: this.formBuilder.control<number | null>(null),
@@ -1134,8 +1135,44 @@ export class ImovelCreate {
     }
   }
 
+  buscarCepParaFormularioImovel(cep: string) {
+    var cepLimpo = cep.replace('-', '').trim();
+
+    if (cepLimpo.length === 8) {
+      this.cepService.get(cepLimpo).subscribe({
+        next: (dados) => {
+          this.preencherDadosEnderecoParaFormulario(dados);
+        },
+        error: (erro: Error) => {
+          console.error('Erro ao buscar CEP:', erro);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Não foi possível buscar o CEP. Por favor, tente novamente mais tarde.'
+          });
+        }
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'CEP inválido. Por favor, insira um CEP no formato 99999-999.'
+      });
+    }
+  }
+
   preencherDadosEndereco(dados: ConsultaCepResponse) {
     return this.condominioForm.patchValue({
+      cep: dados.cep,
+      logradouro: dados.logradouro,
+      bairro: dados.bairro,
+      cidade: dados.localidade,
+      estado: dados.estado,
+    });
+  }
+
+  preencherDadosEnderecoParaFormulario(dados: ConsultaCepResponse) {
+    return this.imovelForm.patchValue({
       cep: dados.cep,
       logradouro: dados.logradouro,
       bairro: dados.bairro,
@@ -1220,7 +1257,6 @@ export class ImovelCreate {
     })
   }
 
-
   editarCondominio(id: string, formCondominioParaEditar: EditarCondominioResquest) {
     this.condominioService.update(id, formCondominioParaEditar).subscribe({
       next: (condominioEditado: CondominioResponse) => {
@@ -1282,15 +1318,17 @@ export class ImovelCreate {
   }
 
   preencherLocalizacaoComCondominio(condominio: CondominioResponse) {
-    this.imovelForm.patchValue({
-      condominio: condominio.id,
-      cep: condominio.cep,
-      logradouro: condominio.logradouro,
-      numero: condominio.numero,
-      bairro: condominio.bairro,
-      estado: condominio.estado,
-      cidade: condominio.cidade,
-    })
+    if(condominio) {
+      this.imovelForm.patchValue({
+        condominio: condominio.id,
+        cep: condominio.cep,
+        logradouro: condominio.logradouro,
+        numero: condominio.numero,
+        bairro: condominio.bairro,
+        estado: condominio.estado,
+        cidade: condominio.cidade,
+      })
+    }
   }
 
   preencherLocalizacaoComCondominioPorId(id: string) {
@@ -1369,7 +1407,6 @@ export class ImovelCreate {
   }
 
   salvarProprietario() {
-    debugger;
     const formCliente: CriarClienteRequest = {
       nome: this.clienteForm.getRawValue().nome!,
       codigo: this.clienteForm.getRawValue().codigo!,
@@ -1465,7 +1502,9 @@ export class ImovelCreate {
     dadosAdicionais: EditarDadosAdicionais
   ) {
     this.clienteService.update(
-      id, formEditar, dadosAdicionais
+      id, 
+      formEditar, 
+      dadosAdicionais
     ).subscribe({
       next: (cliente: ClienteResponse) => {
         console.log(cliente);
@@ -1511,9 +1550,10 @@ export class ImovelCreate {
   cadastrarImovel(form: CriarImovelRequest) {
     this.imovelService.create(form).subscribe({
       next: (imovel: ImovelResponse) => {
-        const idImovel = imovel.id;
-
-        this.buscarDadosClienteParaCadastrarImovel(idImovel, imovel.proprietario);
+        debugger;
+        this.buscarDadosClienteParaCadastrarImovel(
+          imovel.id,
+          this.imovelForm.get('proprietario')?.value!);
 
         this.messageService.add({
           severity: 'success',

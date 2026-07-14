@@ -24,6 +24,14 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
     DeleteButton,
   ],
   template: `
+  <div>
+    <p-button
+    icon="pi pi-plus"
+    label="Cadastrar"
+    severity="success"
+    routerLink="cadastrar"
+     />
+  </div>
   @for (imovel of imoveis(); track imovel.id) {
 <p-card
   class="p-0 mt-3 mb-3 border-r-2 border-l-2"
