@@ -69,27 +69,27 @@ export interface CriarClienteInteressadoRequest {
 }
 
 export interface ClienteProprietarioResponse {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export interface EditarClienteProprietarioRequest {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export interface CriarClienteProprietarioRequest {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export interface ClienteLocatarioResponse {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export interface EditarClienteLocatarioRequest {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export interface CriarClienteLocatarioRequest {
-    imovel_associado: string;
+    imovel_associado: string | null;
 }
 
 export type DadosAdicionais = 

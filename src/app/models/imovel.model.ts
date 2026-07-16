@@ -1,20 +1,20 @@
 export interface CriarImovelRequest {
-    proprietario: string;
-    corretor: string;
+    proprietario: string | null;
+    corretor: string | null;
     codigo: string;
     finalidade: string;
     tipo: string;
     em_condominio: boolean;
-    condominio: string;
+    condominio: string | null;
     cep: string;
     logradouro: string;
     numero: number;
     estado: string;
     cidade: string;
     bairro: string;
-    complemento: string;
+    complemento: string | null;
     valor: number;
-    valor_condominio: number;
+    valor_condominio: number | null;
     valor_iptu: number;
     quantidade_quartos: number;
     quantidade_suites: number;
@@ -26,19 +26,19 @@ export interface CriarImovelRequest {
 }
 
 export interface EditarImovelRequest {
-    proprietario: string;
-    corretor: string;
+    proprietario: string | null;
+    corretor: string | null;
     finalidade: string;
     tipo: string;
     em_condominio: boolean;
-    condominio: string;
+    condominio: string | null;
     cep: string;
     logradouro: string;
     numero: number;
     estado: string;
     cidade: string;
     bairro: string;
-    complemento: string;
+    complemento: string | null;
     valor: number;
     valor_condominio: number;
     valor_iptu: number;
@@ -55,19 +55,19 @@ export interface ImovelResponse {
     id: string;
     status: string;
     codigo: string;
-    proprietario: string;
-    corretor: string;
+    proprietario: string | null;
+    corretor: string | null;
     finalidade: string;
     tipo: string;
     em_condominio: boolean;
-    condominio: string;
+    condominio: string | null;
     cep: string;
     logradouro: string;
     numero: number;
     estado: string;
     cidade: string;
     bairro: string;
-    complemento: string;
+    complemento: string | null;
     valor: number;
     valor_condominio: number;
     valor_iptu: number;
