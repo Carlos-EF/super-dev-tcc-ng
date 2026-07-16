@@ -1,4 +1,4 @@
-import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais } from '@/models/cliente.model';
+import { ClienteResponse, CriarClienteRequest, CriarDadosAdicionais, EditarClienteLocatarioRequest, EditarClienteProprietarioRequest, EditarClienteRequest, EditarDadosAdicionais } from '@/models/cliente.model';
 import { CondominioResponse, CriarCondominioRequest, EditarCondominioResquest } from '@/models/condominio.model';
 import { ConsultaCepResponse } from '@/models/consulta.cep.model';
 import { CorretorCriarRequest, CorretorResponse } from '@/models/corretor.model';
@@ -1166,13 +1166,13 @@ export class ImovelEdit {
 
   criarFormProprietario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
   criarFormLocatario(): FormGroup {
     return this.formBuilder.group({
-      imovel_associado: ['', [Validators.required]]
+      imovel_associado: [null, [Validators.required]]
     })
   }
 
@@ -1500,7 +1500,11 @@ export class ImovelEdit {
 
   editarImovel(id: string, formImovel: EditarImovelRequest) {
     this.imovelService.update(id, formImovel).subscribe({
-      next: (imovelEditado: ImovelResponse) => {
+      next: () => {
+        this.buscarDadosClienteParaCadastrarImovel(
+          this.idParaEditar,
+          this.imovelParaEditarForm.get('proprietario')?.value!
+        )
         this.messageService.add({
           severity: 'success',
           summary: 'Sucesso!',
@@ -1518,6 +1522,73 @@ export class ImovelEdit {
         });
       }
     });
+  }
+
+  buscarDadosClienteParaCadastrarImovel(
+    idImovel: string,
+    idCliente: string) {
+    this.clienteService.getById(idCliente).subscribe({
+      next: (cliente: ClienteResponse) => {
+        if (cliente.tipo == 'Locatário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+
+          const dadosAdicionais: EditarClienteLocatarioRequest = {
+            imovel_associado: idImovel
+          }
+
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        } else if (cliente.tipo == 'Proprietário') {
+          const editarCliente: EditarClienteRequest = {
+            nome: cliente.nome,
+            como_encontrou: cliente.como_encontrou,
+            celular: cliente.celular,
+            email: cliente.email,
+            tipo: cliente.tipo
+          }
+
+          const dadosAdicionais: EditarClienteProprietarioRequest = {
+            imovel_associado: idImovel
+          }
+          this.editarDadosAdicionaisCliente(cliente.id, editarCliente, dadosAdicionais);
+        }
+      },
+      error: (erro: Error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO',
+          detail: 'Ocorreu um erro ao tentar associar o imóvel ao proprietário.'
+        })
+
+        console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário. (Fase de busca pelo cliente no banco):', erro);
+
+      }
+    })
+  }
+
+  editarDadosAdicionaisCliente(
+    id: string,
+    formEditar: EditarClienteRequest,
+    dadosAdicionais: EditarDadosAdicionais
+  ) {
+    this.clienteService.update(
+      id,
+      formEditar,
+      dadosAdicionais
+    ).subscribe({
+      next: (cliente: ClienteResponse) => {
+        console.log(cliente);
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar associar o imóvel ao proprietário:', erro);
+
+      }
+    })
   }
 
   onUpload(event: any) {
