@@ -158,7 +158,7 @@ import { ClienteService } from '@/services/cliente.service';
                   </p>
 
                   <p>
-                    @if (cliente.dados_adicionais == null) {
+                    @if (cliente.dados_adicionais!) {
                       <strong>Dado não cadastrado.</strong>
                     } @else {
                       <strong>
@@ -653,7 +653,7 @@ import { ClienteService } from '@/services/cliente.service';
         <div class="grid grid-cols-2 gap-4">
           <div>
             <strong>Imóvel Associado:</strong>
-            @if ((clienteSelecionado.dados_adicionais) == null) {
+            @if ((clienteSelecionado.dados_adicionais)!) {
               <p class="text-gray-400">
                 Dado não cadastrado.
               </p>
@@ -677,11 +677,8 @@ import { ClienteService } from '@/services/cliente.service';
 })
 export class PessoasList {
   private readonly corretorService = inject(CorretorService);
-
   private readonly clienteService = inject(ClienteService);
-
   private readonly messageService = inject(MessageService);
-
   private readonly confirmationService = inject(ConfirmationService);
 
   opcoesPessoas: MenuItem[];
