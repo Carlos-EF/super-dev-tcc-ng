@@ -86,3 +86,14 @@ export interface ImagensImovelResponse {
     imagem: string | null;
     imagem_principal: boolean;
 }
+
+export interface CriarImagensImovelRequest {
+    id_imovel: string;
+    imagem: string | null;
+    imagem_principal: boolean;
+}
+
+export interface EditarImagensImovelRequest {
+    imagem: string | null;
+    imagem_principal: boolean;
+}
