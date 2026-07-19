@@ -79,3 +79,10 @@ export interface ImovelResponse {
     quantidade_salas: number;
     eh_mobiliado: boolean;
 }
+
+export interface ImagensImovelResponse {
+    id: string;
+    id_imovel: string;
+    imagem: string | null;
+    imagem_principal: boolean;
+}
