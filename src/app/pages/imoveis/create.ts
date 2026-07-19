@@ -41,8 +41,7 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
     InputNumberModule,
     ToastModule,
     FileUploadModule,
-    DialogModule,
-  ],
+    DialogModule],
   template: `
   <p-toast/>
   <form [formGroup]="imovelForm">
