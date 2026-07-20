@@ -1,4 +1,4 @@
-import { ImovelResponse } from '@/models/imovel.model';
+import { ImagensImovelResponse, ImovelResponse } from '@/models/imovel.model';
 import { ImovelService } from '@/services/imovel.service';
 import { Component, inject, model } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -187,10 +187,32 @@ export class ImovelList {
 
   imoveis = model<ImovelResponse[]>([]);
 
+  imagensImoveis = model<ImagensImovelResponse[] | ImagensImovelResponse | null>([]);
+
   constructor() { }
 
   ngOnInit() {
     this.buscarImoveis();
+
+    this.buscarImagensImoveis();
+  }
+
+  buscarImagensImoveis() {
+    this.imovelService.getAllImages().subscribe({
+      next: (imagens: ImagensImovelResponse[] | ImagensImovelResponse | null) => {
+        if (imagens) {
+          this.imagensImoveis.set(imagens);
+        }
+      },
+      error: (erro: Error) => {
+        console.error('Erro ao buscar as imagens dos imóveis:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Ocorreu um erro ao buscar as imagens dos imóveis.'
+        });
+      }
+    })
   }
 
   buscarImoveis() {
