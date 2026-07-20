@@ -405,13 +405,14 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
           <div class="font-semibold text-xl mb-4">Fotos do Imóvel: <span class="text-red-500"><strong> *</strong></span></div>
                     <p-fileupload
                     #upload
+                    url="https://www.primefaces.org/cdn/api/upload.php"
                     chooseLabel="Procurar"
                     uploadLabel="Enviar"
                     cancelLabel="Cancelar"
-                     name="imagens[]" 
+                     name="imagensSelecionadas[]" 
                      (onSelect)="fazerSalvamentoLocal($event)"
-                     [customUpload]="true" 
-                     [multiple]="true" 
+                     (onUpload)="fazerUploadLocal($event)"
+                     [multiple]="true"
                      accept="image/*" 
                      maxFileSize="1000000" 
                      mode="advanced" 
@@ -935,7 +936,9 @@ export class ImovelCreate {
 
   dadosAdicionaisForm = this.formBuilder.group({});
 
-  imagens: File[] = [];
+  imagensSelecionadas: File[] = [];
+
+  imagensImoveis: File[] = [];
 
   constructor(
     private router: Router
@@ -1518,6 +1521,15 @@ export class ImovelCreate {
   }
 
   salvarImovel() {
+    if (this.imagensSelecionadas.length > 0) {
+      this.messageService.add({
+        severity: 'warn',
+          summary: 'AVISO!',
+          detail: 'Ainda possui imagens não salvas do imóvel!'
+      })
+
+      return;
+    }
     const formImovel: CriarImovelRequest = {
       proprietario: this.imovelForm.getRawValue().proprietario!,
       corretor: this.imovelForm.getRawValue().corretor!,
@@ -1575,8 +1587,24 @@ export class ImovelCreate {
     })
   }
 
+  fazerUploadLocal(event: any) {
+    this.imagensImoveis.push(...event.files);
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successo!',
+      detail: 'Foto salva com sucesso!'
+    });
+
+    console.log(this.imagensImoveis);
+
+  }
+
   fazerSalvamentoLocal(event: FileSelectEvent) {
-    this.imagens = event.files;
+    this.imagensSelecionadas.push(...event.files);
+
+    console.log(this.imagensSelecionadas);
+
 
     this.messageService.add({
       severity: 'info',
