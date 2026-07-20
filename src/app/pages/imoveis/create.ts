@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
-import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
+import { FileUploadModule, FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
@@ -26,7 +26,7 @@ import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 import { ImovelService } from '@/services/imovel.service';
-import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
+import { CriarImagensImovelRequest, CriarImovelRequest, ImagensImovelResponse, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -938,7 +938,7 @@ export class ImovelCreate {
 
   imagensSelecionadas: File[] = [];
 
-  imagensImoveis: File[] = [];
+  imagensImoveisLocal = model<SalvarImagensImovelLocal[]>([]);
 
   constructor(
     private router: Router
@@ -1524,8 +1524,8 @@ export class ImovelCreate {
     if (this.imagensSelecionadas.length > 0) {
       this.messageService.add({
         severity: 'warn',
-          summary: 'AVISO!',
-          detail: 'Ainda possui imagens não salvas do imóvel!'
+        summary: 'AVISO!',
+        detail: 'Ainda possui imagens não salvas do imóvel!'
       })
 
       return;
@@ -1563,10 +1563,11 @@ export class ImovelCreate {
   cadastrarImovel(form: CriarImovelRequest) {
     this.imovelService.create(form).subscribe({
       next: (imovel: ImovelResponse) => {
-        debugger;
         this.buscarDadosClienteParaCadastrarImovel(
           imovel.id,
           this.imovelForm.get('proprietario')?.value!);
+
+        // this.cadastrarImagens(imovel.id);
 
         this.messageService.add({
           severity: 'success',
@@ -1587,17 +1588,28 @@ export class ImovelCreate {
     })
   }
 
-  fazerUploadLocal(event: any) {
-    this.imagensImoveis.push(...event.files);
+  // cadastrarImagens(idImovel: string, imagens: ImagensImovelResponse[]) {
+
+  // }
+
+  fazerUploadLocal(event: FileUploadEvent) {
+    for (const imagem of this.imagensSelecionadas) {
+      this.imagensImoveisLocal.update(imagens => [
+        ...imagens,
+        {
+          imagem: imagem.name!,
+          imagem_principal: false
+        }
+
+      ])
+      console.log(this.imagensImoveisLocal());
+    }
 
     this.messageService.add({
       severity: 'success',
       summary: 'Successo!',
       detail: 'Foto salva com sucesso!'
     });
-
-    console.log(this.imagensImoveis);
-
   }
 
   fazerSalvamentoLocal(event: FileSelectEvent) {
