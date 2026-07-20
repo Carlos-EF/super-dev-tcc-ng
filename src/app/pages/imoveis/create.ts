@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUploadModule, FileSelectEvent } from 'primeng/fileupload';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
@@ -404,16 +404,18 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
           <div class="flex flex-col">
           <div class="font-semibold text-xl mb-4">Fotos do Imóvel: <span class="text-red-500"><strong> *</strong></span></div>
                     <p-fileupload
+                    #upload
                     chooseLabel="Procurar"
                     uploadLabel="Enviar"
                     cancelLabel="Cancelar"
-                     name="demo[]" 
-                     (onUpload)="onUpload($event)" 
+                     name="imagens[]" 
+                     (onSelect)="fazerSalvamentoLocal($event)"
+                     [customUpload]="true" 
                      [multiple]="true" 
                      accept="image/*" 
                      maxFileSize="1000000" 
                      mode="advanced" 
-                     url="https://www.primefaces.org/cdn/api/upload.php">
+                     >
                         <ng-template #empty>
                             <div>Arraste e jogue suas fotos do imóvel aqui.</div>
                         </ng-template>
@@ -933,7 +935,7 @@ export class ImovelCreate {
 
   dadosAdicionaisForm = this.formBuilder.group({});
 
-  uploadedFiles: any[] = [];
+  imagens: File[] = [];
 
   constructor(
     private router: Router
@@ -1317,7 +1319,7 @@ export class ImovelCreate {
   }
 
   preencherLocalizacaoComCondominio(condominio: CondominioResponse) {
-    if(condominio) {
+    if (condominio) {
       this.imovelForm.patchValue({
         condominio: condominio.id,
         cep: condominio.cep,
@@ -1501,8 +1503,8 @@ export class ImovelCreate {
     dadosAdicionais: EditarDadosAdicionais
   ) {
     this.clienteService.update(
-      id, 
-      formEditar, 
+      id,
+      formEditar,
       dadosAdicionais
     ).subscribe({
       next: (cliente: ClienteResponse) => {
@@ -1573,23 +1575,13 @@ export class ImovelCreate {
     })
   }
 
-  onUpload(event: any) {
-    for (const file of event.files) {
-      this.uploadedFiles.push(file);
-    }
+  fazerSalvamentoLocal(event: FileSelectEvent) {
+    this.imagens = event.files;
 
     this.messageService.add({
       severity: 'info',
       summary: 'Successo!',
       detail: 'Foto carregada!'
-    });
-  }
-
-  onBasicUpload() {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Successo!',
-      detail: 'Foto carregada com o modo basico.'
     });
   }
 }
