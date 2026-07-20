@@ -940,6 +940,8 @@ export class ImovelCreate {
 
   imagensImoveisLocal = model<SalvarImagensImovelLocal[]>([]);
 
+  imagensImoveis = model<CriarImagensImovelRequest[]>([]);
+
   constructor(
     private router: Router
   ) {
@@ -1565,16 +1567,16 @@ export class ImovelCreate {
       next: (imovel: ImovelResponse) => {
         this.buscarDadosClienteParaCadastrarImovel(
           imovel.id,
-          this.imovelForm.get('proprietario')?.value!);
+          this.imovelForm.get('proprietario')?.value!
+        );
 
-        // this.cadastrarImagens(imovel.id);
+        this.salvarImagens(imovel.id, this.imagensImoveisLocal());
 
         this.messageService.add({
           severity: 'success',
           summary: 'SUCESSO!',
           detail: 'Imóvel cadastrado com sucesso!'
         })
-
         this.router.navigate(['/pages/imoveis']);
       },
       error: (erro: Error) => {
@@ -1588,9 +1590,46 @@ export class ImovelCreate {
     })
   }
 
-  // cadastrarImagens(idImovel: string, imagens: ImagensImovelResponse[]) {
+  salvarImagens(idImovel: string, imagens: SalvarImagensImovelLocal[]) {
+    const id = idImovel;
 
-  // }
+    for (const imagem of imagens) {
+      let imagemParaCadastrar: CriarImagensImovelRequest = {
+        id_imovel: id,
+        imagem: imagem.imagem,
+        imagem_principal: imagem.imagem_principal
+      }
+
+      this.imagensImoveis.update(imagem => [
+        ...imagem,
+        {
+          id_imovel: imagemParaCadastrar.id_imovel,
+          imagem: imagemParaCadastrar.imagem,
+          imagem_principal: imagemParaCadastrar.imagem_principal
+        }
+      ])
+    }
+
+    this.cadastrarImagens(this.imagensImoveis());
+  }
+
+  cadastrarImagens(imagens: CriarImagensImovelRequest[]) {
+    this.imovelService.createImages(imagens).subscribe({
+      next: () => {
+        console.log('Imagens cadastradas com sucesso!');
+      },
+      error: (erro: Error) => {
+        console.log('Ocorreu um erro ao tentar cadastrar as imagens do imóvel:', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'ERRO!',
+          detail: 'Ocorreu um erro ao tentar cadastrar as imagens do imóvel.'
+        })
+
+        return
+      }
+    })
+  }
 
   fazerUploadLocal(event: FileUploadEvent) {
     for (const imagem of this.imagensSelecionadas) {
@@ -1602,6 +1641,9 @@ export class ImovelCreate {
         }
 
       ])
+      this.imagensSelecionadas = this.imagensSelecionadas.filter(
+        img => img !== imagem
+      )
       console.log(this.imagensImoveisLocal());
     }
 
