@@ -1,4 +1,4 @@
-import { CriarImagensImovelRequest, CriarImovelRequest, EditarImovelRequest, ImagensImovelResponse, ImovelResponse } from '@/models/imovel.model';
+import { CriarImovelRequest, EditarImovelRequest, ImagensImovelResponse, ImovelResponse } from '@/models/imovel.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -40,8 +40,8 @@ export class ImovelService {
     return this.httpClient.post<ImovelResponse>(this.url, form);
   }
 
-  createImages(
-    imagens: CriarImagensImovelRequest[] | null
+  uploadImages(
+    imagens: FormData | null
   ): Observable<ImagensImovelResponse[] | null> {
     return this.httpClient.post<ImagensImovelResponse[] | null>(this.urlImagensCadastrar,
       imagens

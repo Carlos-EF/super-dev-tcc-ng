@@ -83,23 +83,11 @@ export interface ImovelResponse {
 export interface ImagensImovelResponse {
     id: string;
     id_imovel: string;
-    imagem: string | null;
+    imagem: File;
     imagem_principal: boolean;
 }
 
 export interface SalvarImagensImovelLocal {
     imagem: File;
-    imagem_principal: boolean;
-
-}
-
-export interface CriarImagensImovelRequest {
-    id_imovel: string;
-    imagem: File;
-    imagem_principal: boolean;
-}
-
-export interface EditarImagensImovelRequest {
-    imagem: File | null;
     imagem_principal: boolean;
 }

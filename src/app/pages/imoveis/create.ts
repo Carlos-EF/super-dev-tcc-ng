@@ -26,7 +26,7 @@ import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 import { ImovelService } from '@/services/imovel.service';
-import { CriarImagensImovelRequest, CriarImovelRequest, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
+import { CriarImovelRequest, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -941,8 +941,6 @@ export class ImovelCreate {
 
   imagensImoveisLocal = model<SalvarImagensImovelLocal[]>([]);
 
-  imagensImoveis = model<CriarImagensImovelRequest[]>([]);
-
   constructor(
     private router: Router
   ) {
@@ -1525,14 +1523,21 @@ export class ImovelCreate {
 
   salvarImovel() {
     if (this.imagensSelecionadas.length > 0) {
-      this.messageService.add({
+      return this.messageService.add({
         severity: 'warn',
         summary: 'AVISO!',
         detail: 'Ainda possui imagens não salvas do imóvel!'
-      })
+      });
+    };
 
-      return;
+    if (this.imagensImoveisLocal().length === 0) {
+      return this.messageService.add({
+        severity: 'warn',
+        summary: 'AVISO!',
+        detail: 'Precisa pelo menos uma imagem do imóvel.'
+      })
     }
+
     const formImovel: CriarImovelRequest = {
       proprietario: this.imovelForm.getRawValue().proprietario!,
       corretor: this.imovelForm.getRawValue().corretor!,
@@ -1573,23 +1578,43 @@ export class ImovelCreate {
 
         const formData = new FormData();
 
-        for (const imagem of this.imagensImoveis()) {
-          formData.append(
-            'imagens', imagem.imagem)
+        for (const imagem of this.imagensImoveisLocal()) {
+          console.log("Arquivo:", imagem.imagem);
+          console.log("É File?", imagem.imagem instanceof File);
+
+          formData.append("imagens", imagem.imagem);
         }
 
-        formData.append('id_imovel', imovel.id);
+        formData.append("id_imovel", imovel.id);
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'SUCESSO!',
-          detail: 'Imóvel cadastrado com sucesso!'
+        for (const [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
+
+        this.imovelService.uploadImages(formData).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'SUCESSO!',
+              detail: 'Imóvel cadastrado com sucesso!'
+            })
+
+            this.router.navigate(['/pages/imoveis'])
+          },
+          error: (erro: Error) => {
+            console.log('Ocorreu um erro ao tentar cadastrar o imóvel (IMAGENS):', erro);
+
+            return this.messageService.add({
+              severity: 'error',
+              summary: 'ERRO!',
+              detail: 'Ocorreu um erro ao tentar cadastrar o imóvel (IMAGENS).'
+            })
+          },
         })
-        this.router.navigate(['/pages/imoveis']);
       },
       error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
-        this.messageService.add({
+        return this.messageService.add({
           severity: 'error',
           summary: 'ERRO!',
           detail: 'Ocorreu um erro ao tentar cadastrar o imóvel.'
@@ -1598,33 +1623,15 @@ export class ImovelCreate {
     })
   }
 
-  cadastrarImagens(imagens: CriarImagensImovelRequest[]) {
-    this.imovelService.createImages(imagens).subscribe({
-      next: () => {
-        console.log('Imagens cadastradas com sucesso!');
-      },
-      error: (erro: Error) => {
-        console.log('Ocorreu um erro ao tentar cadastrar as imagens do imóvel:', erro);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'ERRO!',
-          detail: 'Ocorreu um erro ao tentar cadastrar as imagens do imóvel.'
-        })
-
-        return
-      }
-    })
-  }
 
   fazerUploadLocal(event: FileUploadHandlerEvent, uploader: FileUpload) {
-    for (const imagem of this.imagensSelecionadas) {
+    for (const imagem of event.files) {
       this.imagensImoveisLocal.update(imagens => [
         ...imagens,
         {
           imagem: imagem,
           imagem_principal: false
         }
-
       ])
 
       console.log(this.imagensImoveisLocal());
@@ -1632,7 +1639,7 @@ export class ImovelCreate {
 
     this.imagensSelecionadas = [];
 
-    uploader.clear()
+    uploader.clear();
 
     this.messageService.add({
       severity: 'success',

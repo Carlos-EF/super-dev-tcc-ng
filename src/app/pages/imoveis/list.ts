@@ -10,6 +10,7 @@ import { EditButton } from "@/layout/component/action buttons/edit-button";
 import { StatusButton } from "@/layout/component/action buttons/status-button";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DeleteButton } from "@/layout/component/action buttons/delete-button";
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-list',
@@ -44,8 +45,9 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
     <div class="flex items-stretch w-full">
       <div class="w-64 border-r-2 pr-4 mr-4 flex items-center justify-center flex-shrink-0">
         @for (imagem of imagensImoveis(); track imagem.id_imovel) {
-
-          <p-image src="{{imagem.imagem}}" width="220" />
+          @if (imagem.id_imovel === imovel.id) {
+            <p-image [src]="environment.apiUrl + '/' + imagem.imagem" alt="Erro" width="220" />
+          }
         }
       </div>
 
@@ -187,10 +189,12 @@ export class ImovelList {
   private readonly imovelService = inject(ImovelService);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
-
+  
   imoveis = model<ImovelResponse[]>([]);
 
   imagensImoveis = model<ImagensImovelResponse[]>([]);
+
+  environment = environment;
 
   constructor() { }
 
@@ -217,7 +221,7 @@ export class ImovelList {
       }
     })
   }
-  
+
   buscarImoveis() {
     this.imovelService.getAll().subscribe({
       next: (imoveis: ImovelResponse[]) => {
