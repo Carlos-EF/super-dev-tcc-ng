@@ -1,4 +1,4 @@
-import { CriarImagensImovelRequest, CriarImovelRequest, EditarImovelRequest, ImagensImovelResponse, ImovelResponse } from '@/models/imovel.model';
+import { CriarImovelRequest, EditarImovelRequest, ImagensImovelResponse, ImovelResponse } from '@/models/imovel.model';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -12,14 +12,16 @@ export class ImovelService {
 
   private urlImagens = `${environment.apiUrl}/imoveis/imagens`;
 
+  private urlImagensCadastrar = `${environment.apiUrl}/imoveis/imagens/cadastrar`;
+
   private httpClient = inject(HttpClient);
 
   getAll(): Observable<ImovelResponse[]> {
     return this.httpClient.get<ImovelResponse[]>(this.url);
   }
 
-  getAllImages(): Observable<ImagensImovelResponse | ImagensImovelResponse[] | null> {
-    return this.httpClient.get<ImagensImovelResponse | ImagensImovelResponse[] | null>(this.urlImagens);
+  getAllImages(): Observable<ImagensImovelResponse[] | null> {
+    return this.httpClient.get<ImagensImovelResponse[] | null>(this.urlImagens);
   }
 
   getById(id: string): Observable<ImovelResponse> {
@@ -38,15 +40,11 @@ export class ImovelService {
     return this.httpClient.post<ImovelResponse>(this.url, form);
   }
 
-  createImages(
-    id: string,
-    form: CriarImagensImovelRequest | CriarImagensImovelRequest[] | null
-  ): Observable<ImagensImovelResponse | ImagensImovelResponse[] | null> {
-    return this.httpClient.post<ImagensImovelResponse | ImagensImovelResponse[] | null>(this.urlImagens,
-      {
-        id: id,
-        imagens: form
-      }
+  uploadImages(
+    imagens: FormData | null
+  ): Observable<ImagensImovelResponse[] | null> {
+    return this.httpClient.post<ImagensImovelResponse[] | null>(this.urlImagensCadastrar,
+      imagens
     );
   }
 

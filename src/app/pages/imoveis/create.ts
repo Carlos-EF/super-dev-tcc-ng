@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUploadModule, FileSelectEvent, FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
@@ -26,7 +26,7 @@ import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 import { ImovelService } from '@/services/imovel.service';
-import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
+import { CriarImovelRequest, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -404,16 +404,20 @@ import { CriarImovelRequest, ImovelResponse } from '@/models/imovel.model';
           <div class="flex flex-col">
           <div class="font-semibold text-xl mb-4">Fotos do Imóvel: <span class="text-red-500"><strong> *</strong></span></div>
                     <p-fileupload
+                    #uploader
+                    url="https://www.primefaces.org/cdn/api/upload.php"
                     chooseLabel="Procurar"
                     uploadLabel="Enviar"
                     cancelLabel="Cancelar"
-                     name="demo[]" 
-                     (onUpload)="onUpload($event)" 
-                     [multiple]="true" 
+                     name="imagensSelecionadas[]" 
+                     (onSelect)="fazerSalvamentoLocal($event)"
+                     (uploadHandler)="fazerUploadLocal($event, uploader)"
+                     [customUpload]="true"
+                     [multiple]="true"
                      accept="image/*" 
                      maxFileSize="1000000" 
                      mode="advanced" 
-                     url="https://www.primefaces.org/cdn/api/upload.php">
+                     >
                         <ng-template #empty>
                             <div>Arraste e jogue suas fotos do imóvel aqui.</div>
                         </ng-template>
@@ -933,7 +937,9 @@ export class ImovelCreate {
 
   dadosAdicionaisForm = this.formBuilder.group({});
 
-  uploadedFiles: any[] = [];
+  imagensSelecionadas: File[] = [];
+
+  imagensImoveisLocal = model<SalvarImagensImovelLocal[]>([]);
 
   constructor(
     private router: Router
@@ -1317,7 +1323,7 @@ export class ImovelCreate {
   }
 
   preencherLocalizacaoComCondominio(condominio: CondominioResponse) {
-    if(condominio) {
+    if (condominio) {
       this.imovelForm.patchValue({
         condominio: condominio.id,
         cep: condominio.cep,
@@ -1501,8 +1507,8 @@ export class ImovelCreate {
     dadosAdicionais: EditarDadosAdicionais
   ) {
     this.clienteService.update(
-      id, 
-      formEditar, 
+      id,
+      formEditar,
       dadosAdicionais
     ).subscribe({
       next: (cliente: ClienteResponse) => {
@@ -1516,6 +1522,22 @@ export class ImovelCreate {
   }
 
   salvarImovel() {
+    if (this.imagensSelecionadas.length > 0) {
+      return this.messageService.add({
+        severity: 'warn',
+        summary: 'AVISO!',
+        detail: 'Ainda possui imagens não salvas do imóvel!'
+      });
+    };
+
+    if (this.imagensImoveisLocal().length === 0) {
+      return this.messageService.add({
+        severity: 'warn',
+        summary: 'AVISO!',
+        detail: 'Precisa pelo menos uma imagem do imóvel.'
+      })
+    }
+
     const formImovel: CriarImovelRequest = {
       proprietario: this.imovelForm.getRawValue().proprietario!,
       corretor: this.imovelForm.getRawValue().corretor!,
@@ -1549,22 +1571,50 @@ export class ImovelCreate {
   cadastrarImovel(form: CriarImovelRequest) {
     this.imovelService.create(form).subscribe({
       next: (imovel: ImovelResponse) => {
-        debugger;
         this.buscarDadosClienteParaCadastrarImovel(
           imovel.id,
-          this.imovelForm.get('proprietario')?.value!);
+          this.imovelForm.get('proprietario')?.value!
+        );
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'SUCESSO!',
-          detail: 'Imóvel cadastrado com sucesso!'
+        const formData = new FormData();
+
+        for (const imagem of this.imagensImoveisLocal()) {
+          console.log("Arquivo:", imagem.imagem);
+          console.log("É File?", imagem.imagem instanceof File);
+
+          formData.append("imagens", imagem.imagem);
+        }
+
+        formData.append("id_imovel", imovel.id);
+
+        for (const [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
+
+        this.imovelService.uploadImages(formData).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'SUCESSO!',
+              detail: 'Imóvel cadastrado com sucesso!'
+            })
+
+            this.router.navigate(['/pages/imoveis'])
+          },
+          error: (erro: Error) => {
+            console.log('Ocorreu um erro ao tentar cadastrar o imóvel (IMAGENS):', erro);
+
+            return this.messageService.add({
+              severity: 'error',
+              summary: 'ERRO!',
+              detail: 'Ocorreu um erro ao tentar cadastrar o imóvel (IMAGENS).'
+            })
+          },
         })
-
-        this.router.navigate(['/pages/imoveis']);
       },
       error: (erro: Error) => {
         console.log('Ocorreu um erro ao tentar cadastrar o imóvel:', erro);
-        this.messageService.add({
+        return this.messageService.add({
           severity: 'error',
           summary: 'ERRO!',
           detail: 'Ocorreu um erro ao tentar cadastrar o imóvel.'
@@ -1573,23 +1623,40 @@ export class ImovelCreate {
     })
   }
 
-  onUpload(event: any) {
-    for (const file of event.files) {
-      this.uploadedFiles.push(file);
+
+  fazerUploadLocal(event: FileUploadHandlerEvent, uploader: FileUpload) {
+    for (const imagem of event.files) {
+      this.imagensImoveisLocal.update(imagens => [
+        ...imagens,
+        {
+          imagem: imagem,
+          imagem_principal: false
+        }
+      ])
+
+      console.log(this.imagensImoveisLocal());
     }
+
+    this.imagensSelecionadas = [];
+
+    uploader.clear();
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Successo!',
+      detail: 'Foto salva com sucesso!'
+    });
+  }
+
+  fazerSalvamentoLocal(event: FileSelectEvent) {
+    this.imagensSelecionadas.push(...event.files);
+
+    console.log(this.imagensSelecionadas);
 
     this.messageService.add({
       severity: 'info',
       summary: 'Successo!',
       detail: 'Foto carregada!'
-    });
-  }
-
-  onBasicUpload() {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Successo!',
-      detail: 'Foto carregada com o modo basico.'
     });
   }
 }
