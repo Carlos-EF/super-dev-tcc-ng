@@ -43,7 +43,10 @@ import { DeleteButton } from "@/layout/component/action buttons/delete-button";
   <div class="flex flex-col gap-2 p-3">
     <div class="flex items-stretch w-full">
       <div class="w-64 border-r-2 pr-4 mr-4 flex items-center justify-center flex-shrink-0">
-        <!-- <p-image src="{{imovel.fotoCapa}}" width="220" /> -->
+        @for (imagem of imagensImoveis(); track imagem.id_imovel) {
+
+          <p-image src="{{imagem.imagem}}" width="220" />
+        }
       </div>
 
       <div class="flex=1 w-full bg-surface-900 mt-3 p-3"
@@ -187,7 +190,7 @@ export class ImovelList {
 
   imoveis = model<ImovelResponse[]>([]);
 
-  imagensImoveis = model<ImagensImovelResponse[] | ImagensImovelResponse | null>([]);
+  imagensImoveis = model<ImagensImovelResponse[]>([]);
 
   constructor() { }
 
@@ -199,7 +202,7 @@ export class ImovelList {
 
   buscarImagensImoveis() {
     this.imovelService.getAllImages().subscribe({
-      next: (imagens: ImagensImovelResponse[] | ImagensImovelResponse | null) => {
+      next: (imagens: ImagensImovelResponse[] | null) => {
         if (imagens) {
           this.imagensImoveis.set(imagens);
         }
@@ -214,7 +217,7 @@ export class ImovelList {
       }
     })
   }
-
+  
   buscarImoveis() {
     this.imovelService.getAll().subscribe({
       next: (imoveis: ImovelResponse[]) => {

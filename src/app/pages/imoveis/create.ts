@@ -7,7 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { StepperModule } from 'primeng/stepper';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
-import { FileUploadModule, FileSelectEvent, FileUploadEvent } from 'primeng/fileupload';
+import { FileUploadModule, FileSelectEvent, FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { FINALIDADES } from '@/types/finalidade.types';
@@ -26,7 +26,7 @@ import { CondominioService } from '@/services/condominio.service';
 import { ESTA_EM_CONDOMINIO } from '@/types/condominio.types';
 import { ESTA_MOBILIADO } from '@/types/mobiliado.types';
 import { ImovelService } from '@/services/imovel.service';
-import { CriarImagensImovelRequest, CriarImovelRequest, ImagensImovelResponse, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
+import { CriarImagensImovelRequest, CriarImovelRequest, ImovelResponse, SalvarImagensImovelLocal } from '@/models/imovel.model';
 
 @Component({
   selector: 'app-create',
@@ -404,14 +404,15 @@ import { CriarImagensImovelRequest, CriarImovelRequest, ImagensImovelResponse, I
           <div class="flex flex-col">
           <div class="font-semibold text-xl mb-4">Fotos do Imóvel: <span class="text-red-500"><strong> *</strong></span></div>
                     <p-fileupload
-                    #upload
+                    #uploader
                     url="https://www.primefaces.org/cdn/api/upload.php"
                     chooseLabel="Procurar"
                     uploadLabel="Enviar"
                     cancelLabel="Cancelar"
                      name="imagensSelecionadas[]" 
                      (onSelect)="fazerSalvamentoLocal($event)"
-                     (onUpload)="fazerUploadLocal($event)"
+                     (uploadHandler)="fazerUploadLocal($event, uploader)"
+                     [customUpload]="true"
                      [multiple]="true"
                      accept="image/*" 
                      maxFileSize="1000000" 
@@ -1570,7 +1571,6 @@ export class ImovelCreate {
           this.imovelForm.get('proprietario')?.value!
         );
 
-        this.salvarImagens(imovel.id, this.imagensImoveisLocal());
 
         this.messageService.add({
           severity: 'success',
@@ -1588,29 +1588,6 @@ export class ImovelCreate {
         })
       }
     })
-  }
-
-  salvarImagens(idImovel: string, imagens: SalvarImagensImovelLocal[]) {
-    const id = idImovel;
-
-    for (const imagem of imagens) {
-      let imagemParaCadastrar: CriarImagensImovelRequest = {
-        id_imovel: id,
-        imagem: imagem.imagem,
-        imagem_principal: imagem.imagem_principal
-      }
-
-      this.imagensImoveis.update(imagem => [
-        ...imagem,
-        {
-          id_imovel: imagemParaCadastrar.id_imovel,
-          imagem: imagemParaCadastrar.imagem,
-          imagem_principal: imagemParaCadastrar.imagem_principal
-        }
-      ])
-    }
-
-    this.cadastrarImagens(this.imagensImoveis());
   }
 
   cadastrarImagens(imagens: CriarImagensImovelRequest[]) {
@@ -1631,21 +1608,23 @@ export class ImovelCreate {
     })
   }
 
-  fazerUploadLocal(event: FileUploadEvent) {
+  fazerUploadLocal(event: FileUploadHandlerEvent, uploader: FileUpload) {
     for (const imagem of this.imagensSelecionadas) {
       this.imagensImoveisLocal.update(imagens => [
         ...imagens,
         {
-          imagem: imagem.name!,
+          imagem: imagem,
           imagem_principal: false
         }
 
       ])
-      this.imagensSelecionadas = this.imagensSelecionadas.filter(
-        img => img !== imagem
-      )
+
       console.log(this.imagensImoveisLocal());
     }
+
+    this.imagensSelecionadas = [];
+
+    uploader.clear()
 
     this.messageService.add({
       severity: 'success',
@@ -1658,7 +1637,6 @@ export class ImovelCreate {
     this.imagensSelecionadas.push(...event.files);
 
     console.log(this.imagensSelecionadas);
-
 
     this.messageService.add({
       severity: 'info',

@@ -88,7 +88,7 @@ export interface ImagensImovelResponse {
 }
 
 export interface SalvarImagensImovelLocal {
-    imagem: string | null;
+    imagem: File;
     imagem_principal: boolean;
 
 }
