@@ -1571,6 +1571,14 @@ export class ImovelCreate {
           this.imovelForm.get('proprietario')?.value!
         );
 
+        const formData = new FormData();
+
+        for (const imagem of this.imagensImoveis()) {
+          formData.append(
+            'imagens', imagem.imagem)
+        }
+
+        formData.append('id_imovel', imovel.id);
 
         this.messageService.add({
           severity: 'success',
