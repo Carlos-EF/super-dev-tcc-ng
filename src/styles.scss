@@ -1,1 +1,54 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+    --bg0: #0C0F13;
+    --bg1: #12161C;
+    --bg2: #171D25;
+    --bg3: #1E2631;
+    --line: #27303C;
+    --line-strong: #37424F;
+    --text: #E9EEF5;
+    --text-2: #A6B1C2;
+    --text-3: #68748A;
+    --accent: #E3A857;
+    --accent-strong: #F0BC71;
+    --accent-soft: rgba(227, 168, 87, .12);
+    --accent-line: rgba(227, 168, 87, .35);
+    --success: #57C690;
+    --success-soft: rgba(87, 198, 144, .12);
+    --danger: #E5655E;
+    --danger-soft: rgba(229, 101, 94, .12);
+    --danger-line: rgba(229, 101, 94, .35);
+    --radius: 10px;
+    --radius-sm: 8px;
+    --shadow: 0 20px 50px rgba(0, 0, 0, .45);
+    --font-ui: 'Inter', system-ui, sans-serif;
+    --font-display: 'Sora', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+}
+
+[hidden] {
+    display: none !important
+}
+
+html {
+    color-scheme: dark
+}
+
+body {
+    font-family: var(--font-ui);
+    background: var(--bg0);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+::selection {
+    background: var(--accent-soft);
+    color: var(--accent-strong)
+}
