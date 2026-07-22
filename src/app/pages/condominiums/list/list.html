@@ -1,0 +1,70 @@
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <a routerLink="/home">Início</a>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m9 6 6 6-6 6" />
+    </svg>
+    <span>Condomínios</span>
+</nav>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">Condomínios</h1>
+        <p class="page-sub" id="page-sub">— condomínios cadastrados</p>
+    </div>
+    <button class="btn btn-primary" id="btn-novo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Cadastrar condomínio
+    </button>
+</div>
+<div class="card filters-card">
+    <div class="filters">
+        <div class="field">
+            <label for="f-busca">Buscar</label>
+            <div class="control has-prefix">
+                <span class="prefix">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg>
+                </span>
+                <input type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-bairro">Bairro</label>
+            <div class="select-wrap">
+                <select id="f-bairro">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-cidade">Cidade</label>
+            <div class="select-wrap">
+                <select id="f-cidade">
+                    <option value="">Todas</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-vinculo">Imóveis vinculados</label>
+            <div class="select-wrap">
+                <select id="f-vinculo">
+                    <option value="">Todos</option>
+                    <option value="com">Com imóveis</option>
+                    <option value="sem">Sem imóveis</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-ghost btn-clear" id="btn-limpar" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            Limpar
+        </button>
+    </div>
+</div>
