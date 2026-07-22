@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Topbar } from "./components/topbar.component/topbar.component";
+import { Topbar } from "./components/topbar/topbar.component";
 
 @Component({
   selector: 'app-root',
