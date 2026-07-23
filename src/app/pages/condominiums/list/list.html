@@ -70,77 +70,77 @@
 </div>
 
 @if (createModal === true) {
-<div class="modal-backdrop"
- [class.open]="createModal" id="modal-condominio" role="dialog" aria-modal="true" aria-labelledby="mk-title">
-    <div class="modal">
-        <div class="modal-head">
-            <div>
-                <h3 id="mk-title">Cadastrar condomínio</h3>
-                <p id="mk-sub">O endereço do condomínio será usado nos imóveis vinculados a ele.</p>
-            </div>
-            <button (click)="closeCreateModal()"
-             class="icon-btn" data-close-modal aria-label="Fechar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round">
-                    <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="form-grid">
-                <div class="field" id="field-mk-nome">
-                    <label for="mk-nome">Nome do condomínio <span class="req">*</span></label>
-                    <input type="text" id="mk-nome" placeholder="Residencial Primavera">
-                    <span class="hint" id="mk-nome-hint" hidden>Informe o nome do condomínio</span>
+<form formGroupName="createCondominiumForm">
+    <div class="modal-backdrop" [class.open]="createModal" id="modal-condominio" role="dialog" aria-modal="true"
+        aria-labelledby="mk-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mk-title">Cadastrar condomínio</h3>
+                    <p id="mk-sub">O endereço do condomínio será usado nos imóveis vinculados a ele.</p>
                 </div>
-                <div class="form-grid cols-3">
-                    <div class="field">
-                        <label for="mk-cep">CEP <span class="req">*</span></label>
-                        <div class="control">
-                            <input type="text" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
-                                inputmode="numeric">
-                            <span class="suffix-icon" id="mk-cep-status">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round">
-                                    <circle cx="11" cy="11" r="7" />
-                                    <path d="m21 21-4.3-4.3" />
-                                </svg>
-                            </span>
+                <button (click)="closeCreateModal()" class="icon-btn" data-close-modal aria-label="Fechar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field" id="field-mk-nome">
+                        <label for="mk-nome">Nome do condomínio <span class="req">*</span></label>
+                        <input formControlName="nome" type="text" id="mk-nome" placeholder="Residencial Primavera">
+                        <span class="hint" id="mk-nome-hint" hidden>Informe o nome do condomínio</span>
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="mk-cep">CEP <span class="req">*</span></label>
+                            <div class="control">
+                                <input type="text" formControlName="cep" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
+                                    inputmode="numeric">
+                                <span class="suffix-icon" id="mk-cep-status">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <circle cx="11" cy="11" r="7" />
+                                        <path d="m21 21-4.3-4.3" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <span class="hint">Endereço é buscado ao digitar o CEP completo</span>
                         </div>
-                        <span class="hint">Endereço é buscado ao digitar o CEP completo</span>
+                        <div class="field" style="grid-column:span 2">
+                            <label for="mk-rua">Logradouro <span class="req">*</span></label>
+                            <input type="text" formControlName="logradouro" id="mk-rua" placeholder="Preenchido pelo CEP">
+                        </div>
                     </div>
-                    <div class="field" style="grid-column:span 2">
-                        <label for="mk-rua">Logradouro <span class="req">*</span></label>
-                        <input type="text" id="mk-rua" placeholder="Preenchido pelo CEP">
-                    </div>
-                </div>
-                <div class="form-grid cols-3">
-                    <div class="field">
-                        <label for="mk-numero">Número <span class="req">*</span></label>
-                        <input type="number" id="mk-numero" placeholder="480" inputmode="numeric">
-                    </div>
-                    <div class="field">
-                        <label for="mk-bairro">Bairro <span class="req">*</span></label>
-                        <input type="text" id="mk-bairro" placeholder="Preenchido pelo CEP">
-                    </div>
-                    <div class="field">
-                        <label for="mk-cidade">Cidade / UF <span class="req">*</span></label>
-                        <input type="text" id="mk-cidade" placeholder="Preenchido pelo CEP">
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="mk-numero">Número <span class="req">*</span></label>
+                            <input type="number" id="mk-numero" formControlName="numero" placeholder="480" inputmode="numeric">
+                        </div>
+                        <div class="field">
+                            <label for="mk-bairro">Bairro <span class="req">*</span></label>
+                            <input type="text" id="mk-bairro" formControlName="bairro" placeholder="Preenchido pelo CEP">
+                        </div>
+                        <div class="field">
+                            <label for="mk-cidade">Cidade / UF <span class="req">*</span></label>
+                            <input type="text" id="mk-cidade" formControlName="cidade_uf" placeholder="Preenchido pelo CEP">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-foot">
-            <button (click)="cancelCreateModal()"
-             class="btn btn-ghost" data-close-modal>Cancelar</button>
-            <button class="btn btn-primary" id="mk-salvar">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 6 9 17l-5-5" />
-                </svg>
-                <span id="mk-salvar-label">Salvar condomínio</span>
-            </button>
+            <div class="modal-foot">
+                <button (click)="cancelCreateModal()" class="btn btn-ghost" data-close-modal>Cancelar</button>
+                <button class="btn btn-primary" id="mk-salvar">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span id="mk-salvar-label">Salvar condomínio</span>
+                </button>
+            </div>
         </div>
     </div>
-</div>
+</form>
 }
