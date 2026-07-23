@@ -117,7 +117,7 @@
                 <div class="form-grid cols-3">
                     <div class="field">
                         <label for="mk-numero">Número <span class="req">*</span></label>
-                        <input type="text" id="mk-numero" placeholder="480" inputmode="numeric">
+                        <input type="number" id="mk-numero" placeholder="480" inputmode="numeric">
                     </div>
                     <div class="field">
                         <label for="mk-bairro">Bairro <span class="req">*</span></label>
@@ -131,7 +131,8 @@
             </div>
         </div>
         <div class="modal-foot">
-            <button class="btn btn-ghost" data-close-modal>Cancelar</button>
+            <button (click)="cancelCreateModal()"
+             class="btn btn-ghost" data-close-modal>Cancelar</button>
             <button class="btn btn-primary" id="mk-salvar">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">

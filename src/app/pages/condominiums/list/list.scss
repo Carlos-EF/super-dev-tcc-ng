@@ -66,6 +66,7 @@
 }
 
 input[type=text],
+input[type=number],
 input[type=search],
 select {
     width: 100%;
@@ -78,6 +79,12 @@ select {
     padding: 9px 12px;
     transition: border-color .15s, box-shadow .15s;
     appearance: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input::placeholder {
