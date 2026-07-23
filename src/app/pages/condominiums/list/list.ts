@@ -41,4 +41,6 @@ export class CondominiumsList {
   closeCreateModal() {
     this.createModal = false;
   };
+
+  searchCep() {}
 }
