@@ -42,5 +42,13 @@ export class CondominiumsList {
     this.createModal = false;
   };
 
-  searchCep() {}
+  searchCep() {
+    const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
+
+    const cleanCep = cep.replace('-', '').trim();
+
+    if (cleanCep.length == 8) {
+      
+    }
+  }
 }
