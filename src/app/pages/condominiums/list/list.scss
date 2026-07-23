@@ -186,6 +186,24 @@ select {
     transition: opacity .2s;
 }
 
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .15s, color .15s;
+}
+
+.icon-btn:hover {
+    background: var(--bg3);
+    color: var(--text)
+}
+
 .modal-backdrop.open {
     opacity: 1;
     pointer-events: auto

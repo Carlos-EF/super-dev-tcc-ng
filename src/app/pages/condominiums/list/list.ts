@@ -13,4 +13,8 @@ export class CondominiumsList {
   openCreateModal() {
     this.createModal = true;
   }
+
+  closeCreateModal() {
+    this.createModal = false;
+  }
 }
