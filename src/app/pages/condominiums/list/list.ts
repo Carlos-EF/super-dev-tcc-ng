@@ -7,4 +7,10 @@ import { RouterLink } from "@angular/router";
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
-export class CondominiumsList {}
+export class CondominiumsList {
+  createModal: boolean = false;
+
+  openCreateModal() {
+    this.createModal = true;
+  }
+}

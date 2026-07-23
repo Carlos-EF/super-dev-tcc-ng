@@ -10,7 +10,8 @@
         <h1 class="page-title">Condomínios</h1>
         <p class="page-sub" id="page-sub">— condomínios cadastrados</p>
     </div>
-    <button class="btn btn-primary" id="btn-novo">
+    <button (click)="openCreateModal()"
+     class="btn btn-primary" id="btn-novo">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round">
             <path d="M12 5v14M5 12h14" />
@@ -68,3 +69,76 @@
         </button>
     </div>
 </div>
+
+@if (createModal == true) {
+    <div class="modal-backdrop" id="modal-condominio" role="dialog" aria-modal="true" aria-labelledby="mk-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mk-title">Cadastrar condomínio</h3>
+                    <p id="mk-sub">O endereço do condomínio será usado nos imóveis vinculados a ele.</p>
+                </div>
+                <button class="icon-btn" data-close-modal aria-label="Fechar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-grid">
+                <div class="field" id="field-mk-nome">
+                    <label for="mk-nome">Nome do condomínio <span class="req">*</span></label>
+                    <input type="text" id="mk-nome" placeholder="Residencial Primavera">
+                    <span class="hint" id="mk-nome-hint" hidden>Informe o nome do condomínio</span>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label for="mk-cep">CEP <span class="req">*</span></label>
+                        <div class="control">
+                            <input type="text" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
+                                inputmode="numeric">
+                            <span class="suffix-icon" id="mk-cep-status">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <circle cx="11" cy="11" r="7" />
+                                    <path d="m21 21-4.3-4.3" />
+                                </svg>
+                            </span>
+                        </div>
+                        <span class="hint">Endereço é buscado ao digitar o CEP completo</span>
+                    </div>
+                    <div class="field" style="grid-column:span 2">
+                        <label for="mk-rua">Logradouro <span class="req">*</span></label>
+                        <input type="text" id="mk-rua" placeholder="Preenchido pelo CEP">
+                    </div>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label for="mk-numero">Número <span class="req">*</span></label>
+                        <input type="text" id="mk-numero" placeholder="480" inputmode="numeric">
+                    </div>
+                    <div class="field">
+                        <label for="mk-bairro">Bairro <span class="req">*</span></label>
+                        <input type="text" id="mk-bairro" placeholder="Preenchido pelo CEP">
+                    </div>
+                    <div class="field">
+                        <label for="mk-cidade">Cidade / UF <span class="req">*</span></label>
+                        <input type="text" id="mk-cidade" placeholder="Preenchido pelo CEP">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" data-close-modal>Cancelar</button>
+            <button class="btn btn-primary" id="mk-salvar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+                <span id="mk-salvar-label">Salvar condomínio</span>
+            </button>
+        </div>
+    </div>
+</div>
+}
