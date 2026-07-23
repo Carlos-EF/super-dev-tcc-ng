@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-condominiums-list',
   imports: [
     RouterLink,
     FormsModule,
+    NgxMaskDirective,
     ReactiveFormsModule,
   ],
   templateUrl: './list.html',
@@ -24,19 +26,19 @@ export class CondominiumsList {
     numero: [this.formBuilder.control<number>(0), Validators.required],
     bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     cidade_uf: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
-  })
+  });
 
   openCreateModal() {
     this.createModal = true;
-  }
+  };
 
   cancelCreateModal() {
-    this.createCondominiumForm.reset();
-    
     this.createModal = false;
-  }
+    
+    this.createCondominiumForm.reset();
+  };
 
   closeCreateModal() {
     this.createModal = false;
-  }
+  };
 }
