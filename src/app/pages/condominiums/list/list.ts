@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -19,13 +20,17 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+  constructor(private toastService: ToastService) { }
+
+
   createCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    cep: ['', [Validators.maxLength(9)]],
-    logradouro: ['', [Validators.minLength(3), Validators.maxLength(60)]],
+    cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+    logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     numero: [this.formBuilder.control<number>(0), Validators.required],
     bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-    cidade_uf: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
+    uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+    cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
 
   openCreateModal() {
@@ -34,7 +39,7 @@ export class CondominiumsList {
 
   cancelCreateModal() {
     this.createModal = false;
-    
+
     this.createCondominiumForm.reset();
   };
 
@@ -42,13 +47,19 @@ export class CondominiumsList {
     this.createModal = false;
   };
 
+  saveCondominium() {
+    this.closeCreateModal();
+    
+    this.toastService.show('create', 'Condomínio');
+  }
+
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
 
     const cleanCep = cep.replace('-', '').trim();
 
     if (cleanCep.length == 8) {
-      
+
     }
   }
 }

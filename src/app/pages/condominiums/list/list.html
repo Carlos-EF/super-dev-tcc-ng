@@ -129,8 +129,8 @@
                                 placeholder="Preenchido pelo CEP">
                         </div>
                         <div class="field">
-                            <label for="mk-cidade">Cidade / UF <span class="req">*</span></label>
-                            <input type="text" id="mk-cidade" formControlName="cidade_uf"
+                            <label for="mk-cidade">Cidade <span class="req">*</span></label>
+                            <input type="text" id="mk-cidade" formControlName="cidade"
                                 placeholder="Preenchido pelo CEP">
                         </div>
                     </div>
@@ -138,7 +138,7 @@
             </div>
             <div class="modal-foot">
                 <button (click)="cancelCreateModal()" class="btn btn-ghost" data-close-modal>Cancelar</button>
-                <button class="btn btn-primary" id="mk-salvar">
+                <button (click)="saveCondominium()" class="btn btn-primary" id="mk-salvar">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 6 9 17l-5-5" />
