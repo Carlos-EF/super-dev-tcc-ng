@@ -19,6 +19,7 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+
   createCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
@@ -35,7 +36,7 @@ export class CondominiumsList {
 
   cancelCreateModal() {
     this.createModal = false;
-    
+
     this.createCondominiumForm.reset();
   };
 
@@ -43,13 +44,17 @@ export class CondominiumsList {
     this.createModal = false;
   };
 
+  saveCondominium() {
+
+  }
+
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
 
     const cleanCep = cep.replace('-', '').trim();
 
     if (cleanCep.length == 8) {
-      
+
     }
   }
 }
