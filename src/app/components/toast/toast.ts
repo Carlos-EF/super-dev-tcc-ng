@@ -1,50 +1,42 @@
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { ToastType } from '../../types/toast.types';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-toast',
-  imports: [
-    CommonModule,
-  ],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './toast.html',
-  styleUrl: './toast.scss',
+  styleUrl: './toast.scss'
 })
 export class Toast {
-  @Input() type: ToastType = '';
-  @Input() entity = 'register';
-  @Input() visible = false;
 
-  get message(): string {
-    switch (this.type) {
+  private readonly toastService = inject(ToastService);
+
+  readonly state = this.toastService.toast;
+
+  readonly visible = computed(() => this.state().visible);
+  readonly type = computed(() => this.state().type);
+  readonly entity = computed(() => this.state().entity);
+
+  readonly message = computed(() => {
+    switch (this.type()) {
       case 'create':
-        return `${this.entity
-          } cadastrado(a) com sucesso!`;
+        return `${this.entity()} criado com sucesso.`;
 
       case 'edit':
-        return `${this.entity
-          } atualizado(a) com sucesso!`;
+        return `${this.entity()} editado com sucesso.`;
 
       case 'delete':
-        return `${this.entity
-          } excluído(a) com sucesso!`;
+        return `${this.entity()} removido com sucesso.`;
 
       default:
-        return 'Operação realizada com sucesso!';
+        return '';
     }
+  });
+
+  close(): void {
+    this.toastService.hide();
   }
 
-  show(type: ToastType, entity: string, duration = 3000) {
-    this.type = type;
-    this.entity = entity;
-    this.visible = true;
-
-    setTimeout(() => {
-      this.visible = false;
-    }, duration);
-  }
-
-  close() {
-    this.visible = false;
-  }
 }

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -18,6 +19,8 @@ export class CondominiumsList {
   private readonly formBuilder = inject(FormBuilder);
 
   createModal: boolean = false;
+
+  constructor(private toastService: ToastService) { }
 
 
   createCondominiumForm = this.formBuilder.group({
@@ -45,7 +48,9 @@ export class CondominiumsList {
   };
 
   saveCondominium() {
-
+    this.closeCreateModal();
+    
+    this.toastService.show('create', 'Condomínio');
   }
 
   searchCep() {
