@@ -13,4 +13,10 @@ export class CondominiumService {
     getAll(): Observable<CondominiumResponse[]> {
         return this.httpClient.get<CondominiumResponse[]>(this.url);
     }
+
+    getById(id: string): Observable<CondominiumResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.get<CondominiumResponse>(urlWithId);
+    }
 }
