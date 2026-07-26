@@ -3,7 +3,8 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumService } from '../../../services/condominium.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -18,11 +19,10 @@ import { CreateCondominiumRequest } from '../../../models/condominium.model';
 })
 export class CondominiumsList {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly condominiumService = inject(CondominiumService);
+  private readonly toastService = inject(ToastService);
 
   createModal: boolean = false;
-
-  constructor(private toastService: ToastService) { }
-
 
   createCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
@@ -62,7 +62,18 @@ export class CondominiumsList {
     this.createCondominium(newCondominium);
   }
 
-  createCondominium(condominium: CreateCondominiumRequest) {}
+  createCondominium(condominium: CreateCondominiumRequest) {
+    this.condominiumService.create(condominium).subscribe({
+      next: () => {
+        this.closeCreateModal();
+
+        this.toastService.show('create', 'Condomínio');
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
+  }
 
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
