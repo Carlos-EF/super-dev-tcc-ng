@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
@@ -24,6 +24,12 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+  condominiums = model<CondominiumResponse[]>([]);
+
+  constructor() {
+    this.getAllCondominiums();
+  }
+
   createCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
@@ -33,6 +39,17 @@ export class CondominiumsList {
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
+
+  getAllCondominiums() {
+    this.condominiumService.getAll().subscribe({
+      next: (condominiums: CondominiumResponse[]) => {
+        this.condominiums.set(condominiums);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
+      }
+    })
+  }
 
   openCreateModal() {
     this.createModal = true;
