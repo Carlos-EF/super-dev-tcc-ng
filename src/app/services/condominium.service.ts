@@ -20,6 +20,12 @@ export class CondominiumService {
         return this.httpClient.get<CondominiumResponse>(urlWithId);
     };
 
+    delete(id: string): Observable<void> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.delete<void>(urlWithId);
+    };
+
     create(form: CreateCondominiumRequest): Observable<CondominiumResponse> {
         return this.httpClient.post<CondominiumResponse>(this.url, form);
     };
