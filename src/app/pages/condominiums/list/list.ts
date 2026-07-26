@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
+import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumService } from '../../../services/condominium.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -17,11 +19,16 @@ import { ToastService } from '../../../services/toast.service';
 })
 export class CondominiumsList {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly condominiumService = inject(CondominiumService);
+  private readonly toastService = inject(ToastService);
 
   createModal: boolean = false;
 
-  constructor(private toastService: ToastService) { }
+  condominiums = model<CondominiumResponse[]>([]);
 
+  constructor() {
+    this.getAllCondominiums();
+  }
 
   createCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
@@ -32,6 +39,17 @@ export class CondominiumsList {
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
+
+  getAllCondominiums() {
+    this.condominiumService.getAll().subscribe({
+      next: (condominiums: CondominiumResponse[]) => {
+        this.condominiums.set(condominiums);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
+      }
+    })
+  }
 
   openCreateModal() {
     this.createModal = true;
@@ -48,9 +66,30 @@ export class CondominiumsList {
   };
 
   saveCondominium() {
-    this.closeCreateModal();
-    
-    this.toastService.show('create', 'Condomínio');
+    const newCondominium: CreateCondominiumRequest = {
+      nome: this.createCondominiumForm.getRawValue().nome!,
+      cep: this.createCondominiumForm.getRawValue().cep!,
+      logradouro: this.createCondominiumForm.getRawValue().logradouro!,
+      numero: this.createCondominiumForm.getRawValue().numero!,
+      bairro: this.createCondominiumForm.getRawValue().bairro!,
+      uf: this.createCondominiumForm.getRawValue().uf!,
+      cidade: this.createCondominiumForm.getRawValue().cidade!
+    }
+
+    this.createCondominium(newCondominium);
+  }
+
+  createCondominium(condominium: CreateCondominiumRequest) {
+    this.condominiumService.create(condominium).subscribe({
+      next: () => {
+        this.closeCreateModal();
+
+        this.toastService.show('create', 'Condomínio');
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
   }
 
   searchCep() {
