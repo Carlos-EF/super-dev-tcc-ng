@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { CondominiumResponse, CreateCondominiumRequest } from '../models/condominium.model';
+import { CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../models/condominium.model';
 
 @Service()
 export class CondominiumService {
@@ -28,5 +28,11 @@ export class CondominiumService {
 
     create(form: CreateCondominiumRequest): Observable<CondominiumResponse> {
         return this.httpClient.post<CondominiumResponse>(this.url, form);
+    };
+
+    edit(id: string, form: EditCondominiumRequest): Observable<CondominiumResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.put<CondominiumResponse>(urlWithId, form);
     };
 }
