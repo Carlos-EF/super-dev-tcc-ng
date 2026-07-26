@@ -12,11 +12,15 @@ export class CondominiumService {
 
     getAll(): Observable<CondominiumResponse[]> {
         return this.httpClient.get<CondominiumResponse[]>(this.url);
-    }
+    };
 
     getById(id: string): Observable<CondominiumResponse> {
         const urlWithId = `${this.url}/${id}`;
 
         return this.httpClient.get<CondominiumResponse>(urlWithId);
-    }
+    };
+
+    create(form: CreateCondominiumRequest): Observable<CondominiumResponse> {
+        return this.httpClient.post<CondominiumResponse>(this.url, form);
+    };
 }
