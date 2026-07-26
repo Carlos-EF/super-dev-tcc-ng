@@ -9,7 +9,7 @@ export class ToastService {
 
   private readonly Signaltoast = signal<ToastState>({
     visible: false,
-    type: 'create' as ToastType,
+    type: '' as ToastType,
     entity: ''
   });
 
