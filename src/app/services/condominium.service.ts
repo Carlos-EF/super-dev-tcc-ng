@@ -8,7 +8,7 @@ import { CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest }
 export class CondominiumService {
     private httpClient = inject(HttpClient);
 
-    private url = `${environment.apiUrl}/condominium`;
+    private url = `${environment.apiUrl}/condominiums`;
 
     getAll(): Observable<CondominiumResponse[]> {
         return this.httpClient.get<CondominiumResponse[]>(this.url);
