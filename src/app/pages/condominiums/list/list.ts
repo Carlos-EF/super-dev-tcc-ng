@@ -3,6 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
+import { CreateCondominiumRequest } from '../../../models/condominium.model';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -48,10 +49,20 @@ export class CondominiumsList {
   };
 
   saveCondominium() {
-    this.closeCreateModal();
-    
-    this.toastService.show('create', 'Condomínio');
+    const newCondominium: CreateCondominiumRequest = {
+      nome: this.createCondominiumForm.getRawValue().nome!,
+      cep: this.createCondominiumForm.getRawValue().cep!,
+      logradouro: this.createCondominiumForm.getRawValue().logradouro!,
+      numero: this.createCondominiumForm.getRawValue().numero!,
+      bairro: this.createCondominiumForm.getRawValue().bairro!,
+      uf: this.createCondominiumForm.getRawValue().uf!,
+      cidade: this.createCondominiumForm.getRawValue().cidade!
+    }
+
+    this.createCondominium(newCondominium);
   }
+
+  createCondominium(condominium: CreateCondominiumRequest) {}
 
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
