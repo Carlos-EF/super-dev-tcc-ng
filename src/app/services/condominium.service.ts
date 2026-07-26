@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
+import { CondominiumResponse, CreateCondominiumRequest } from '../models/condominium.model';
 
 @Service()
 export class CondominiumService {
@@ -9,5 +10,7 @@ export class CondominiumService {
 
     private url = `${environment.apiUrl}/condominium`;
 
-    // getAll(): Observable<>
+    getAll(): Observable<CondominiumResponse[]> {
+        return this.httpClient.get<CondominiumResponse[]>(this.url);
+    }
 }
