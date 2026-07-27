@@ -113,7 +113,36 @@
                     <th class="actions-col"><span class="th-plain">Ações</span></th>
                 </tr>
             </thead>
-            <tbody id="tbody"></tbody>
+            <tbody id="tbody">
+                @for (condominium of condominiums(); track condominium.id) {
+                <tr>
+                    <td>{{ condominium.nome }}</td>
+                    <td>
+                        <div>
+                            {{ condominium.logradouro }}, {{condominium.numero}}
+                            {{condominium.bairro}} - {{condominium.cidade}} / {{condominium.uf}}
+                        </div>
+                    </td>
+                    <td>{{ condominium.cep }}</td>
+                    <td class="num">{{sumTotal()}}</td>
+                    <td class="actions-col">
+                        <button type="button" class="btn-icon" aria-label="Editar condomínio">
+                            Editar
+                        </button>
+
+                        <button type="button" class="btn-icon danger" aria-label="Excluir condomínio">
+                            Excluir
+                        </button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="5" class="text-center">
+                        Nenhum condomínio encontrado.
+                    </td>
+                </tr>
+                }
+            </tbody>
         </table>
     </div>
 

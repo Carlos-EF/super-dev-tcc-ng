@@ -92,6 +92,12 @@ export class CondominiumsList {
     })
   }
 
+  sumTotal() {
+    var total = 0;
+
+    return total;
+  }
+
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
 
