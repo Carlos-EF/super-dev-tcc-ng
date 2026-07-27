@@ -24,6 +24,10 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+  selectedCondominium: CondominiumResponse | null = null;
+
+  confirmModal: boolean = false;
+
   condominiums = model<CondominiumResponse[]>([]);
 
   constructor() {
@@ -55,6 +59,17 @@ export class CondominiumsList {
     this.createModal = true;
   };
 
+  openConfirmModal(condominium: CondominiumResponse) {
+    this.selectedCondominium = condominium;
+    this.confirmModal = true;
+  }
+
+  closeConfirmModal() {
+    this.confirmModal = false;
+
+    this.selectedCondominium = null;
+  }
+
   cancelCreateModal() {
     this.createModal = false;
 
@@ -82,12 +97,29 @@ export class CondominiumsList {
   createCondominium(condominium: CreateCondominiumRequest) {
     this.condominiumService.create(condominium).subscribe({
       next: () => {
-        this.closeCreateModal();
-
         this.toastService.show('create', 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeCreateModal();
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
+  }
+
+  deleteCondominium(id: string) {
+    this.condominiumService.delete(id).subscribe({
+      next: () => {
+        this.toastService.show("delete", 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeConfirmModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar apagar o condomínio:', error);
       }
     })
   }

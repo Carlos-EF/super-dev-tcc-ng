@@ -185,8 +185,8 @@
                                 </svg>
                             </button>
 
-                            <button class="icon-btn danger" type="button" title="Excluir condomínio"
-                                [attr.aria-label]="'Excluir ' + condominium.nome">
+                            <button (click)="openConfirmModal(condominium)" class="icon-btn danger" type="button"
+                                title="Excluir condomínio" [attr.aria-label]="'Excluir ' + condominium.nome">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M3 6h18" />
@@ -331,4 +331,69 @@
         </div>
     </div>
 </form>
+}
+
+@if (confirmModal && selectedCondominium) {
+<div class="modal-backdrop open" role="dialog" aria-modal="true" aria-labelledby="mx-title">
+    <div class="modal modal-sm">
+        <div class="modal-head">
+            <div>
+                <h3 id="mx-title">Excluir condomínio</h3>
+            </div>
+
+            <button class="icon-btn" type="button" aria-label="Fechar" (click)="closeConfirmModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="confirm-box">
+                <div class="confirm-icon">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                    </svg>
+                </div>
+                <div>
+                    <p>
+                        Excluir o condomínio
+                        <b>{{ selectedCondominium.nome }}</b>?
+                    </p>
+                    @if (sumTotal(selectedCondominium.id) > 0) {
+                    <span class="warn">
+                        {{ sumTotal(selectedCondominium.id) }}
+                        {{ sumTotal(selectedCondominium.id) === 1
+                        ? ' imóvel vinculado ficará'
+                        : ' imóveis vinculados ficarão' }}
+                        sem condomínio.
+                    </span>
+                    } @else {
+                    <span class="warn">
+                        Este condomínio não possui imóveis vinculados.
+                    </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-foot">
+            <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()">
+                Cancelar
+            </button>
+            <button class="btn btn-danger" type="button" (click)="deleteCondominium(selectedCondominium.id)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                </svg>
+                Excluir
+            </button>
+        </div>
+    </div>
+</div>
 }
