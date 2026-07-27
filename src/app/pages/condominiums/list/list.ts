@@ -5,6 +5,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
+import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -30,6 +31,8 @@ export class CondominiumsList {
 
   condominiums = model<CondominiumResponse[]>([]);
 
+  busca = new Subject<string>();
+
   cities = computed(() => {
     return [...new Set(this.condominiums().map(c => c.cidade))].sort();
   });
@@ -42,6 +45,18 @@ export class CondominiumsList {
 
   constructor() {
     this.getAllCondominiums();
+  }
+
+  ngOnInit() {
+    this.busca.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(
+      resultado => {
+        this.filters.busca = resultado;
+        this.updateListWithFilters();
+      }
+    )
   }
 
   createCondominiumForm = this.formBuilder.group({
@@ -156,18 +171,10 @@ export class CondominiumsList {
     this.updateListWithFilters();
   }
 
-  getHasPropertyValue(event: Event) {
-    const hasProperty = event.target as HTMLSelectElement;
+  getSearchValue(event: Event) {
+    const search = event.target as HTMLInputElement;
 
-    if (hasProperty.value === "com") {
-      this.filters.comImoveis = true;
-    } else if (hasProperty.value === "sem") {
-      this.filters.comImoveis = false;
-    } else {
-      this.filters.comImoveis = undefined;
-    }
-
-    this.updateListWithFilters();
+    this.busca.next(search.value);
   }
 
   private updateListWithFilters() {

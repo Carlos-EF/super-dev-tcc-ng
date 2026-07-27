@@ -30,7 +30,7 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
+                <input (input)="getSearchValue($event)" type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
             </div>
         </div>
         <div class="field">
@@ -58,7 +58,7 @@
         <div class="field">
             <label for="f-vinculo">Imóveis vinculados</label>
             <div class="select-wrap">
-                <select (change)="getHasPropertyValue($event)" id="f-vinculo">
+                <select id="f-vinculo">
                     <option value="">Todos</option>
                     <option value="com">Com imóveis</option>
                     <option value="sem">Sem imóveis</option>

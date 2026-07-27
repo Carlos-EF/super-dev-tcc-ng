@@ -24,10 +24,6 @@ export class CondominiumService {
             params = params.set('bairro', filters.bairro);
         }
 
-        if (filters?.comImoveis) {
-            params = params.set('comImoveis', filters.comImoveis);
-        }
-
         return this.httpClient.get<CondominiumResponse[]>(
             this.url,
             { params }
