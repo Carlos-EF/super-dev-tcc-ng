@@ -1,10 +1,11 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, computed, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
+import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -24,10 +25,48 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+  selectedCondominium: CondominiumResponse | null = null;
+
+  confirmModal: boolean = false;
+
+  busca = new Subject<string>();
+
   condominiums = model<CondominiumResponse[]>([]);
+
+  condominiumsForFilter = model<CondominiumResponse[]>([]);
+
+  districts = computed(() => {
+    return [...new Set(
+      this.condominiumsForFilter()
+        .map(c => c.bairro)
+        .filter((bairro): bairro is string => !!bairro)
+    )];
+  });
+
+  cities = computed(() => {
+    return [...new Set(
+      this.condominiumsForFilter()
+        .map(c => c.cidade)
+        .filter((cidade): cidade is string => !!cidade)
+    )];
+  });
+
+  filters: CondominiumFilters = {};
 
   constructor() {
     this.getAllCondominiums();
+  }
+
+  ngOnInit() {
+    this.busca.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(
+      resultado => {
+        this.filters.busca = resultado;
+        this.updateListWithFilters();
+      }
+    )
   }
 
   createCondominiumForm = this.formBuilder.group({
@@ -41,9 +80,10 @@ export class CondominiumsList {
   });
 
   getAllCondominiums() {
-    this.condominiumService.getAll().subscribe({
+    this.condominiumService.getAll(this.filters).subscribe({
       next: (condominiums: CondominiumResponse[]) => {
         this.condominiums.set(condominiums);
+        this.condominiumsForFilter.set(condominiums);
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
@@ -54,6 +94,17 @@ export class CondominiumsList {
   openCreateModal() {
     this.createModal = true;
   };
+
+  openConfirmModal(condominium: CondominiumResponse) {
+    this.selectedCondominium = condominium;
+    this.confirmModal = true;
+  }
+
+  closeConfirmModal() {
+    this.confirmModal = false;
+
+    this.selectedCondominium = null;
+  }
 
   cancelCreateModal() {
     this.createModal = false;
@@ -82,14 +133,87 @@ export class CondominiumsList {
   createCondominium(condominium: CreateCondominiumRequest) {
     this.condominiumService.create(condominium).subscribe({
       next: () => {
-        this.closeCreateModal();
-
         this.toastService.show('create', 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeCreateModal();
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
       }
     })
+  }
+
+  deleteCondominium(id: string) {
+    this.condominiumService.delete(id).subscribe({
+      next: () => {
+        this.toastService.show("delete", 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeConfirmModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar apagar o condomínio:', error);
+      }
+    })
+  }
+
+  sumTotal(id: string) {
+    var total = 0;
+
+    return total;
+  }
+
+  getDistrictValue(event: Event) {
+    const district = event.target as HTMLSelectElement;
+
+    this.filters.bairro = district.value;
+
+    this.updateListWithFilters();
+  }
+
+  getCityValue(event: Event) {
+    const city = event.target as HTMLSelectElement;
+
+    this.filters.cidade = city.value;
+
+    this.updateListWithFilters();
+  }
+
+  getSearchValue(event: Event) {
+    const search = event.target as HTMLInputElement;
+
+    this.busca.next(search.value);
+  }
+
+  private updateListWithFilters() {
+    let condominiums = this.condominiumsForFilter();
+
+    if (this.filters.busca?.trim()) {
+      const busca = this.filters.busca.toLowerCase().trim();
+
+      condominiums = condominiums.filter(c =>
+        c.nome.toLowerCase().includes(busca) ||
+        c.cidade.toLowerCase().includes(busca) ||
+        c.bairro.toLowerCase().includes(busca)
+      );
+    }
+
+    if (this.filters.cidade) {
+      condominiums = condominiums.filter(
+        c => c.cidade === this.filters.cidade
+      );
+    }
+
+    if (this.filters.bairro) {
+      condominiums = condominiums.filter(
+        c => c.bairro === this.filters.bairro
+      );
+    }
+
+    this.condominiums.set(condominiums);
   }
 
   searchCep() {

@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../models/condominium.model';
+import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../models/condominium.model';
 
 @Service()
 export class CondominiumService {
@@ -10,8 +10,24 @@ export class CondominiumService {
 
     private url = `${environment.apiUrl}/condominiums`;
 
-    getAll(): Observable<CondominiumResponse[]> {
-        return this.httpClient.get<CondominiumResponse[]>(this.url);
+    getAll(filters?: CondominiumFilters): Observable<CondominiumResponse[]> {
+        let params = new HttpParams();
+        if (filters?.busca) {
+            params = params.set('busca', filters.busca);
+        }
+
+        if (filters?.cidade) {
+            params = params.set('cidade', filters.cidade);
+        }
+
+        if (filters?.bairro) {
+            params = params.set('bairro', filters.bairro);
+        }
+
+        return this.httpClient.get<CondominiumResponse[]>(
+            this.url,
+            { params }
+        );
     };
 
     getById(id: string): Observable<CondominiumResponse> {
