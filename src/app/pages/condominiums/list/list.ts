@@ -29,16 +29,26 @@ export class CondominiumsList {
 
   confirmModal: boolean = false;
 
-  condominiums = model<CondominiumResponse[]>([]);
-
   busca = new Subject<string>();
 
-  cities = computed(() => {
-    return [...new Set(this.condominiums().map(c => c.cidade))].sort();
-  });
+  condominiums = model<CondominiumResponse[]>([]);
+
+  condominiumsForFilter = model<CondominiumResponse[]>([]);
 
   districts = computed(() => {
-    return [...new Set(this.condominiums().map(c => c.bairro))].sort();
+    return [...new Set(
+      this.condominiumsForFilter()
+        .map(c => c.bairro)
+        .filter((bairro): bairro is string => !!bairro)
+    )];
+  });
+
+  cities = computed(() => {
+    return [...new Set(
+      this.condominiumsForFilter()
+        .map(c => c.cidade)
+        .filter((cidade): cidade is string => !!cidade)
+    )];
   });
 
   filters: CondominiumFilters = {};
@@ -73,6 +83,7 @@ export class CondominiumsList {
     this.condominiumService.getAll(this.filters).subscribe({
       next: (condominiums: CondominiumResponse[]) => {
         this.condominiums.set(condominiums);
+        this.condominiumsForFilter.set(condominiums);
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
@@ -178,7 +189,31 @@ export class CondominiumsList {
   }
 
   private updateListWithFilters() {
-    this.getAllCondominiums();
+    let condominiums = this.condominiumsForFilter();
+
+    if (this.filters.busca?.trim()) {
+      const busca = this.filters.busca.toLowerCase().trim();
+
+      condominiums = condominiums.filter(c =>
+        c.nome.toLowerCase().includes(busca) ||
+        c.cidade.toLowerCase().includes(busca) ||
+        c.bairro.toLowerCase().includes(busca)
+      );
+    }
+
+    if (this.filters.cidade) {
+      condominiums = condominiums.filter(
+        c => c.cidade === this.filters.cidade
+      );
+    }
+
+    if (this.filters.bairro) {
+      condominiums = condominiums.filter(
+        c => c.bairro === this.filters.bairro
+      );
+    }
+
+    this.condominiums.set(condominiums);
   }
 
   searchCep() {
