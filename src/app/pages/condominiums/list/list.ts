@@ -140,6 +140,40 @@ export class CondominiumsList {
     return total;
   }
 
+  getDistrictValue(event: Event) {
+    const district = event.target as HTMLSelectElement;
+
+    this.filters.bairro = district.value;
+
+    this.updateListWithFilters();
+  }
+
+  getCityValue(event: Event) {
+    const city = event.target as HTMLSelectElement;
+
+    this.filters.cidade = city.value;
+
+    this.updateListWithFilters();
+  }
+
+  getHasPropertyValue(event: Event) {
+    const hasProperty = event.target as HTMLSelectElement;
+
+    if (hasProperty.value === "com") {
+      this.filters.comImoveis = true;
+    } else if (hasProperty.value === "sem") {
+      this.filters.comImoveis = false;
+    } else {
+      this.filters.comImoveis = undefined;
+    }
+
+    this.updateListWithFilters();
+  }
+
+  private updateListWithFilters() {
+    this.getAllCondominiums();
+  }
+
   searchCep() {
     const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
 
