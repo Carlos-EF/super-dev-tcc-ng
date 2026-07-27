@@ -1,9 +1,9 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, computed, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
 
 @Component({
@@ -30,6 +30,16 @@ export class CondominiumsList {
 
   condominiums = model<CondominiumResponse[]>([]);
 
+  cities = computed(() => {
+    return [...new Set(this.condominiums().map(c => c.cidade))].sort();
+  });
+
+  districts = computed(() => {
+    return [...new Set(this.condominiums().map(c => c.bairro))].sort();
+  });
+
+  filters: CondominiumFilters = {};
+
   constructor() {
     this.getAllCondominiums();
   }
@@ -45,7 +55,7 @@ export class CondominiumsList {
   });
 
   getAllCondominiums() {
-    this.condominiumService.getAll().subscribe({
+    this.condominiumService.getAll(this.filters).subscribe({
       next: (condominiums: CondominiumResponse[]) => {
         this.condominiums.set(condominiums);
       },
