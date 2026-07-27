@@ -30,3 +30,10 @@ export interface CondominiumResponse {
     criado_em: Date;
     alterado_em: Date;
 }
+
+export interface CondominiumFilters {
+    busca?: string;
+    cidade?: string;
+    bairro?: string;
+    comImoveis?: boolean;
+}
