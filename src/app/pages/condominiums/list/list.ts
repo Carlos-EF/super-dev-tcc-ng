@@ -92,7 +92,7 @@ export class CondominiumsList {
     })
   }
 
-  sumTotal() {
+  sumTotal(id: string) {
     var total = 0;
 
     return total;

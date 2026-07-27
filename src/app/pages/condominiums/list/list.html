@@ -70,75 +70,132 @@
 </div>
 
 <div class="card table-card">
+    @if (condominiums().length > 0) {
     <div class="table-wrap">
         <table aria-label="Lista de condomínios">
             <thead>
                 <tr>
                     <th data-sort="nome">
-                        <button class="th-sort">Condomínio
-                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                        <button class="th-sort">
+                            Condomínio
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg></span>
+                                </svg>
+                            </span>
                         </button>
                     </th>
                     <th data-sort="endereco">
-                        <button class="th-sort">Endereço
-                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                        <button class="th-sort">
+                            Endereço
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg></span>
+                                </svg>
+                            </span>
                         </button>
                     </th>
                     <th data-sort="cep">
-                        <button class="th-sort">CEP
-                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                        <button class="th-sort">
+                            CEP
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg></span>
+                                </svg>
+                            </span>
                         </button>
                     </th>
                     <th data-sort="imoveis" class="num">
-                        <button class="th-sort">Imóveis
-                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-                                    stroke-linejoin="round">
+                        <button class="th-sort">
+                            Imóveis
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg></span>
+                                </svg>
+                            </span>
                         </button>
                     </th>
-                    <th class="actions-col"><span class="th-plain">Ações</span></th>
+                    <th class="actions-col">
+                        <span class="th-plain">Ações</span>
+                    </th>
                 </tr>
             </thead>
-            <tbody id="tbody">
+
+            <tbody>
                 @for (condominium of condominiums(); track condominium.id) {
                 <tr>
-                    <td>{{ condominium.nome }}</td>
                     <td>
-                        <div>
-                            {{ condominium.logradouro }}, {{condominium.numero}}
-                            {{condominium.bairro}} - {{condominium.cidade}} / {{condominium.uf}}
+                        <div class="condo-name">
+                            <span class="condo-ico">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 21h18" />
+                                    <path d="M5 21V7l7-4 7 4v14" />
+                                    <path d="M9 10h.01M15 10h.01M9 14h.01M15 14h.01" />
+                                </svg>
+                            </span>
+                            <b>{{ condominium.nome }}</b>
                         </div>
                     </td>
-                    <td>{{ condominium.cep }}</td>
-                    <td class="num">{{sumTotal()}}</td>
-                    <td class="actions-col">
-                        <button type="button" class="btn-icon" aria-label="Editar condomínio">
-                            Editar
-                        </button>
-
-                        <button type="button" class="btn-icon danger" aria-label="Excluir condomínio">
-                            Excluir
-                        </button>
+                    <td>
+                        <span class="addr-l1">
+                            {{ condominium.logradouro }}, {{ condominium.numero }}
+                        </span>
+                        <span class="addr-l2">
+                            {{ condominium.bairro }} —
+                            {{ condominium.cidade }}/{{ condominium.uf }}
+                        </span>
                     </td>
-                </tr>
-                } @empty {
-                <tr>
-                    <td colspan="5" class="text-center">
-                        Nenhum condomínio encontrado.
+                    <td class="cep-cell">
+                        {{ condominium.cep }}
+                    </td>
+                    <td class="num">
+                        <span class="count-badge" [class.zero]="sumTotal(condominium.id) === 0" [title]="sumTotal(condominium.id) === 0
+                                ? 'Nenhum imóvel vinculado'
+                                : sumTotal(condominium.id) + ' imóveis vinculados'">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 10.5 12 3l9 7.5" />
+                                <path d="M5 9.5V21h14V9.5" />
+                            </svg>
+                            {{ sumTotal(condominium.id) }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn" type="button" title="Ver imóveis do condomínio"
+                                [attr.aria-label]="'Ver imóveis de ' + condominium.nome">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+
+                            <button class="icon-btn" type="button" title="Editar condomínio"
+                                [attr.aria-label]="'Editar ' + condominium.nome">
+
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
+                                </svg>
+                            </button>
+
+                            <button class="icon-btn danger" type="button" title="Excluir condomínio"
+                                [attr.aria-label]="'Excluir ' + condominium.nome">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                    <path d="M10 11v6M14 11v6" />
+                                </svg>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 }
@@ -146,28 +203,8 @@
         </table>
     </div>
 
-    <div class="empty-state" id="empty-state" hidden>
-        <div class="es-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="7" />
-                <path d="m21 21-4.3-4.3" />
-                <path d="M8 11h6" />
-            </svg>
-        </div>
-        <h4>Nenhum condomínio encontrado</h4>
-        <p>Nenhum resultado para os filtros aplicados. Ajuste a busca ou limpe os filtros.</p>
-        <button class="btn btn-ghost" id="btn-limpar-empty">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round">
-                <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-            Limpar filtros
-        </button>
-    </div>
-
-    <div class="table-foot" id="table-foot">
-        <span class="foot-info" id="foot-info"></span>
+    <div class="table-foot">
+        <span class="foot-info"></span>
         <div class="foot-ctrl">
             <div class="per-page">
                 <label for="per-page">Itens por página</label>
@@ -179,10 +216,35 @@
                     </select>
                 </div>
             </div>
-            <nav class="pager" id="pager" aria-label="Paginação"></nav>
+            <nav class="pager" aria-label="Paginação"></nav>
         </div>
     </div>
+    } @else {
+    <div class="empty-state">
+        <div class="es-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+                <path d="M8 11h6" />
+            </svg>
+        </div>
+        <h4>Nenhum condomínio encontrado</h4>
+        <p>
+            Nenhum resultado para os filtros aplicados.
+            Ajuste a busca ou limpe os filtros.
+        </p>
+        <button class="btn btn-ghost" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            Limpar filtros
+        </button>
+    </div>
+    }
 </div>
+
 
 @if (createModal === true) {
 <form [formGroup]="createCondominiumForm">
