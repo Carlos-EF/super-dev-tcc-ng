@@ -69,6 +69,92 @@
     </div>
 </div>
 
+<div class="card table-card">
+    <div class="table-wrap">
+        <table aria-label="Lista de condomínios">
+            <thead>
+                <tr>
+                    <th data-sort="nome">
+                        <button class="th-sort">Condomínio
+                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg></span>
+                        </button>
+                    </th>
+                    <th data-sort="endereco">
+                        <button class="th-sort">Endereço
+                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg></span>
+                        </button>
+                    </th>
+                    <th data-sort="cep">
+                        <button class="th-sort">CEP
+                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg></span>
+                        </button>
+                    </th>
+                    <th data-sort="imoveis" class="num">
+                        <button class="th-sort">Imóveis
+                            <span class="arrow"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg></span>
+                        </button>
+                    </th>
+                    <th class="actions-col"><span class="th-plain">Ações</span></th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" id="empty-state" hidden>
+        <div class="es-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+                <path d="M8 11h6" />
+            </svg>
+        </div>
+        <h4>Nenhum condomínio encontrado</h4>
+        <p>Nenhum resultado para os filtros aplicados. Ajuste a busca ou limpe os filtros.</p>
+        <button class="btn btn-ghost" id="btn-limpar-empty">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            Limpar filtros
+        </button>
+    </div>
+
+    <div class="table-foot" id="table-foot">
+        <span class="foot-info" id="foot-info"></span>
+        <div class="foot-ctrl">
+            <div class="per-page">
+                <label for="per-page">Itens por página</label>
+                <div class="select-wrap">
+                    <select id="per-page">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="pager" id="pager" aria-label="Paginação"></nav>
+        </div>
+    </div>
+</div>
+
 @if (createModal === true) {
 <form [formGroup]="createCondominiumForm">
     <div class="modal-backdrop" [class.open]="createModal" id="modal-condominio" role="dialog" aria-modal="true"
@@ -97,8 +183,9 @@
                         <div class="field">
                             <label for="mk-cep">CEP <span class="req">*</span></label>
                             <div class="control">
-                                <input type="text" mask="00000-000" [dropSpecialCharacters]="false" formControlName="cep" id="mk-cep" class="mono"
-                                    placeholder="00000-000" maxlength="9" inputmode="numeric">
+                                <input type="text" mask="00000-000" [dropSpecialCharacters]="false"
+                                    formControlName="cep" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
+                                    inputmode="numeric">
 
                                 <button type="button" class="suffix-icon" id="mk-cep-status" (click)="searchCep()"
                                     aria-label="Buscar CEP">
@@ -135,8 +222,7 @@
                         </div>
                         <div class="field">
                             <label for="mk-uf">UF <span class="req">*</span></label>
-                            <input type="text" id="mk-uf" formControlName="uf"
-                                placeholder="Preenchido pelo CEP">
+                            <input type="text" id="mk-uf" formControlName="uf" placeholder="Preenchido pelo CEP">
                         </div>
                     </div>
                 </div>
