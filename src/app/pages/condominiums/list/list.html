@@ -40,7 +40,7 @@
                 <select #districtSelect 
                 (change)="getDistrictValue($event)" id="f-bairro">
                     <option value="">Todos</option>
-                    @for (district of districts(); track district) {
+                    @for (district of districts().bairros; track district) {
                     <option [value]="district">{{district}}</option>
                     }
                 </select>
@@ -52,7 +52,7 @@
                 <select #citySelect
                  (change)="getCityValue($event)" id="f-cidade">
                     <option value="">Todos</option>
-                    @for (city of cities(); track city) {
+                    @for (city of cities().cidades; track city) {
                     <option [value]="city">{{city}}</option>
                     }
                 </select>

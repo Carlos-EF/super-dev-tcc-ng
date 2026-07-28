@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
+import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
@@ -36,34 +36,26 @@ export class CondominiumsList {
 
   busca = new Subject<string>();
 
-  condominiums = model<PaginatedCondominiumResponse>();
+  condominiums = model<PaginatedCondominiumResponse>({condominios: []});
 
   condominiumsForFilter = model<PaginatedCondominiumResponse>();
+
+  cities = model<CitiesResponse>({cidades: []});
+
+  districts = model<DistrictsResponse>({bairros: []});
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
   @ViewChild('citySelect') citySelect!: ElementRef<HTMLSelectElement>;
 
-  districts = computed(() => {
-    return [...new Set(
-      (this.condominiumsForFilter()?.condominios ?? [])
-        .map(c => c.bairro)
-        .filter((bairro): bairro is string => !!bairro)
-    )];
-  });
-
-  cities = computed(() => {
-    return [...new Set(
-      (this.condominiumsForFilter()?.condominios ?? [])
-        .map(c => c.cidade)
-        .filter((cidade): cidade is string => !!cidade)
-    )];
-  });
-
   filters: CondominiumFilters = {};
 
   constructor() {
     this.getAllCondominiums();
+
+    this.getAllCities();
+
+    this.getAllDisticts();
   }
 
   ngOnInit() {
@@ -96,6 +88,28 @@ export class CondominiumsList {
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
+      }
+    })
+  }
+
+  getAllCities() {
+     this.condominiumService.getAllCities().subscribe({
+      next: (cities: CitiesResponse) => {
+        this.cities.set(cities);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todas as cidades:', error);
+      }
+    })
+  }
+
+  getAllDisticts() {
+     this.condominiumService.getAllDistricts().subscribe({
+      next: (districts: DistrictsResponse) => {
+          this.districts.set(districts);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
       }
     })
   }
