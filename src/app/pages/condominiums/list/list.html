@@ -218,7 +218,9 @@
             <div class="per-page">
                 <label for="per-page">Itens por página</label>
                 <div class="select-wrap">
-                    <select id="per-page">
+                    <select [value]="perPage()"
+                    (change)="changePerPagevalue($event)"
+                     id="per-page">
                         <option value="10" selected>10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>

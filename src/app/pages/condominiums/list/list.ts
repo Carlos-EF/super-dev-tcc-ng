@@ -56,6 +56,10 @@ export class CondominiumsList {
     }
   );
 
+  perPage = model(10);
+
+  page = model(1);
+
   cities = model<CitiesResponse>({ cidades: [] });
 
   districts = model<DistrictsResponse>({ bairros: [] });
@@ -97,7 +101,11 @@ export class CondominiumsList {
   });
 
   getAllCondominiums() {
-    this.condominiumService.getAll(this.filters).subscribe({
+    this.condominiumService.getAll(
+      this.filters,
+      this.page(),
+      this.perPage()
+    ).subscribe({
       next: (condominiums: PaginatedCondominiumResponse) => {
         this.condominiums.set(condominiums);
         this.condominiumsForFilter.set(condominiums);
@@ -305,6 +313,16 @@ export class CondominiumsList {
     this.busca.next(search.value);
   }
 
+  changePerPagevalue(event: Event) {
+    const perPageCount = +(event.target as HTMLSelectElement).value;
+
+    this.perPage.set(perPageCount);
+
+    this.page.set(1);
+
+    this.getAllCondominiums();
+  }
+
   private updateListWithFilters() {
     const original = this.condominiumsForFilter();
 
@@ -316,7 +334,9 @@ export class CondominiumsList {
       const busca = this.filters.busca.toLowerCase().trim();
       condominios = condominios.
         filter(c => c.nome.
-          toLowerCase().includes(busca) || c.cidade.toLowerCase().includes(busca) || c.bairro.toLowerCase().includes(busca));
+          toLowerCase().includes(busca) ||
+          c.cidade.toLowerCase().includes(busca) ||
+          c.bairro.toLowerCase().includes(busca));
     }
 
     if (this.filters.cidade) {
@@ -331,7 +351,6 @@ export class CondominiumsList {
     this.condominiums.set({
       ...original,
       condominios,
-      total: condominios.length
     });
   }
 
