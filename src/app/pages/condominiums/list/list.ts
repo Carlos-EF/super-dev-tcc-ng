@@ -6,6 +6,8 @@ import { ToastService } from '../../../services/toast.service';
 import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SearchCepService } from '../../../services/search.cep.service';
+import { CepResponse } from '../../../models/cep.model';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -21,6 +23,7 @@ import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 export class CondominiumsList {
   private readonly formBuilder = inject(FormBuilder);
   private readonly condominiumService = inject(CondominiumService);
+  private readonly cepService = inject(SearchCepService);
   private readonly toastService = inject(ToastService);
 
   openModal: boolean = false;
@@ -286,7 +289,19 @@ export class CondominiumsList {
     const cleanCep = cep.replace('-', '').trim();
 
     if (cleanCep.length == 8) {
-
+      this.cepService.get(cleanCep).subscribe({
+        next: (response: CepResponse) => {
+          return this.condominiumForm.patchValue({
+            logradouro: response.street,
+            bairro: response.neighborhood,
+            cidade: response.city,
+            uf: response.state
+          });
+        },
+        error: (error:Error) => {
+        return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        }
+      })
     }
   }
 }
