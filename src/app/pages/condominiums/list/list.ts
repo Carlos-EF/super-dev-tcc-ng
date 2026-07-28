@@ -25,6 +25,8 @@ export class CondominiumsList {
 
   createModal: boolean = false;
 
+  editModal: boolean = false;
+
   selectedCondominium: CondominiumResponse | null = null;
 
   confirmModal: boolean = false;
@@ -70,6 +72,16 @@ export class CondominiumsList {
   }
 
   createCondominiumForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+    logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    numero: [this.formBuilder.control<number>(0), Validators.required],
+    bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+    uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+    cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
+  });
+
+  editCondominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
