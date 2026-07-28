@@ -168,6 +168,17 @@ body {
     margin: 5px 0 18px
 }
 
+.error-message {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.field input.ng-invalid.ng-touched {
+    border-color: #dc2626;
+}
+
 @media (prefers-reduced-motion:reduce) {
 
     *,

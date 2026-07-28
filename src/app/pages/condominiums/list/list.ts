@@ -1,11 +1,13 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, ElementRef, inject, model, Signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
-import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { SearchCepService } from '../../../services/search.cep.service';
+import { CepResponse } from '../../../models/cep.model';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -21,9 +23,12 @@ import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 export class CondominiumsList {
   private readonly formBuilder = inject(FormBuilder);
   private readonly condominiumService = inject(CondominiumService);
+  private readonly cepService = inject(SearchCepService);
   private readonly toastService = inject(ToastService);
 
-  createModal: boolean = false;
+  openModal: boolean = false;
+
+  isEditMode: boolean = false;
 
   selectedCondominium: CondominiumResponse | null = null;
 
@@ -31,30 +36,46 @@ export class CondominiumsList {
 
   busca = new Subject<string>();
 
-  condominiums = model<CondominiumResponse[]>([]);
+  condominiums = model<PaginatedCondominiumResponse>(
+    {
+      condominios: [],
+      pagina: 1,
+      por_pagina: 10,
+      total: 0,
+      total_paginas: 0
+    }
+  );
 
-  condominiumsForFilter = model<CondominiumResponse[]>([]);
+  condominiumsForFilter = model<PaginatedCondominiumResponse>(
+    {
+      condominios: [],
+      pagina: 1,
+      por_pagina: 10,
+      total: 0,
+      total_paginas: 0
+    }
+  );
 
-  districts = computed(() => {
-    return [...new Set(
-      this.condominiumsForFilter()
-        .map(c => c.bairro)
-        .filter((bairro): bairro is string => !!bairro)
-    )];
-  });
+  perPage = model(10);
 
-  cities = computed(() => {
-    return [...new Set(
-      this.condominiumsForFilter()
-        .map(c => c.cidade)
-        .filter((cidade): cidade is string => !!cidade)
-    )];
-  });
+  page = model(1);
+
+  cities = model<CitiesResponse>({ cidades: [] });
+
+  districts = model<DistrictsResponse>({ bairros: [] });
+
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('citySelect') citySelect!: ElementRef<HTMLSelectElement>;
 
   filters: CondominiumFilters = {};
 
   constructor() {
     this.getAllCondominiums();
+
+    this.getAllCities();
+
+    this.getAllDisticts();
   }
 
   ngOnInit() {
@@ -69,19 +90,23 @@ export class CondominiumsList {
     )
   }
 
-  createCondominiumForm = this.formBuilder.group({
+  condominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    numero: [this.formBuilder.control<number>(0), Validators.required],
+    numero: [null as number | null, Validators.required],
     bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
 
   getAllCondominiums() {
-    this.condominiumService.getAll(this.filters).subscribe({
-      next: (condominiums: CondominiumResponse[]) => {
+    this.condominiumService.getAll(
+      this.filters,
+      this.page(),
+      this.perPage()
+    ).subscribe({
+      next: (condominiums: PaginatedCondominiumResponse) => {
         this.condominiums.set(condominiums);
         this.condominiumsForFilter.set(condominiums);
       },
@@ -91,8 +116,32 @@ export class CondominiumsList {
     })
   }
 
+  getAllCities() {
+    this.condominiumService.getAllCities().subscribe({
+      next: (cities: CitiesResponse) => {
+        this.cities.set(cities);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todas as cidades:', error);
+      }
+    })
+  }
+
+  getAllDisticts() {
+    this.condominiumService.getAllDistricts().subscribe({
+      next: (districts: DistrictsResponse) => {
+        this.districts.set(districts);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
+      }
+    })
+  }
+
   openCreateModal() {
-    this.createModal = true;
+    this.isEditMode = false;
+
+    this.openModal = true;
   };
 
   openConfirmModal(condominium: CondominiumResponse) {
@@ -106,28 +155,75 @@ export class CondominiumsList {
     this.selectedCondominium = null;
   }
 
-  cancelCreateModal() {
-    this.createModal = false;
+  cancelModal() {
+    this.isEditMode = false;
 
-    this.createCondominiumForm.reset();
+    this.selectedCondominium = null;
+
+    this.openModal = false;
+
+    this.condominiumForm.reset();
   };
 
-  closeCreateModal() {
-    this.createModal = false;
+  closeModal() {
+    this.isEditMode = false;
+
+    this.selectedCondominium = null;
+
+    this.openModal = false;
   };
+
+  openEditModal(condominium: CondominiumResponse) {
+    this.condominiumForm.patchValue({
+      nome: condominium.nome,
+      cep: condominium.cep,
+      logradouro: condominium.logradouro,
+      cidade: condominium.cidade,
+      numero: condominium.numero,
+      bairro: condominium.bairro,
+      uf: condominium.uf,
+    });
+
+    this.selectedCondominium = condominium;
+
+    this.isEditMode = true;
+
+    this.openModal = true;
+  }
 
   saveCondominium() {
-    const newCondominium: CreateCondominiumRequest = {
-      nome: this.createCondominiumForm.getRawValue().nome!,
-      cep: this.createCondominiumForm.getRawValue().cep!,
-      logradouro: this.createCondominiumForm.getRawValue().logradouro!,
-      numero: this.createCondominiumForm.getRawValue().numero!,
-      bairro: this.createCondominiumForm.getRawValue().bairro!,
-      uf: this.createCondominiumForm.getRawValue().uf!,
-      cidade: this.createCondominiumForm.getRawValue().cidade!
+    if (this.condominiumForm.invalid) {
+      this.condominiumForm.markAllAsTouched();
+
+      return;
     }
 
-    this.createCondominium(newCondominium);
+    if (this.isEditMode && this.selectedCondominium) {
+      const editCondominium: EditCondominiumRequest = {
+        nome: this.condominiumForm.getRawValue().nome!,
+        cep: this.condominiumForm.getRawValue().cep!,
+        logradouro: this.condominiumForm.getRawValue().logradouro!,
+        numero: this.condominiumForm.getRawValue().numero!,
+        bairro: this.condominiumForm.getRawValue().bairro!,
+        uf: this.condominiumForm.getRawValue().uf!,
+        cidade: this.condominiumForm.getRawValue().cidade!
+      }
+
+      this.editCondominium(this.selectedCondominium.id, editCondominium);
+    } else {
+
+      const newCondominium: CreateCondominiumRequest = {
+        nome: this.condominiumForm.getRawValue().nome!,
+        cep: this.condominiumForm.getRawValue().cep!,
+        logradouro: this.condominiumForm.getRawValue().logradouro!,
+        numero: this.condominiumForm.getRawValue().numero!,
+        bairro: this.condominiumForm.getRawValue().bairro!,
+        uf: this.condominiumForm.getRawValue().uf!,
+        cidade: this.condominiumForm.getRawValue().cidade!
+      }
+
+      this.createCondominium(newCondominium);
+    }
   }
 
   createCondominium(condominium: CreateCondominiumRequest) {
@@ -137,10 +233,29 @@ export class CondominiumsList {
 
         this.getAllCondominiums();
 
-        this.closeCreateModal();
+        this.closeModal();
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
+  }
+
+  editCondominium(id: string, condominium: EditCondominiumRequest) {
+    this.condominiumService.edit(id, condominium).subscribe({
+      next: () => {
+        this.toastService.show('edit', 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeModal();
+
+        this.isEditMode = false;
+
+        this.selectedCondominium = null;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar condomínio:', error);
       }
     })
   }
@@ -166,6 +281,16 @@ export class CondominiumsList {
     return total;
   }
 
+  clearFilters() {
+    this.filters = {};
+
+    this.searchInput.nativeElement.value = '';
+    this.citySelect.nativeElement.value = '';
+    this.districtSelect.nativeElement.value = '';
+
+    this.updateListWithFilters();
+  }
+
   getDistrictValue(event: Event) {
     const district = event.target as HTMLSelectElement;
 
@@ -188,41 +313,67 @@ export class CondominiumsList {
     this.busca.next(search.value);
   }
 
+  changePerPagevalue(event: Event) {
+    const perPageCount = +(event.target as HTMLSelectElement).value;
+
+    this.perPage.set(perPageCount);
+
+    this.page.set(1);
+
+    this.getAllCondominiums();
+  }
+
   private updateListWithFilters() {
-    let condominiums = this.condominiumsForFilter();
+    const original = this.condominiumsForFilter();
+
+    if (!original) return;
+
+    let condominios = [...original.condominios];
 
     if (this.filters.busca?.trim()) {
       const busca = this.filters.busca.toLowerCase().trim();
-
-      condominiums = condominiums.filter(c =>
-        c.nome.toLowerCase().includes(busca) ||
-        c.cidade.toLowerCase().includes(busca) ||
-        c.bairro.toLowerCase().includes(busca)
-      );
+      condominios = condominios.
+        filter(c => c.nome.
+          toLowerCase().includes(busca) ||
+          c.cidade.toLowerCase().includes(busca) ||
+          c.bairro.toLowerCase().includes(busca));
     }
 
     if (this.filters.cidade) {
-      condominiums = condominiums.filter(
-        c => c.cidade === this.filters.cidade
-      );
+      condominios = condominios.
+        filter(c => c.cidade === this.filters.cidade);
     }
-
     if (this.filters.bairro) {
-      condominiums = condominiums.filter(
-        c => c.bairro === this.filters.bairro
-      );
+      condominios = condominios.
+        filter(c => c.bairro === this.filters.bairro);
     }
 
-    this.condominiums.set(condominiums);
+    this.condominiums.set({
+      ...original,
+      condominios,
+    });
   }
 
+
   searchCep() {
-    const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
+    const cep: string = this.condominiumForm.get('cep')?.getRawValue();
 
     const cleanCep = cep.replace('-', '').trim();
 
     if (cleanCep.length == 8) {
-
+      this.cepService.get(cleanCep).subscribe({
+        next: (response: CepResponse) => {
+          return this.condominiumForm.patchValue({
+            logradouro: response.street,
+            bairro: response.neighborhood,
+            cidade: response.city,
+            uf: response.state
+          });
+        },
+        error: (error: Error) => {
+          return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        }
+      })
     }
   }
 }
