@@ -78,7 +78,7 @@ export class CondominiumsList {
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    numero: [this.formBuilder.control<number>(0), Validators.required],
+    numero: [null as number | null, Validators.required],
     bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
@@ -150,6 +150,12 @@ export class CondominiumsList {
   }
 
   saveCondominium() {
+    if (this.condominiumForm.invalid) {
+      this.condominiumForm.markAllAsTouched();
+
+      return;
+    }
+
     if (this.isEditMode && this.selectedCondominium) {
       const editCondominium: EditCondominiumRequest = {
         nome: this.condominiumForm.getRawValue().nome!,
@@ -298,8 +304,8 @@ export class CondominiumsList {
             uf: response.state
           });
         },
-        error: (error:Error) => {
-        return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        error: (error: Error) => {
+          return console.log('Ocorreu um erro ao buscar o CEP:', error);
         }
       })
     }
