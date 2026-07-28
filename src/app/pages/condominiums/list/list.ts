@@ -36,13 +36,29 @@ export class CondominiumsList {
 
   busca = new Subject<string>();
 
-  condominiums = model<PaginatedCondominiumResponse>({condominios: []});
+  condominiums = model<PaginatedCondominiumResponse>(
+    {
+      condominios: [],
+      pagina: 1,
+      por_pagina: 10,
+      total: 0,
+      total_paginas: 0
+    }
+  );
 
-  condominiumsForFilter = model<PaginatedCondominiumResponse>();
+  condominiumsForFilter = model<PaginatedCondominiumResponse>(
+    {
+      condominios: [],
+      pagina: 1,
+      por_pagina: 10,
+      total: 0,
+      total_paginas: 0
+    }
+  );
 
-  cities = model<CitiesResponse>({cidades: []});
+  cities = model<CitiesResponse>({ cidades: [] });
 
-  districts = model<DistrictsResponse>({bairros: []});
+  districts = model<DistrictsResponse>({ bairros: [] });
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
@@ -93,7 +109,7 @@ export class CondominiumsList {
   }
 
   getAllCities() {
-     this.condominiumService.getAllCities().subscribe({
+    this.condominiumService.getAllCities().subscribe({
       next: (cities: CitiesResponse) => {
         this.cities.set(cities);
       },
@@ -104,9 +120,9 @@ export class CondominiumsList {
   }
 
   getAllDisticts() {
-     this.condominiumService.getAllDistricts().subscribe({
+    this.condominiumService.getAllDistricts().subscribe({
       next: (districts: DistrictsResponse) => {
-          this.districts.set(districts);
+        this.districts.set(districts);
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
@@ -312,10 +328,11 @@ export class CondominiumsList {
         filter(c => c.bairro === this.filters.bairro);
     }
 
-    this.condominiums.set({ 
-      ...original, 
-      condominios, 
-      total: condominios.length });
+    this.condominiums.set({
+      ...original,
+      condominios,
+      total: condominios.length
+    });
   }
 
 

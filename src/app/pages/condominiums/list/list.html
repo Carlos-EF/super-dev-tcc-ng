@@ -79,7 +79,7 @@
 </div>
 
 <div class="card table-card">
-    @if (condominiums().length > 0) {
+    @if ((condominiums()?.condominios.length ?? 0) > 0) {
     <div class="table-wrap">
         <table aria-label="Lista de condomínios">
             <thead>
@@ -135,7 +135,7 @@
             </thead>
 
             <tbody>
-                @for (condominium of condominiums(); track condominium.id) {
+                @for (condominium of (condominiums().condominios); track condominium.id) {
                 <tr>
                     <td>
                         <div class="condo-name">
