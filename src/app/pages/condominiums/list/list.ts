@@ -1,11 +1,11 @@
-import { Component, computed, inject, model } from '@angular/core';
+import { Component, computed, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
-import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 
@@ -39,6 +39,10 @@ export class CondominiumsList {
   condominiums = model<CondominiumResponse[]>([]);
 
   condominiumsForFilter = model<CondominiumResponse[]>([]);
+
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('citySelect') citySelect!: ElementRef<HTMLSelectElement>;
 
   districts = computed(() => {
     return [...new Set(
@@ -237,6 +241,16 @@ export class CondominiumsList {
     var total = 0;
 
     return total;
+  }
+  
+  clearFilters() {
+    this.filters = {};
+
+    this.searchInput.nativeElement.value = '';
+    this.citySelect.nativeElement.value = '';
+    this.districtSelect.nativeElement.value = '';
+
+    this.updateListWithFilters();
   }
 
   getDistrictValue(event: Event) {

@@ -30,13 +30,15 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input (input)="getSearchValue($event)" type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
+                <input #searchInput
+                 (input)="getSearchValue($event)" type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
             </div>
         </div>
         <div class="field">
             <label for="f-bairro">Bairro</label>
             <div class="select-wrap">
-                <select (change)="getDistrictValue($event)" id="f-bairro">
+                <select #districtSelect 
+                (change)="getDistrictValue($event)" id="f-bairro">
                     <option value="">Todos</option>
                     @for (district of districts(); track district) {
                     <option [value]="district">{{district}}</option>
@@ -47,7 +49,8 @@
         <div class="field">
             <label for="f-cidade">Cidade</label>
             <div class="select-wrap">
-                <select (change)="getCityValue($event)" id="f-cidade">
+                <select #citySelect
+                 (change)="getCityValue($event)" id="f-cidade">
                     <option value="">Todos</option>
                     @for (city of cities(); track city) {
                     <option [value]="city">{{city}}</option>
@@ -240,7 +243,8 @@
             Nenhum resultado para os filtros aplicados.
             Ajuste a busca ou limpe os filtros.
         </p>
-        <button class="btn btn-ghost" type="button">
+        <button (click)="clearFilters()"
+         class="btn btn-ghost" type="button">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round">
                 <path d="M18 6 6 18M6 6l12 12" />
