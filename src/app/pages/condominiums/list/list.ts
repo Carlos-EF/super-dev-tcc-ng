@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { debounce, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
@@ -23,9 +23,9 @@ export class CondominiumsList {
   private readonly condominiumService = inject(CondominiumService);
   private readonly toastService = inject(ToastService);
 
-  createModal: boolean = false;
+  openModal: boolean = false;
 
-  editModal: boolean = false;
+  isEditMode: boolean = false;
 
   selectedCondominium: CondominiumResponse | null = null;
 
@@ -71,17 +71,7 @@ export class CondominiumsList {
     )
   }
 
-  createCondominiumForm = this.formBuilder.group({
-    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
-    logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    numero: [this.formBuilder.control<number>(0), Validators.required],
-    bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-    uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
-    cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
-  });
-
-  editCondominiumForm = this.formBuilder.group({
+  condominiumForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
@@ -104,7 +94,9 @@ export class CondominiumsList {
   }
 
   openCreateModal() {
-    this.createModal = true;
+    this.isEditMode = false;
+
+    this.openModal = true;
   };
 
   openConfirmModal(condominium: CondominiumResponse) {
@@ -118,28 +110,69 @@ export class CondominiumsList {
     this.selectedCondominium = null;
   }
 
-  cancelCreateModal() {
-    this.createModal = false;
+  cancelModal() {
+    this.isEditMode = false;
 
-    this.createCondominiumForm.reset();
+    this.selectedCondominium = null;
+
+    this.openModal = false;
+
+    this.condominiumForm.reset();
   };
 
-  closeCreateModal() {
-    this.createModal = false;
+  closeModal() {
+    this.isEditMode = false;
+
+    this.selectedCondominium = null;
+
+    this.openModal = false;
   };
+
+  openEditModal(condominium: CondominiumResponse) {
+    this.condominiumForm.patchValue({
+      nome: condominium.nome,
+      cep: condominium.cep,
+      logradouro: condominium.logradouro,
+      cidade: condominium.cidade,
+      numero: condominium.numero,
+      bairro: condominium.bairro,
+      uf: condominium.uf,
+    });
+
+    this.selectedCondominium = condominium;
+
+    this.isEditMode = true;
+
+    this.openModal = true;
+  }
 
   saveCondominium() {
-    const newCondominium: CreateCondominiumRequest = {
-      nome: this.createCondominiumForm.getRawValue().nome!,
-      cep: this.createCondominiumForm.getRawValue().cep!,
-      logradouro: this.createCondominiumForm.getRawValue().logradouro!,
-      numero: this.createCondominiumForm.getRawValue().numero!,
-      bairro: this.createCondominiumForm.getRawValue().bairro!,
-      uf: this.createCondominiumForm.getRawValue().uf!,
-      cidade: this.createCondominiumForm.getRawValue().cidade!
-    }
+    if (this.isEditMode && this.selectedCondominium) {
+      const editCondominium: EditCondominiumRequest = {
+        nome: this.condominiumForm.getRawValue().nome!,
+        cep: this.condominiumForm.getRawValue().cep!,
+        logradouro: this.condominiumForm.getRawValue().logradouro!,
+        numero: this.condominiumForm.getRawValue().numero!,
+        bairro: this.condominiumForm.getRawValue().bairro!,
+        uf: this.condominiumForm.getRawValue().uf!,
+        cidade: this.condominiumForm.getRawValue().cidade!
+      }
 
-    this.createCondominium(newCondominium);
+      this.editCondominium(this.selectedCondominium.id, editCondominium);
+    } else {
+
+      const newCondominium: CreateCondominiumRequest = {
+        nome: this.condominiumForm.getRawValue().nome!,
+        cep: this.condominiumForm.getRawValue().cep!,
+        logradouro: this.condominiumForm.getRawValue().logradouro!,
+        numero: this.condominiumForm.getRawValue().numero!,
+        bairro: this.condominiumForm.getRawValue().bairro!,
+        uf: this.condominiumForm.getRawValue().uf!,
+        cidade: this.condominiumForm.getRawValue().cidade!
+      }
+
+      this.createCondominium(newCondominium);
+    }
   }
 
   createCondominium(condominium: CreateCondominiumRequest) {
@@ -149,10 +182,29 @@ export class CondominiumsList {
 
         this.getAllCondominiums();
 
-        this.closeCreateModal();
+        this.closeModal();
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
+  }
+
+  editCondominium(id: string, condominium: EditCondominiumRequest) {
+    this.condominiumService.edit(id, condominium).subscribe({
+      next: () => {
+        this.toastService.show('edit', 'Condomínio');
+
+        this.getAllCondominiums();
+
+        this.closeModal();
+
+        this.isEditMode = false;
+
+        this.selectedCondominium = null;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar condomínio:', error);
       }
     })
   }
@@ -229,7 +281,7 @@ export class CondominiumsList {
   }
 
   searchCep() {
-    const cep: string = this.createCondominiumForm.get('cep')?.getRawValue();
+    const cep: string = this.condominiumForm.get('cep')?.getRawValue();
 
     const cleanCep = cep.replace('-', '').trim();
 

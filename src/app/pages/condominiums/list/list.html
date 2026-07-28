@@ -182,7 +182,8 @@
                                 </svg>
                             </button>
 
-                            <button class="icon-btn" type="button" title="Editar condomínio"
+                            <button (click)="openEditModal(condominium)"
+                             class="icon-btn" type="button" title="Editar condomínio"
                                 [attr.aria-label]="'Editar ' + condominium.nome">
 
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -252,17 +253,17 @@
 </div>
 
 
-@if (createModal === true) {
-<form [formGroup]="createCondominiumForm">
-    <div class="modal-backdrop" [class.open]="createModal" id="modal-condominio" role="dialog" aria-modal="true"
+@if (openModal === true) {
+<form [formGroup]="condominiumForm">
+    <div class="modal-backdrop" [class.open]="openModal" id="modal-condominio" role="dialog" aria-modal="true"
         aria-labelledby="mk-title">
         <div class="modal">
             <div class="modal-head">
                 <div>
-                    <h3 id="mk-title">Cadastrar condomínio</h3>
+                    <h3 id="mk-title">{{isEditMode?  'Editar condomínio' :  'Cadastrar condomínio'}}</h3>
                     <p id="mk-sub">O endereço do condomínio será usado nos imóveis vinculados a ele.</p>
                 </div>
-                <button (click)="closeCreateModal()" class="icon-btn" data-close-modal aria-label="Fechar">
+                <button (click)="closeModal()" class="icon-btn" data-close-modal aria-label="Fechar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round">
                         <path d="M18 6 6 18M6 6l12 12" />
@@ -325,13 +326,13 @@
                 </div>
             </div>
             <div class="modal-foot">
-                <button (click)="cancelCreateModal()" class="btn btn-ghost" data-close-modal>Cancelar</button>
+                <button (click)="cancelModal()" class="btn btn-ghost" data-close-modal>Cancelar</button>
                 <button (click)="saveCondominium()" class="btn btn-primary" id="mk-salvar">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 6 9 17l-5-5" />
                     </svg>
-                    <span id="mk-salvar-label">Salvar condomínio</span>
+                    <span id="mk-salvar-label">{{isEditMode ? 'Salvar Alterações' : 'Salvar condomínio'}}</span>
                 </button>
             </div>
         </div>
