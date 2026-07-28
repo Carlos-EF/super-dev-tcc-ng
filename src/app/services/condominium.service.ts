@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../models/condominium.model';
+import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../models/condominium.model';
 
 @Service()
 export class CondominiumService {
@@ -10,8 +10,14 @@ export class CondominiumService {
 
     private url = `${environment.apiUrl}/condominiums`;
 
-    getAll(filters?: CondominiumFilters): Observable<CondominiumResponse[]> {
-        let params = new HttpParams();
+    getAll(
+        filters?: CondominiumFilters,
+        pagina: number = 1,
+        porPagina: number = 10
+    ): Observable<PaginatedCondominiumResponse> {
+        let params = new HttpParams().
+        set('pagina', pagina.toString())
+        .set('por_pagina',porPagina.toString());
         if (filters?.busca) {
             params = params.set('busca', filters.busca);
         }
@@ -24,11 +30,23 @@ export class CondominiumService {
             params = params.set('bairro', filters.bairro);
         }
 
-        return this.httpClient.get<CondominiumResponse[]>(
+        return this.httpClient.get<PaginatedCondominiumResponse>(
             this.url,
             { params }
         );
     };
+
+    getAllCities(): Observable<CitiesResponse> {
+        const citiesUrl = `${this.url}/cities`;
+
+        return this.httpClient.get<CitiesResponse>(citiesUrl);
+    }
+
+    getAllDistricts(): Observable<DistrictsResponse> {
+        const districts = `${this.url}/districts`;
+
+        return this.httpClient.get<DistrictsResponse>(districts);
+    }
 
     getById(id: string): Observable<CondominiumResponse> {
         const urlWithId = `${this.url}/${id}`;

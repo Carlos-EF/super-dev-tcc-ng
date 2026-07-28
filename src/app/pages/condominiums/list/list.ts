@@ -1,9 +1,9 @@
-import { Component, computed, ElementRef, inject, model, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, model, Signal, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
-import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest } from '../../../models/condominium.model';
+import { CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
@@ -36,9 +36,9 @@ export class CondominiumsList {
 
   busca = new Subject<string>();
 
-  condominiums = model<CondominiumResponse[]>([]);
+  condominiums = model<PaginatedCondominiumResponse>();
 
-  condominiumsForFilter = model<CondominiumResponse[]>([]);
+  condominiumsForFilter = model<PaginatedCondominiumResponse>();
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
@@ -46,7 +46,7 @@ export class CondominiumsList {
 
   districts = computed(() => {
     return [...new Set(
-      this.condominiumsForFilter()
+      (this.condominiumsForFilter()?.condominios ?? [])
         .map(c => c.bairro)
         .filter((bairro): bairro is string => !!bairro)
     )];
@@ -54,7 +54,7 @@ export class CondominiumsList {
 
   cities = computed(() => {
     return [...new Set(
-      this.condominiumsForFilter()
+      (this.condominiumsForFilter()?.condominios ?? [])
         .map(c => c.cidade)
         .filter((cidade): cidade is string => !!cidade)
     )];
@@ -90,7 +90,7 @@ export class CondominiumsList {
 
   getAllCondominiums() {
     this.condominiumService.getAll(this.filters).subscribe({
-      next: (condominiums: CondominiumResponse[]) => {
+      next: (condominiums: PaginatedCondominiumResponse) => {
         this.condominiums.set(condominiums);
         this.condominiumsForFilter.set(condominiums);
       },
@@ -242,7 +242,7 @@ export class CondominiumsList {
 
     return total;
   }
-  
+
   clearFilters() {
     this.filters = {};
 
@@ -276,32 +276,34 @@ export class CondominiumsList {
   }
 
   private updateListWithFilters() {
-    let condominiums = this.condominiumsForFilter();
+    const original = this.condominiumsForFilter();
+
+    if (!original) return;
+
+    let condominios = [...original.condominios];
 
     if (this.filters.busca?.trim()) {
       const busca = this.filters.busca.toLowerCase().trim();
-
-      condominiums = condominiums.filter(c =>
-        c.nome.toLowerCase().includes(busca) ||
-        c.cidade.toLowerCase().includes(busca) ||
-        c.bairro.toLowerCase().includes(busca)
-      );
+      condominios = condominios.
+        filter(c => c.nome.
+          toLowerCase().includes(busca) || c.cidade.toLowerCase().includes(busca) || c.bairro.toLowerCase().includes(busca));
     }
 
     if (this.filters.cidade) {
-      condominiums = condominiums.filter(
-        c => c.cidade === this.filters.cidade
-      );
+      condominios = condominios.
+        filter(c => c.cidade === this.filters.cidade);
     }
-
     if (this.filters.bairro) {
-      condominiums = condominiums.filter(
-        c => c.bairro === this.filters.bairro
-      );
+      condominios = condominios.
+        filter(c => c.bairro === this.filters.bairro);
     }
 
-    this.condominiums.set(condominiums);
+    this.condominiums.set({ 
+      ...original, 
+      condominios, 
+      total: condominios.length });
   }
+
 
   searchCep() {
     const cep: string = this.condominiumForm.get('cep')?.getRawValue();

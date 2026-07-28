@@ -31,8 +31,24 @@ export interface CondominiumResponse {
     alterado_em: Date;
 }
 
+export interface PaginatedCondominiumResponse {
+    condominios: CondominiumResponse[];
+    pagina: number;
+    por_pagina: number;
+    total: number;
+    total_paginas: number;
+}
+
 export interface CondominiumFilters {
     busca?: string;
     cidade?: string;
     bairro?: string;
+}
+
+export interface CitiesResponse {
+    cidades: string[];
+}
+
+export interface DistrictsResponse {
+    bairros: string[];
 }
