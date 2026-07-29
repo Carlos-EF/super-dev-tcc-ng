@@ -8,6 +8,8 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
+import { SortType } from '../../../types/sort.types';
+import { CondTables } from '../../../types/cond.sort.types';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -60,6 +62,10 @@ export class CondominiumsList {
 
   page = model(1);
 
+  sortCollumns: CondTables = null;
+
+  sortDirection: SortType = 'asc';
+
   cities = model<CitiesResponse>({ cidades: [] });
 
   districts = model<DistrictsResponse>({ bairros: [] });
@@ -85,7 +91,7 @@ export class CondominiumsList {
     ).subscribe(
       resultado => {
         this.filters.busca = resultado;
-        this.updateListWithFilters();
+        this.getAllCondominiums();
       }
     )
   }
@@ -281,6 +287,54 @@ export class CondominiumsList {
     return total;
   }
 
+  sortBy(column: CondTables) {
+    const original = this.condominiums();
+
+    if (!original) {
+      return
+    }
+
+    if (this.sortCollumns == column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortCollumns = column;
+      this.sortDirection = 'asc';
+    }
+
+    const condominios = [...original.condominios];
+
+    condominios.sort((a, b) => {
+      let i = 0;
+
+      switch (column) {
+        case 'nome':
+          i = a.nome.localeCompare(b.nome, 'pt-BR', {
+            sensitivity: 'base'
+          });
+          break;
+
+        case 'endereco':
+          i = a.logradouro.localeCompare(b.logradouro, 'pt-BR', {
+            sensitivity: 'base'
+          });
+          break;
+
+        case 'imoveis':
+          i = this.sumTotal(a.id) - this.sumTotal(b.id);
+          break;
+      }
+
+      return this.sortDirection === 'asc' ? i : -i;
+    });
+
+    this.condominiums.set(
+      {
+        ...original,
+        condominios
+      }
+    );
+  };
+
   clearFilters() {
     this.filters = {};
 
@@ -288,30 +342,38 @@ export class CondominiumsList {
     this.citySelect.nativeElement.value = '';
     this.districtSelect.nativeElement.value = '';
 
-    this.updateListWithFilters();
-  }
+    this.page.set(1);
+
+    this.getAllCondominiums()
+  };
 
   getDistrictValue(event: Event) {
     const district = event.target as HTMLSelectElement;
 
     this.filters.bairro = district.value;
 
-    this.updateListWithFilters();
-  }
+    this.page.set(1);
+
+    this.getAllCondominiums()
+  };
 
   getCityValue(event: Event) {
     const city = event.target as HTMLSelectElement;
 
     this.filters.cidade = city.value;
 
-    this.updateListWithFilters();
-  }
+    this.page.set(1);
+
+    this.getAllCondominiums();
+  };
 
   getSearchValue(event: Event) {
     const search = event.target as HTMLInputElement;
 
+    this.page.set(1);
+
     this.busca.next(search.value);
-  }
+  };
 
   changePerPagevalue(event: Event) {
     const perPageCount = +(event.target as HTMLSelectElement).value;
@@ -321,39 +383,25 @@ export class CondominiumsList {
     this.page.set(1);
 
     this.getAllCondominiums();
-  }
+  };
 
-  private updateListWithFilters() {
-    const original = this.condominiumsForFilter();
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
 
-    if (!original) return;
-
-    let condominios = [...original.condominios];
-
-    if (this.filters.busca?.trim()) {
-      const busca = this.filters.busca.toLowerCase().trim();
-      condominios = condominios.
-        filter(c => c.nome.
-          toLowerCase().includes(busca) ||
-          c.cidade.toLowerCase().includes(busca) ||
-          c.bairro.toLowerCase().includes(busca));
+      this.getAllCondominiums();
     }
+  };
 
-    if (this.filters.cidade) {
-      condominios = condominios.
-        filter(c => c.cidade === this.filters.cidade);
+  nextPage(): void {
+    const totalPages = this.condominiums()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllCondominiums();
     }
-    if (this.filters.bairro) {
-      condominios = condominios.
-        filter(c => c.bairro === this.filters.bairro);
-    }
-
-    this.condominiums.set({
-      ...original,
-      condominios,
-    });
-  }
-
+  };
 
   searchCep() {
     const cep: string = this.condominiumForm.get('cep')?.getRawValue();
@@ -375,5 +423,5 @@ export class CondominiumsList {
         }
       })
     }
-  }
+  };
 }

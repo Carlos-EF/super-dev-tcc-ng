@@ -30,15 +30,14 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input #searchInput
-                 (input)="getSearchValue($event)" type="search" id="f-busca" placeholder="Nome, endereço ou CEP…">
+                <input #searchInput (input)="getSearchValue($event)" type="search" id="f-busca"
+                    placeholder="Nome, endereço ou CEP…">
             </div>
         </div>
         <div class="field">
             <label for="f-bairro">Bairro</label>
             <div class="select-wrap">
-                <select #districtSelect 
-                (change)="getDistrictValue($event)" id="f-bairro">
+                <select #districtSelect (change)="getDistrictValue($event)" id="f-bairro">
                     <option value="">Todos</option>
                     @for (district of districts().bairros; track district) {
                     <option [value]="district">{{district}}</option>
@@ -49,8 +48,7 @@
         <div class="field">
             <label for="f-cidade">Cidade</label>
             <div class="select-wrap">
-                <select #citySelect
-                 (change)="getCityValue($event)" id="f-cidade">
+                <select #citySelect (change)="getCityValue($event)" id="f-cidade">
                     <option value="">Todos</option>
                     @for (city of cities().cidades; track city) {
                     <option [value]="city">{{city}}</option>
@@ -84,8 +82,11 @@
         <table aria-label="Lista de condomínios">
             <thead>
                 <tr>
-                    <th data-sort="nome">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]="
+                    sortCollumns === 'nome' ? 
+                    (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
+                    " data-sort="nome">
+                        <button (click)="sortBy('nome')" class="th-sort">
                             Condomínio
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -95,8 +96,11 @@
                             </span>
                         </button>
                     </th>
-                    <th data-sort="endereco">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]=" 
+                    sortCollumns === 'endereco' ? 
+                    (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
+                     " data-sort="endereco">
+                        <button (click)="sortBy('endereco')" class="th-sort">
                             Endereço
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -107,18 +111,15 @@
                         </button>
                     </th>
                     <th data-sort="cep">
-                        <button class="th-sort">
+                        <button class="th-sort" disabled>
                             CEP
-                            <span class="arrow">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg>
-                            </span>
                         </button>
                     </th>
-                    <th data-sort="imoveis" class="num">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]=" 
+                    sortCollumns==='imoveis' ? 
+                    (sortDirection==='asc' ? 'ascending' : 'descending') : 'none' 
+                    " data-sort=" imoveis" class="num">
+                        <button (click)="sortBy('imoveis')" class="th-sort">
                             Imóveis
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -218,16 +219,21 @@
             <div class="per-page">
                 <label for="per-page">Itens por página</label>
                 <div class="select-wrap">
-                    <select [value]="perPage()"
-                    (change)="changePerPagevalue($event)"
-                     id="per-page">
+                    <select [value]="perPage()" (change)="changePerPagevalue($event)" id="per-page">
                         <option value="10" selected>10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
                     </select>
                 </div>
             </div>
-            <nav class="pager" aria-label="Paginação"></nav>
+            <nav class="pager" aria-label="Paginação">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
+                    aria-label="Página anterior"> ‹ </button>
+                <button class="page-btn current" aria-current="page"> {{page()}} </button>
+                <button (click)="nextPage()" 
+                [disabled]="page() === (condominiums().total_paginas ?? 1)"
+                class="page-btn" aria-label="Próxima página"> › </button>
+            </nav>
         </div>
     </div>
     } @else {
@@ -245,8 +251,7 @@
             Nenhum resultado para os filtros aplicados.
             Ajuste a busca ou limpe os filtros.
         </p>
-        <button (click)="clearFilters()"
-         class="btn btn-ghost" type="button">
+        <button (click)="clearFilters()" class="btn btn-ghost" type="button">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round">
                 <path d="M18 6 6 18M6 6l12 12" />
