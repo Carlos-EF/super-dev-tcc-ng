@@ -385,6 +385,24 @@ export class CondominiumsList {
     this.getAllCondominiums();
   };
 
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
+
+      this.getAllCondominiums();
+    }
+  };
+
+  nextPage(): void {
+    const totalPages = this.condominiums()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllCondominiums();
+    }
+  };
+
   searchCep() {
     const cep: string = this.condominiumForm.get('cep')?.getRawValue();
 
