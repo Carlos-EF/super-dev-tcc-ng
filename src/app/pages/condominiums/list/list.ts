@@ -364,7 +364,7 @@ export class CondominiumsList {
 
     this.page.set(1);
 
-    this.getAllCondominiums()
+    this.getAllCondominiums();
   };
 
   getSearchValue(event: Event) {
