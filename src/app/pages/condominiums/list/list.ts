@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 import { SortType } from '../../../types/sort.types';
+import { CondTables } from '../../../types/cond.sort.types';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -61,6 +62,8 @@ export class CondominiumsList {
 
   page = model(1);
 
+  sortCollumns: CondTables = null;
+  
   sortDirection: SortType = 'asc';
 
   cities = model<CitiesResponse>({ cidades: [] });
