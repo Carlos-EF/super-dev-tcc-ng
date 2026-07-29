@@ -91,7 +91,7 @@ export class CondominiumsList {
     ).subscribe(
       resultado => {
         this.filters.busca = resultado;
-        this.updateListWithFilters();
+        this.getAllCondominiums();
       }
     )
   }
@@ -342,7 +342,9 @@ export class CondominiumsList {
     this.citySelect.nativeElement.value = '';
     this.districtSelect.nativeElement.value = '';
 
-    this.updateListWithFilters();
+    this.page.set(1);
+
+    this.getAllCondominiums()
   };
 
   getDistrictValue(event: Event) {
@@ -350,7 +352,9 @@ export class CondominiumsList {
 
     this.filters.bairro = district.value;
 
-    this.updateListWithFilters();
+    this.page.set(1);
+
+    this.getAllCondominiums()
   };
 
   getCityValue(event: Event) {
@@ -358,11 +362,15 @@ export class CondominiumsList {
 
     this.filters.cidade = city.value;
 
-    this.updateListWithFilters();
+    this.page.set(1);
+
+    this.getAllCondominiums()
   };
 
   getSearchValue(event: Event) {
     const search = event.target as HTMLInputElement;
+
+    this.page.set(1);
 
     this.busca.next(search.value);
   };
@@ -376,38 +384,6 @@ export class CondominiumsList {
 
     this.getAllCondominiums();
   };
-
-  private updateListWithFilters() {
-    const original = this.condominiumsForFilter();
-
-    if (!original) return;
-
-    let condominios = [...original.condominios];
-
-    if (this.filters.busca?.trim()) {
-      const busca = this.filters.busca.toLowerCase().trim();
-      condominios = condominios.
-        filter(c => c.nome.
-          toLowerCase().includes(busca) ||
-          c.cidade.toLowerCase().includes(busca) ||
-          c.bairro.toLowerCase().includes(busca));
-    }
-
-    if (this.filters.cidade) {
-      condominios = condominios.
-        filter(c => c.cidade === this.filters.cidade);
-    }
-    if (this.filters.bairro) {
-      condominios = condominios.
-        filter(c => c.bairro === this.filters.bairro);
-    }
-
-    this.condominiums.set({
-      ...original,
-      condominios,
-    });
-  };
-
 
   searchCep() {
     const cep: string = this.condominiumForm.get('cep')?.getRawValue();
