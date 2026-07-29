@@ -397,16 +397,18 @@ thead th .th-sort:hover .arrow {
     opacity: .5
 }
 
-thead th[aria-sort] .th-sort {
-    color: var(--accent-strong)
+thead th[aria-sort="ascending"] .th-sort,
+thead th[aria-sort="descending"] .th-sort {
+    color: var(--accent-strong);
 }
 
-thead th[aria-sort] .th-sort .arrow {
-    opacity: 1
+thead th[aria-sort="ascending"] .th-sort .arrow,
+thead th[aria-sort="descending"] .th-sort .arrow {
+    opacity: 1;
 }
 
 thead th[aria-sort="descending"] .th-sort .arrow {
-    transform: rotate(180deg)
+    transform: rotate(180deg);
 }
 
 th.num .th-sort,

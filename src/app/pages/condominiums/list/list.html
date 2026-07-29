@@ -82,8 +82,11 @@
         <table aria-label="Lista de condomínios">
             <thead>
                 <tr>
-                    <th data-sort="nome">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]="
+                    sortCollumns === 'nome' ? 
+                    (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
+                    " data-sort="nome">
+                        <button (click)="sortBy('nome')" class="th-sort">
                             Condomínio
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -93,8 +96,11 @@
                             </span>
                         </button>
                     </th>
-                    <th data-sort="endereco">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]=" 
+                    sortCollumns === 'endereco' ? 
+                    (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'
+                     " data-sort="endereco">
+                        <button (click)="sortBy('endereco')" class="th-sort">
                             Endereço
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -105,18 +111,15 @@
                         </button>
                     </th>
                     <th data-sort="cep">
-                        <button class="th-sort">
+                        <button class="th-sort" disabled>
                             CEP
-                            <span class="arrow">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 19V5M6 11l6-6 6 6" />
-                                </svg>
-                            </span>
                         </button>
                     </th>
-                    <th data-sort="imoveis" class="num">
-                        <button class="th-sort">
+                    <th [attr.aria-sort]=" 
+                    sortCollumns==='imoveis' ? 
+                    (sortDirection==='asc' ? 'ascending' : 'descending') : 'none' 
+                    " data-sort=" imoveis" class="num">
+                        <button (click)="sortBy('imoveis')" class="th-sort">
                             Imóveis
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"

@@ -63,7 +63,7 @@ export class CondominiumsList {
   page = model(1);
 
   sortCollumns: CondTables = null;
-  
+
   sortDirection: SortType = 'asc';
 
   cities = model<CitiesResponse>({ cidades: [] });
@@ -287,6 +287,54 @@ export class CondominiumsList {
     return total;
   }
 
+  sortBy(column: CondTables) {
+    const original = this.condominiums();
+
+    if (!original) {
+      return
+    }
+
+    if (this.sortCollumns == column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortCollumns = column;
+      this.sortDirection = 'asc';
+    }
+
+    const condominios = [...original.condominios];
+
+    condominios.sort((a, b) => {
+      let i = 0;
+
+      switch (column) {
+        case 'nome':
+          i = a.nome.localeCompare(b.nome, 'pt-BR', {
+            sensitivity: 'base'
+          });
+          break;
+
+        case 'endereco':
+          i = a.logradouro.localeCompare(b.logradouro, 'pt-BR', {
+            sensitivity: 'base'
+          });
+          break;
+
+        case 'imoveis':
+          i = this.sumTotal(a.id) - this.sumTotal(b.id);
+          break;
+      }
+
+      return this.sortDirection === 'asc' ? i : -i;
+    });
+
+    this.condominiums.set(
+      {
+        ...original,
+        condominios
+      }
+    );
+  };
+
   clearFilters() {
     this.filters = {};
 
@@ -295,7 +343,7 @@ export class CondominiumsList {
     this.districtSelect.nativeElement.value = '';
 
     this.updateListWithFilters();
-  }
+  };
 
   getDistrictValue(event: Event) {
     const district = event.target as HTMLSelectElement;
@@ -303,7 +351,7 @@ export class CondominiumsList {
     this.filters.bairro = district.value;
 
     this.updateListWithFilters();
-  }
+  };
 
   getCityValue(event: Event) {
     const city = event.target as HTMLSelectElement;
@@ -311,13 +359,13 @@ export class CondominiumsList {
     this.filters.cidade = city.value;
 
     this.updateListWithFilters();
-  }
+  };
 
   getSearchValue(event: Event) {
     const search = event.target as HTMLInputElement;
 
     this.busca.next(search.value);
-  }
+  };
 
   changePerPagevalue(event: Event) {
     const perPageCount = +(event.target as HTMLSelectElement).value;
@@ -327,7 +375,7 @@ export class CondominiumsList {
     this.page.set(1);
 
     this.getAllCondominiums();
-  }
+  };
 
   private updateListWithFilters() {
     const original = this.condominiumsForFilter();
@@ -358,7 +406,7 @@ export class CondominiumsList {
       ...original,
       condominios,
     });
-  }
+  };
 
 
   searchCep() {
@@ -381,5 +429,5 @@ export class CondominiumsList {
         }
       })
     }
-  }
+  };
 }
