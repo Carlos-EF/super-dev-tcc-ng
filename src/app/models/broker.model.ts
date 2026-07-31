@@ -32,3 +32,11 @@ export interface BrokerResponse {
     criado_em: Date;
     alterado_em: Date;
 }
+
+export interface PaginatedBrokerResponse {
+    condominios: BrokerResponse[];
+    pagina: number;
+    por_pagina: number;
+    total: number;
+    total_paginas: number;
+}
