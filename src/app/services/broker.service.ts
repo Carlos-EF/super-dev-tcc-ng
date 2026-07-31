@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { BrokerFilters, BrokerResponse, CreateBrokerRequest, PaginatedBrokerResponse } from '../models/broker.model';
+import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../models/broker.model';
 
 @Service()
 export class BrokerService {
@@ -43,5 +43,11 @@ export class BrokerService {
 
     create(form: CreateBrokerRequest): Observable<BrokerResponse> {
         return this.httpClient.post<BrokerResponse>(this.url, form);
+    };
+
+    edit(id: string, form: EditBrokerRequest): Observable<BrokerResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.put<BrokerResponse>(urlWithId, form);
     };
 }
