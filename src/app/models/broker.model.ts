@@ -40,3 +40,8 @@ export interface PaginatedBrokerResponse {
     total: number;
     total_paginas: number;
 }
+
+
+export interface BrokerFilters {
+    busca?: string;
+}
