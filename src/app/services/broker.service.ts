@@ -35,4 +35,10 @@ export class BrokerService {
         return this.httpClient.get<BrokerResponse>(urlWithId);
     };
 
+    Delete(id: string): Observable<void> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.delete<void>(urlWithId);
+    };
+
 }
