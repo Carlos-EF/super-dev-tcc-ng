@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { BrokerFilters, PaginatedBrokerResponse } from '../models/broker.model';
+import { BrokerFilters, BrokerResponse, PaginatedBrokerResponse } from '../models/broker.model';
 
 @Service()
 export class BrokerService {
@@ -16,9 +16,9 @@ export class BrokerService {
         porPagina: number = 10
     ): Observable<PaginatedBrokerResponse> {
         let params = new HttpParams().
-        set('pagina', pagina.toString())
-        .set('por_pagina',porPagina.toString());
-        
+            set('pagina', pagina.toString())
+            .set('por_pagina', porPagina.toString());
+
         if (filters?.busca) {
             params = params.set('busca', filters.busca);
         }
@@ -28,4 +28,11 @@ export class BrokerService {
             { params }
         );
     };
+
+    getById(id: string): Observable<BrokerResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.get<BrokerResponse>(urlWithId);
+    };
+
 }
