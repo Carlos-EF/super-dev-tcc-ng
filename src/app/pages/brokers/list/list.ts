@@ -220,4 +220,19 @@ export class BrokersList {
       }
     });
   };
+
+  deleteBroker(id: string) {
+    this.brokerService.Delete(id).subscribe({
+      next: () => {
+        this.toastService.show('delete', 'corretor');
+
+        this.getAllBrokers();
+
+        this.confirmModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar deletar o corretor:', error);
+      }
+    });
+  };
 }
