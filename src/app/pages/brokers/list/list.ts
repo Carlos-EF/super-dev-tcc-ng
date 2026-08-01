@@ -286,4 +286,32 @@ export class BrokersList {
       }
     );
   };
+
+  changePerPagevalue(event: Event) {
+    const perPageCount = +(event.target as HTMLSelectElement).value;
+
+    this.perPage.set(perPageCount);
+
+    this.page.set(1);
+
+    this.getAllBrokers();
+  };
+
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
+
+      this.getAllBrokers();
+    }
+  };
+
+  nextPage(): void {
+    const totalPages = this.brokers()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllBrokers();
+    }
+  };
 }
