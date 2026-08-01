@@ -163,18 +163,18 @@
                 <label for="per-page">Itens por página</label>
                 <div class="select-wrap">
                     <select [value]="perPage()" (change)="changePerPagevalue($event)" id="per-page">
-                        <option value="10">10</option>
+                        <option value="10" selected>10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
                     </select>
                 </div>
             </div>
             <nav class="pager" aria-label="Paginação">
-                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"> ‹ </button>
-                <button class="page-btn current" aria-current="page"> {{ page() }}
-
-                </button>
-                <button class="page-btn" (click)="nextPage()" [disabled]="page() === (brokers().total_paginas ?? 1)"> ›
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
+                    aria-label="Página anterior"> ‹
+                </button> <button class="page-btn current" aria-current="page"> {{ page() }} </button>
+                <button class="page-btn" (click)="nextPage()" [disabled]="page() === (brokers().total_paginas ?? 1)"
+                    aria-label="Próxima página"> ›
                 </button>
             </nav>
         </div>
@@ -245,8 +245,8 @@
                             [class.invalid]="brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid">
                             <label for="mc-codigo">Código <span class="req">*</span>
                             </label>
-                            <input type="text" id="mc-codigo" class="mono"
-                                formControlName="codigo" placeholder="0001 ou CR01">
+                            <input type="text" id="mc-codigo" class="mono" formControlName="codigo"
+                                placeholder="0001 ou CR01">
                             @if (brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid) {
                             <span class="error-message">
                                 @if (brokerForm.get('codigo')?.errors?.['required']) {
@@ -337,7 +337,8 @@
                         <label for="mc-nascimento">Data de nascimento</label>
                         <input type="text" id="mc-nascimento" class="mono" formControlName="data_nascimento"
                             mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="dd/mm/aaaa">
-                        @if (brokerForm.get('data_nascimento')?.touched && brokerForm.get('data_nascimento')?.invalid) {
+                        @if (brokerForm.get('data_nascimento')?.touched &&
+                        brokerForm.get('data_nascimento')?.invalid) {
 
                         <span class="error-message"> A data deve estar no formato dd/mm/aaaa. </span>
                         }
