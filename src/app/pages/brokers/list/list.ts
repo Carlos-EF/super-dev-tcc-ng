@@ -1,15 +1,20 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ToastService } from '../../../services/toast.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
 import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../../../models/broker.model';
 import { BrokerTables } from '../../../types/broker.sort.types';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-list',
-  imports: [],
+  imports: [
+    FormsModule,
+    RouterLink,
+    ReactiveFormsModule
+  ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })

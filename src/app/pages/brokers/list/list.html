@@ -1,1 +1,333 @@
-<p>list works!</p>
+<nav class="breadcrumb" aria-label="breadcrumb"> <a routerLink="/home">Início</a>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m9 6 6 6-6 6" />
+    </svg>
+    <span>Corretores</span>
+</nav>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">Corretores</h1>
+        <p class="page-sub">— corretores cadastrados</p>
+    </div>
+    <button (click)="openCreateModal()" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14" />
+        </svg> Cadastrar corretor
+    </button>
+</div>
+<div class="card filters-card">
+    <div class="filters">
+        <div class="field">
+            <label for="f-busca">Buscar</label>
+            <div class="control has-prefix">
+                <span class="prefix"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg>
+                </span>
+                <input #searchInput type="search" id="f-busca" placeholder="Nome, código, CRECI, celular ou e-mail…"
+                    (input)="busca.next(($any($event.target).value))" />
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-vinculo">Imóveis vinculados</label>
+            <div class="select-wrap">
+                <select id="f-vinculo">
+                    <option value="">Todos</option>
+                    <option value="com">Com imóveis</option>
+                    <option value="sem">Sem imóveis</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card table-card">
+    @if ((brokers()?.corretores.length ?? 0) > 0) {
+    <div class="table-wrap">
+        <table aria-label="Lista de corretores">
+            <thead>
+                <tr>
+                    <th
+                        [attr.aria-sort]=" sortCollumns === 'nome' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' ">
+                        <button (click)="sortBy('nome')" class="th-sort"> Corretor
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg>
+                            </span>
+                        </button>
+                    </th>
+                    <th>
+                        <span class="th-plain">CRECI</span>
+                    </th>
+                    <th>
+                        <span class="th-plain">Contato</span>
+                    </th>
+                    <th class="num"
+                        [attr.aria-sort]=" sortCollumns === 'imoveis' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' ">
+                        <button (click)="sortBy('imoveis')" class="th-sort"> Imóveis
+                            <span class="arrow">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19V5M6 11l6-6 6 6" />
+                                </svg>
+                            </span>
+                        </button>
+                    </th>
+                    <th class="actions-col">
+                        <span class="th-plain">Ações</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (broker of brokers().corretores; track broker.id) {
+                <tr>
+                    <td>
+                        <div class="person">
+                            <span class="person-avatar"> {{ broker.nome.charAt(0).toUpperCase() }}
+                            </span>
+                            <div>
+                                <b>{{ broker.nome }}</b>
+                                <span class="cod">COR-{{ broker.codigo }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="creci-cell"> {{ broker.creci }} </td>
+                    <td>
+                        <span class="contact-l">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.15 10.8 19.79 19.79 0 0 1 .08 2.18 2 2 0 0 1 2.06 0h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L6.1 7.6a16 16 0 0 0 6.3 6.3l1.15-1.15a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92z" />
+                            </svg> {{ broker.numero }}
+                        </span> <span class="contact-l">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16v16H4z" />
+                                <path d="m22 6-10 7L2 6" />
+                            </svg> {{ broker.email }}
+                        </span>
+                    </td>
+                    <td class="num">
+                        <span class="count-badge" [class.zero]="sumTotal(broker.id) === 0"
+                            [title]="sumTotal(broker.id) === 0 ? 'Nenhum imóvel sob responsabilidade' : sumTotal(broker.id) + ' imóveis sob responsabilidade'">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 10.5 12 3l9 7.5" />
+                                <path d="M5 9.5V21h14V9.5" />
+                            </svg>
+                            {{ sumTotal(broker.id) }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="icon-btn" type="button" title="Ver imóveis do corretor"
+                                [attr.aria-label]="'Ver imóveis de ' + broker.nome">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                            <button (click)="openEditModal(broker)" class="icon-btn" type="button"
+                                title="Editar corretor" [attr.aria-label]="'Editar ' + broker.nome">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
+                                </svg>
+                            </button>
+                            <button (click)="openConfirmModal(broker)" class="icon-btn danger" type="button"
+                                title="Excluir corretor" [attr.aria-label]="'Excluir ' + broker.nome">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                    <path d="M10 11v6M14 11v6" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-foot">
+        <div class="foot-ctrl">
+            <div class="per-page">
+                <label for="per-page">Itens por página</label>
+                <div class="select-wrap">
+                    <select [value]="perPage()" (change)="changePerPagevalue($event)" id="per-page">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="pager" aria-label="Paginação">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"> ‹ </button>
+                <button class="page-btn current" aria-current="page"> {{ page() }}
+
+                </button>
+                <button class="page-btn" (click)="nextPage()" [disabled]="page() === (brokers().total_paginas ?? 1)"> ›
+                </button>
+            </nav>
+        </div>
+    </div>
+    } @else {
+    <div class="empty-state">
+        <div class="es-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="8" r="3.5" />
+                <path d="M3.5 20c.8-3.2 3.4-5 6.5-5 1.2 0 2.3.3 3.2.8" />
+                <circle cx="17.5" cy="17.5" r="3" />
+                <path d="m21.5 21.5-1.8-1.8" />
+            </svg>
+        </div>
+        <h4>Nenhum corretor encontrado</h4>
+        <p> Nenhum resultado para os filtros aplicados. Ajuste a busca ou limpe os filtros. </p>
+        <button (click)="clearFilters()" class="btn btn-ghost" type="button"> Limpar filtros
+        </button>
+    </div>
+    }
+</div>
+
+@if (openModal) {
+<form [formGroup]="brokerForm">
+    <div class="modal-backdrop open" role="dialog" aria-modal="true" aria-labelledby="mc-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mc-title"> {{ isEditMode ? 'Editar corretor' : 'Cadastrar corretor' }} </h3>
+                    <p>O corretor ficará disponível para responder pelos imóveis e negociações.</p>
+                </div>
+                <button type="button" (click)="closeModal()" class="icon-btn" aria-label="Fechar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">01</span>
+                        Informações necessárias
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-grid cols-2">
+                        <div class="field">
+                            <label for="mc-nome">Nome completo <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-nome" formControlName="nome" placeholder="João Pereira">
+                        </div>
+                        <div class="field">
+                            <label for="mc-codigo">Código <span class="req">*</span></label>
+                            <input type="text" id="mc-codigo" class="mono" formControlName="codigo"
+                                placeholder="0001 ou CR01">
+                        </div>
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="mc-creci">CRECI <span class="req">*</span></label>
+                            <input type="text" id="mc-creci" class="mono" formControlName="creci" placeholder="00.000F">
+                        </div>
+                        <div class="field">
+                            <label for="mc-celular">Celular <span class="req">*</span></label>
+                            <input type="tel" id="mc-celular" class="mono" formControlName="numero"
+                                placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="field">
+                            <label for="mc-email">E-mail <span class="req">*</span></label>
+                            <input type="email" id="mc-email" formControlName="email"
+                                placeholder="joao@imobiliaria.com">
+                        </div>
+                    </div>
+                </div>
+                <hr class="form-divider">
+                <div class="section-head">
+                    <div class="section-title"> <span class="n">02</span>
+                        Informações pessoais
+                    </div>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label for="mc-nascimento">Data de nascimento</label>
+                        <input type="text" id="mc-nascimento" class="mono" formControlName="data_nascimento"
+                            placeholder="dd/mm/aaaa">
+                    </div>
+                    <div class="field">
+                        <label for="mc-rg">RG</label>
+                        <input type="text" id="mc-rg" class="mono" formControlName="rg" placeholder="0.000.000">
+                    </div>
+                    <div class="field">
+                        <label for="mc-cpf">CPF</label> <input type="text" id="mc-cpf" class="mono"
+                            formControlName="cpf" placeholder="000.000.000-00">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" (click)="cancelModal()" class="btn btn-ghost"> Cancelar
+                </button>
+                <button type="button" (click)="saveBroker()" class="btn btn-primary"> <svg width="15" height="15"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    {{ isEditMode ? 'Salvar alterações' : 'Salvar corretor' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+}
+
+@if (confirmModal && selectedBroker) {
+<div class="modal-backdrop open" role="dialog" aria-modal="true" aria-labelledby="mx-title">
+    <div class="modal modal-sm">
+        <div class="modal-head">
+            <div>
+                <h3 id="mx-title">Excluir corretor</h3>
+            </div>
+            <button class="icon-btn" type="button" (click)="closeConfirmModal()" aria-label="Fechar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="confirm-box">
+                <div class="confirm-icon">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.9">
+                        <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                    </svg>
+                </div>
+                <div>
+                    <p> Excluir o corretor <b>{{ selectedBroker.nome }}</b>? </p>
+                    <span class="warn"> Esta ação não poderá ser desfeita.
+
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-foot">
+            <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()"> Cancelar
+            </button>
+            <button class="btn btn-danger" type="button" (click)="deleteBroker(selectedBroker.id)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                </svg> Excluir
+            </button>
+        </div>
+    </div>
+</div>
+}
