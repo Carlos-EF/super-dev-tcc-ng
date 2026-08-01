@@ -4,7 +4,7 @@ import { ToastService } from '../../../services/toast.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
-import { BrokerFilters, PaginatedBrokerResponse } from '../../../models/broker.model';
+import { BrokerFilters, BrokerResponse, PaginatedBrokerResponse } from '../../../models/broker.model';
 
 @Component({
   selector: 'app-list',
@@ -53,9 +53,11 @@ export class BrokersList {
     }
   );
 
+  selectedBroker: BrokerResponse | null = null;
+
   brokerForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
-    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4),]],
     creci: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
@@ -94,5 +96,59 @@ export class BrokersList {
         return console.log('Ocorreu um erro ao tentar buscar todos os corretores:', error);
       }
     })
+  };
+
+  openCreateModal() {
+    this.isEditMode = false;
+
+    this.openModal = true;
+  };
+
+  openConfirmModal(broker: BrokerResponse) {
+    this.selectedBroker = broker;
+    this.confirmModal = true;
+  }
+
+  closeConfirmModal() {
+    this.confirmModal = false;
+
+    this.selectedBroker = null;
+  }
+
+  cancelModal() {
+    this.isEditMode = false;
+
+    this.selectedBroker = null;
+
+    this.openModal = false;
+
+    this.brokerForm.reset();
+  };
+
+  closeModal() {
+    this.isEditMode = false;
+
+    this.selectedBroker = null;
+
+    this.openModal = false;
+  };
+
+  openEditModal(broker: BrokerResponse) {
+    this.brokerForm.patchValue({
+      nome: broker.nome,
+      codigo: broker.codigo,
+      creci: broker.creci,
+      numero: broker.numero,
+      email: broker.email,
+      rg: broker.rg,
+      data_nascimento: broker.data_nascimento,
+      cpf: broker.cpf,
+    });
+
+    this.selectedBroker = broker;
+
+    this.isEditMode = true;
+
+    this.openModal = true;
   }
 }
