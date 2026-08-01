@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ToastService } from '../../../services/toast.service';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -35,6 +35,8 @@ export class BrokersList {
   sortCollumns: BrokerTables = null;
 
   filters: BrokerFilters = {};
+
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   brokers = model<PaginatedBrokerResponse>(
     {
@@ -313,5 +315,15 @@ export class BrokersList {
 
       this.getAllBrokers();
     }
+  };
+
+  clearFilters() {
+    this.filters = {};
+
+    this.searchInput.nativeElement.value = '';
+
+    this.page.set(1);
+
+    this.getAllBrokers();
   };
 }
