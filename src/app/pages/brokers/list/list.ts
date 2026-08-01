@@ -4,7 +4,7 @@ import { ToastService } from '../../../services/toast.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
-import { BrokerFilters, BrokerResponse, PaginatedBrokerResponse } from '../../../models/broker.model';
+import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../../../models/broker.model';
 
 @Component({
   selector: 'app-list',
@@ -136,7 +136,6 @@ export class BrokersList {
   openEditModal(broker: BrokerResponse) {
     this.brokerForm.patchValue({
       nome: broker.nome,
-      codigo: broker.codigo,
       creci: broker.creci,
       numero: broker.numero,
       email: broker.email,
@@ -150,5 +149,45 @@ export class BrokersList {
     this.isEditMode = true;
 
     this.openModal = true;
-  }
+  };
+
+  saveBroker() {
+    if (this.brokerForm.invalid) {
+      this.brokerForm.markAllAsTouched();
+
+      return;
+    }
+
+    if (this.isEditMode && this.selectedBroker) {
+      const editBroker: EditBrokerRequest = {
+        nome: this.brokerForm.getRawValue().nome!,
+        creci: this.brokerForm.getRawValue().creci!,
+        numero: this.brokerForm.getRawValue().numero!,
+        email: this.brokerForm.getRawValue().email!,
+        data_nascimento: this.brokerForm.getRawValue().data_nascimento!,
+        rg: this.brokerForm.getRawValue().rg!,
+        cpf: this.brokerForm.getRawValue().cpf!
+      }
+
+      this.editBroker(this.selectedBroker.id, editBroker);
+    } else {
+
+      const newBroker: CreateBrokerRequest = {
+        nome: this.brokerForm.getRawValue().nome!,
+        creci: this.brokerForm.getRawValue().creci!,
+        codigo: this.brokerForm.getRawValue().codigo!, 
+        numero: this.brokerForm.getRawValue().numero!,
+        email: this.brokerForm.getRawValue().email!,
+        data_nascimento: this.brokerForm.getRawValue().data_nascimento!,
+        rg: this.brokerForm.getRawValue().rg!,
+        cpf: this.brokerForm.getRawValue().cpf!
+      }
+
+      this.createBroker(newBroker);
+    }
+  };
+
+  createBroker(broker: CreateBrokerRequest) {};
+
+  editBroker(id: string, broker: EditBrokerRequest) {};
 }
