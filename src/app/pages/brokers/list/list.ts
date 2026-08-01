@@ -70,7 +70,7 @@ export class BrokersList {
   brokerForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4),]],
-    creci: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7)]],
+    creci: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7), Validators.pattern(/^\d{2}\.\d{3}F$/)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
     data_nascimento: [null as string | null, [Validators.minLength(10), Validators.maxLength(10)]],
@@ -113,6 +113,8 @@ export class BrokersList {
   openCreateModal() {
     this.isEditMode = false;
 
+    this.brokerForm.get('codigo')?.enable();
+
     this.openModal = true;
   };
 
@@ -148,6 +150,7 @@ export class BrokersList {
   openEditModal(broker: BrokerResponse) {
     this.brokerForm.patchValue({
       nome: broker.nome,
+      codigo: broker.codigo,
       creci: broker.creci,
       numero: broker.numero,
       email: broker.email,
@@ -155,6 +158,8 @@ export class BrokersList {
       data_nascimento: broker.data_nascimento,
       cpf: broker.cpf,
     });
+
+    this.brokerForm.get('codigo')?.disable();
 
     this.selectedBroker = broker;
 

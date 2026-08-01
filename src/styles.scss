@@ -128,6 +128,63 @@ body {
     filter: brightness(1.08)
 }
 
+button:disabled,
+.btn:disabled,
+.icon-btn:disabled,
+.page-btn:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+    pointer-events: none;
+}
+
+.btn-primary:disabled {
+    background: #3b4149;
+    border-color: #3b4149;
+    color: #9ca3af;
+    box-shadow: none;
+}
+
+.btn-ghost:disabled {
+    background: transparent;
+    border-color: #2f3640;
+    color: #6b7280;
+}
+
+.icon-btn:disabled {
+    background: transparent;
+    color: #6b7280;
+}
+
+.page-btn:disabled {
+    background: #1b2026;
+    border-color: #2f3640;
+    color: #6b7280;
+}
+
+.btn-primary:disabled:hover,
+.btn-ghost:disabled:hover,
+.icon-btn:disabled:hover,
+.page-btn:disabled:hover {
+    background: inherit;
+    border-color: inherit;
+    color: inherit;
+    transform: none;
+    box-shadow: none;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background: #161a1f;
+    border-color: #2b3138;
+    color: #8b95a5;
+    cursor: not-allowed;
+}
+
+input:disabled::placeholder {
+    color: #5f6773;
+}
+
 .main {
     flex: 1;
     padding: 28px 32px 80px;

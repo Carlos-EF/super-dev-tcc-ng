@@ -245,8 +245,8 @@
                             [class.invalid]="brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid">
                             <label for="mc-codigo">Código <span class="req">*</span>
                             </label>
-                            <input type="text" id="mc-codigo" class="mono" formControlName="codigo"
-                                placeholder="0001 ou CR01">
+                            <input type="text" id="mc-codigo" class="mono"
+                                formControlName="codigo" placeholder="0001 ou CR01">
                             @if (brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid) {
                             <span class="error-message">
                                 @if (brokerForm.get('codigo')?.errors?.['required']) {
@@ -266,15 +266,17 @@
                         <div class="field"
                             [class.invalid]="brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid">
                             <label for="mc-creci">CRECI <span class="req">*</span>
-                            </label> <input type="text" id="mc-creci" class="mono" [dropSpecialCharacters]="false"
-                                formControlName="creci" mask="00.000F" placeholder="00.000F">
+                            </label>
+                            <input type="text" id="mc-creci" class="mono" formControlName="creci" mask="00.000A"
+                                [dropSpecialCharacters]="false" placeholder="00.000F">
                             @if (brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid) {
                             <span class="error-message">
                                 @if (brokerForm.get('creci')?.errors?.['required']) {
                                 O CRECI é obrigatório.
                                 }
                                 @if (brokerForm.get('creci')?.errors?.['minlength'] ||
-                                brokerForm.get('creci')?.errors?.['maxlength']) {
+                                brokerForm.get('creci')?.errors?.['maxlength'] ||
+                                brokerForm.get('creci')?.errors?.['pattern']) {
                                 O CRECI deve estar no formato 00.000F.
                                 }
                             </span>
@@ -342,8 +344,8 @@
                     </div>
                     <div class="field" [class.invalid]="brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid">
                         <label for="mc-rg">RG</label>
-                        <input type="text" id="mc-rg" class="mono" formControlName="rg" mask="0.000.000"
-                            placeholder="0.000.000">
+                        <input type="text" id="mc-rg" [dropSpecialCharacters]="false" class="mono" formControlName="rg"
+                            mask="0.000.000" placeholder="0.000.000">
                         @if (brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid) {
                         <span class="error-message">
                             O RG deve estar no formato
