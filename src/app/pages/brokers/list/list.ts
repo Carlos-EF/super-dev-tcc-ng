@@ -7,13 +7,15 @@ import { SortType } from '../../../types/sort.types';
 import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../../../models/broker.model';
 import { BrokerTables } from '../../../types/broker.sort.types';
 import { RouterLink } from '@angular/router';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-list',
   imports: [
     FormsModule,
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxMaskDirective
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
