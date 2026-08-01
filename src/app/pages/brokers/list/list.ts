@@ -1,7 +1,7 @@
 import { Component, inject, model } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ToastService } from '../../../services/toast.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
 import { BrokerFilters } from '../../../models/broker.model';
@@ -32,4 +32,15 @@ export class BrokersList {
   sortDirection: SortType = 'asc';
 
   filters: BrokerFilters = {};
+
+  brokerForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+    creci: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7)]],
+    numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
+    email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
+    data_nascimento: [null as string | null, [Validators.minLength(10), Validators.maxLength(10)]],
+    rg: [null as string | null, [Validators.minLength(9), Validators.maxLength(9)]],
+    cpf: [null as string | null, [Validators.minLength(14), Validators.maxLength(14)]]
+  });
 }
