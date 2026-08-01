@@ -187,7 +187,37 @@ export class BrokersList {
     }
   };
 
-  createBroker(broker: CreateBrokerRequest) {};
+  createBroker(broker: CreateBrokerRequest) {
+    this.brokerService.create(broker).subscribe({
+      next: (broker: BrokerResponse) => {
+        this.toastService.show('create', 'corretor');
 
-  editBroker(id: string, broker: EditBrokerRequest) {};
+        this.getAllBrokers();
+
+        this.brokerForm.reset();
+
+        this.openModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar criar o corretor:', error);
+      }
+    });
+  };
+
+  editBroker(id: string, broker: EditBrokerRequest) {
+    this.brokerService.edit(id, broker).subscribe({
+      next: (broker: BrokerResponse) => {
+        this.toastService.show('edit', 'corretor');
+
+        this.getAllBrokers();
+
+        this.brokerForm.reset();
+
+        this.openModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar o corretor:', error);
+      }
+    });
+  };
 }
