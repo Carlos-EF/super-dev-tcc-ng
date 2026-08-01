@@ -34,7 +34,7 @@ export interface BrokerResponse {
 }
 
 export interface PaginatedBrokerResponse {
-    condominios: BrokerResponse[];
+    corretores: BrokerResponse[];
     pagina: number;
     por_pagina: number;
     total: number;
