@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
 import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../../../models/broker.model';
+import { BrokerTables } from '../../../types/broker.sort.types';
 
 @Component({
   selector: 'app-list',
@@ -30,6 +31,8 @@ export class BrokersList {
   page = model(1);
 
   sortDirection: SortType = 'asc';
+
+  sortCollumns: BrokerTables = null;
 
   filters: BrokerFilters = {};
 
@@ -175,7 +178,7 @@ export class BrokersList {
       const newBroker: CreateBrokerRequest = {
         nome: this.brokerForm.getRawValue().nome!,
         creci: this.brokerForm.getRawValue().creci!,
-        codigo: this.brokerForm.getRawValue().codigo!, 
+        codigo: this.brokerForm.getRawValue().codigo!,
         numero: this.brokerForm.getRawValue().numero!,
         email: this.brokerForm.getRawValue().email!,
         data_nascimento: this.brokerForm.getRawValue().data_nascimento!,
@@ -234,5 +237,53 @@ export class BrokersList {
         return console.log('Ocorreu um erro ao tentar deletar o corretor:', error);
       }
     });
+  };
+
+  sumTotal(id: string) {
+    var total = 0;
+
+    return total;
+  };
+
+  sortBy(column: BrokerTables) {
+    const original = this.brokers();
+
+    if (!original) {
+      return
+    }
+
+    if (this.sortCollumns == column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortCollumns = column;
+      this.sortDirection = 'asc';
+    }
+
+    const corretores = [...original.corretores];
+
+    corretores.sort((a, b) => {
+      let i = 0;
+
+      switch (column) {
+        case 'nome':
+          i = a.nome.localeCompare(b.nome, 'pt-BR', {
+            sensitivity: 'base'
+          });
+          break;
+
+        case 'imoveis':
+          i = this.sumTotal(a.id) - this.sumTotal(b.id);
+          break;
+      }
+
+      return this.sortDirection === 'asc' ? i : -i;
+    });
+
+    this.brokers.set(
+      {
+        ...original,
+        corretores
+      }
+    );
   };
 }
