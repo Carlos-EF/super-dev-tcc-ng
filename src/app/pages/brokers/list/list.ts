@@ -1,5 +1,5 @@
 import { Component, inject, model } from '@angular/core';
-import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ToastService } from '../../../services/toast.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BrokerService } from '../../../services/broker.service';
@@ -53,7 +53,6 @@ export class BrokersList {
     }
   );
 
-
   brokerForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
@@ -64,6 +63,22 @@ export class BrokersList {
     rg: [null as string | null, [Validators.minLength(9), Validators.maxLength(9)]],
     cpf: [null as string | null, [Validators.minLength(14), Validators.maxLength(14)]]
   });
+
+  constructor() {
+    this.getAllBrokers();
+  }
+
+  ngOnInit() {
+    this.busca.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(
+      resultado => {
+        this.filters.busca = resultado;
+        this.getAllBrokers();
+      }
+    )
+  }
 
   getAllBrokers() {
     this.brokerService.getAll(
