@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
-import { ClientsFilters } from '../models/clients.model';
+import { ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, EditInterestedRequest } from '../models/clients.model';
 
 @Service()
 export class ClientsService {
@@ -51,5 +51,38 @@ export class ClientsService {
         const urlWithId = `${this.url}/${id}/interested`;
 
         return this.httpClient.get(urlWithId);
+    }
+
+    create(
+        form: CreateClientRequest
+    ) {
+        return this.httpClient.post(this.url, form);
+    }
+
+    createInterested(
+        id: string,
+        form: CreateInterestedRequest
+    ) {
+        const urlWithId = `${this.url}/${id}/interested`;
+
+        return this.httpClient.post(urlWithId, form);
+    }
+
+    edit(
+        id: string,
+        form: EditClientRequest
+    ) {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.put(urlWithId, form);
+    }
+
+    editInterested(
+        id: string,
+        form: EditInterestedRequest
+    ) {
+        const urlWithId = `${this.url}/${id}/interested`;
+
+        return this.httpClient.put(urlWithId, form);
     }
 }
