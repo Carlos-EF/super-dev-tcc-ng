@@ -9,12 +9,25 @@ export interface CreateClientRequest {
     numero: string;
     email: string;
     tipo: ClientsTypes;
-    como_encontrou: ContactTypes;
+    como_encontrou: ContactTypes | null;
+}
+
+export interface EditClientRequest {
+    nome: string;
+    numero: string;
+    email: string;
+    como_encontrou: ContactTypes | null;
 }
 
 export interface CreateInterestRequest {
     cliente_id: string;
-    procura: PropertyTypes;
-    finalidade: FinalityTypes;
-    preferencia: string;
+    procura: PropertyTypes | null;
+    finalidade: FinalityTypes | null;
+    preferencia: string | null;
+}
+
+export interface EditInterestRequest {
+    procura: PropertyTypes | null;
+    finalidade: FinalityTypes | null;
+    preferencia: string | null;
 }
