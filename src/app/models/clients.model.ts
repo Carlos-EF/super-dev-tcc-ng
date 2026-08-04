@@ -19,6 +19,16 @@ export interface EditClientRequest {
     como_encontrou: ContactTypes | null;
 }
 
+export interface ClientResponse {
+    id: string;
+    nome: string;
+    codigo: string;
+    numero: string;
+    email: string;
+    tipo: ClientsTypes;
+    como_encontrou: ContactTypes | null;
+}
+
 export interface CreateInterestRequest {
     cliente_id: string;
     procura: PropertyTypes | null;
@@ -30,4 +40,12 @@ export interface EditInterestRequest {
     procura: PropertyTypes | null;
     finalidade: FinalityTypes | null;
     preferencia: string | null;
+}
+
+export interface PaginatedClientResponse {
+    clientes: ClientResponse[];
+    pagina: number;
+    por_pagina: number;
+    total: number;
+    total_paginas: number;
 }
