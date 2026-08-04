@@ -34,4 +34,10 @@ export class ClientsService {
 
         return this.httpClient.get(this.url, { params });
     }
+
+    delete(id: string) {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.delete(urlWithId);
+    }
 }
