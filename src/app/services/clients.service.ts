@@ -1,7 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
-import { ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, EditInterestedRequest } from '../models/clients.model';
+import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../models/clients.model';
+import { Observable } from 'rxjs';
 
 @Service()
 export class ClientsService {
@@ -13,7 +14,7 @@ export class ClientsService {
         filters?: ClientsFilters,
         pagina: number = 1,
         porPagina: number = 10
-    ) {
+    ): Observable<PaginatedClientResponse> {
         let params = new HttpParams();
 
         if (filters?.busca) {
@@ -32,57 +33,60 @@ export class ClientsService {
 
         params = params.set('por_pagina', porPagina);
 
-        return this.httpClient.get(this.url, { params });
+        return this.httpClient.get<PaginatedClientResponse>(
+            this.url, {
+            params
+        });
     }
 
-    delete(id: string) {
+    delete(id: string): Observable<void> {
         const urlWithId = `${this.url}/${id}`;
 
-        return this.httpClient.delete(urlWithId);
+        return this.httpClient.delete<void>(urlWithId);
     }
 
-    getById(id: string) {
+    getById(id: string): Observable<ClientResponse> {
         const urlWithId = `${this.url}/${id}`;
 
-        return this.httpClient.get(urlWithId);
+        return this.httpClient.get<ClientResponse>(urlWithId);
     }
 
-    getInterestedById(id: string) {
+    getInterestedById(id: string): Observable<InterestedResponse> {
         const urlWithId = `${this.url}/${id}/interested`;
 
-        return this.httpClient.get(urlWithId);
+        return this.httpClient.get<InterestedResponse>(urlWithId);
     }
 
     create(
         form: CreateClientRequest
-    ) {
-        return this.httpClient.post(this.url, form);
+    ): Observable<ClientResponse> {
+        return this.httpClient.post<ClientResponse>(this.url, form);
     }
 
     createInterested(
         id: string,
         form: CreateInterestedRequest
-    ) {
+    ): Observable<InterestedResponse> {
         const urlWithId = `${this.url}/${id}/interested`;
 
-        return this.httpClient.post(urlWithId, form);
+        return this.httpClient.post<InterestedResponse>(urlWithId, form);
     }
 
     edit(
         id: string,
         form: EditClientRequest
-    ) {
+    ): Observable<ClientResponse> {
         const urlWithId = `${this.url}/${id}`;
 
-        return this.httpClient.put(urlWithId, form);
+        return this.httpClient.put<ClientResponse>(urlWithId, form);
     }
 
     editInterested(
         id: string,
         form: EditInterestedRequest
-    ) {
+    ): Observable<InterestedResponse> {
         const urlWithId = `${this.url}/${id}/interested`;
 
-        return this.httpClient.put(urlWithId, form);
+        return this.httpClient.put<InterestedResponse>(urlWithId, form);
     }
 }
