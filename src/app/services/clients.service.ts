@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
-import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../models/clients.model';
+import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../models/clients.model';
 import { Observable } from 'rxjs';
 
 @Service()
