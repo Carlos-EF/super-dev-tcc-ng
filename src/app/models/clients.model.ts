@@ -42,6 +42,14 @@ export interface EditInterestRequest {
     preferencia: string | null;
 }
 
+export interface InterestResponse {
+    id: string;
+    cliente_id: string;
+    procura: PropertyTypes | null;
+    finalidade: FinalityTypes | null;
+    preferencia: string | null;
+}
+
 export interface PaginatedClientResponse {
     clientes: ClientResponse[];
     pagina: number;
