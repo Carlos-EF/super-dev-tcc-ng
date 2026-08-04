@@ -1,5 +1,5 @@
 import { ClientsTypes } from "../types/clients.types";
-import { ContactTypes } from "../types/contact_types";
+import { ContactTypes } from "../types/contact.types";
 
 export interface CreateClientRequest {
     nome: string;
