@@ -57,3 +57,9 @@ export interface PaginatedClientResponse {
     total: number;
     total_paginas: number;
 }
+
+export interface ClientsFilters {
+    busca?: string;
+    tipo?: ClientsTypes;
+    origem?: ContactTypes;
+}
