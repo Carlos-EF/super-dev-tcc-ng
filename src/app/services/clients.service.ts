@@ -40,4 +40,16 @@ export class ClientsService {
 
         return this.httpClient.delete(urlWithId);
     }
+
+    getById(id: string) {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.get(urlWithId);
+    }
+
+    getInterestedById(id: string) {
+        const urlWithId = `${this.url}/${id}/interested`;
+
+        return this.httpClient.get(urlWithId);
+    }
 }

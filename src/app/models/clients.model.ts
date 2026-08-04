@@ -29,20 +29,20 @@ export interface ClientResponse {
     como_encontrou: ContactTypes | null;
 }
 
-export interface CreateInterestRequest {
+export interface CreateInterestedRequest {
     cliente_id: string;
     procura: PropertyTypes | null;
     finalidade: FinalityTypes | null;
     preferencia: string | null;
 }
 
-export interface EditInterestRequest {
+export interface EditInterestedRequest {
     procura: PropertyTypes | null;
     finalidade: FinalityTypes | null;
     preferencia: string | null;
 }
 
-export interface InterestResponse {
+export interface InterestedResponse {
     id: string;
     cliente_id: string;
     procura: PropertyTypes | null;
