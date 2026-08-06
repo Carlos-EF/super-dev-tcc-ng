@@ -3,6 +3,8 @@ import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
 import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../models/broker.model';
+import { BrokerTables } from '../types/broker.sort.types';
+import { SortType } from '../types/sort.types';
 
 @Service()
 export class BrokerService {
@@ -13,11 +15,15 @@ export class BrokerService {
     getAll(
         filters?: BrokerFilters,
         pagina: number = 1,
-        porPagina: number = 10
+        porPagina: number = 10,
+        ordenarPor: BrokerTables = 'nome',
+        direcao: SortType = 'asc'
     ): Observable<PaginatedBrokerResponse> {
-        let params = new HttpParams().
-            set('pagina', pagina.toString())
-            .set('por_pagina', porPagina.toString());
+        let params = new HttpParams()
+            .set('pagina', pagina.toString())
+            .set('por_pagina', porPagina.toString())
+            .set('ordenar_por', ordenarPor)
+            .set('direcao', direcao);
 
         if (filters?.busca) {
             params = params.set('busca', filters.busca);

@@ -39,7 +39,7 @@ export class BrokersList {
 
   sortDirection: SortType = 'asc';
 
-  sortCollumns: BrokerTables = null;
+  sortCollumns: BrokerTables = 'nome';
 
   filters: BrokerFilters = {};
 
@@ -98,7 +98,9 @@ export class BrokersList {
     this.brokerService.getAll(
       this.filters,
       this.page(),
-      this.perPage()
+      this.perPage(),
+      this.sortCollumns,
+      this.sortDirection
     ).subscribe({
       next: (brokers: PaginatedBrokerResponse) => {
         this.brokers.set(brokers);
@@ -260,45 +262,15 @@ export class BrokersList {
   };
 
   sortBy(column: BrokerTables) {
-    const original = this.brokers();
-
-    if (!original) {
-      return
-    }
-
-    if (this.sortCollumns == column) {
+    if (this.sortCollumns === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortCollumns = column;
+
       this.sortDirection = 'asc';
-    }
+    };
 
-    const corretores = [...original.corretores];
-
-    corretores.sort((a, b) => {
-      let i = 0;
-
-      switch (column) {
-        case 'nome':
-          i = a.nome.localeCompare(b.nome, 'pt-BR', {
-            sensitivity: 'base'
-          });
-          break;
-
-        case 'imoveis':
-          i = this.sumTotal(a.id) - this.sumTotal(b.id);
-          break;
-      }
-
-      return this.sortDirection === 'asc' ? i : -i;
-    });
-
-    this.brokers.set(
-      {
-        ...original,
-        corretores
-      }
-    );
+    this.getAllBrokers();
   };
 
   changePerPagevalue(event: Event) {
