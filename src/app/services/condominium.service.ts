@@ -3,6 +3,8 @@ import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
 import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../models/condominium.model';
+import { CondTables } from '../types/cond.sort.types';
+import { SortType } from '../types/sort.types';
 
 @Service()
 export class CondominiumService {
@@ -13,11 +15,16 @@ export class CondominiumService {
     getAll(
         filters?: CondominiumFilters,
         pagina: number = 1,
-        porPagina: number = 10
+        porPagina: number = 10,
+        ordenarPor: CondTables = 'nome',
+        direcao: SortType = 'asc'
     ): Observable<PaginatedCondominiumResponse> {
-        let params = new HttpParams().
-        set('pagina', pagina.toString())
-        .set('por_pagina',porPagina.toString());
+        let params = new HttpParams()
+        .set('pagina', pagina.toString())
+        .set('por_pagina',porPagina.toString())
+        .set('ordenar_por', ordenarPor)
+        .set('direcao', direcao);
+        
         if (filters?.busca) {
             params = params.set('busca', filters.busca);
         }

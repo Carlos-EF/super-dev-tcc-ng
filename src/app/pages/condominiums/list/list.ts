@@ -62,7 +62,7 @@ export class CondominiumsList {
 
   page = model(1);
 
-  sortCollumns: CondTables = null;
+  sortCollumns: CondTables = 'nome';
 
   sortDirection: SortType = 'asc';
 
@@ -110,7 +110,9 @@ export class CondominiumsList {
     this.condominiumService.getAll(
       this.filters,
       this.page(),
-      this.perPage()
+      this.perPage(),
+      this.sortCollumns,
+      this.sortDirection
     ).subscribe({
       next: (condominiums: PaginatedCondominiumResponse) => {
         this.condominiums.set(condominiums);
@@ -257,7 +259,7 @@ export class CondominiumsList {
         this.toastService.show('edit', 'Condomínio');
 
         this.getAllCondominiums();
-        
+
         this.getAllCities();
 
         this.getAllCondominiums();
@@ -280,7 +282,7 @@ export class CondominiumsList {
         this.toastService.show("delete", 'Condomínio');
 
         this.getAllCondominiums();
-        
+
         this.getAllCities();
 
         this.getAllCondominiums();
@@ -300,51 +302,15 @@ export class CondominiumsList {
   }
 
   sortBy(column: CondTables) {
-    const original = this.condominiums();
-
-    if (!original) {
-      return
-    }
-
-    if (this.sortCollumns == column) {
+    if (this.sortCollumns === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      this.sortCollumns = column;
+      this.sortCollumns = column; 
+
       this.sortDirection = 'asc';
     }
 
-    const condominios = [...original.condominios];
-
-    condominios.sort((a, b) => {
-      let i = 0;
-
-      switch (column) {
-        case 'nome':
-          i = a.nome.localeCompare(b.nome, 'pt-BR', {
-            sensitivity: 'base'
-          });
-          break;
-
-        case 'endereco':
-          i = a.logradouro.localeCompare(b.logradouro, 'pt-BR', {
-            sensitivity: 'base'
-          });
-          break;
-
-        case 'imoveis':
-          i = this.sumTotal(a.id) - this.sumTotal(b.id);
-          break;
-      }
-
-      return this.sortDirection === 'asc' ? i : -i;
-    });
-
-    this.condominiums.set(
-      {
-        ...original,
-        condominios
-      }
-    );
+    this.getAllCondominiums();
   };
 
   clearFilters() {
