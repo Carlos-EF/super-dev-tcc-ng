@@ -239,6 +239,10 @@ export class CondominiumsList {
 
         this.getAllCondominiums();
 
+        this.getAllCities();
+
+        this.getAllCondominiums();
+
         this.closeModal();
       },
       error: (error: Error) => {
@@ -251,6 +255,10 @@ export class CondominiumsList {
     this.condominiumService.edit(id, condominium).subscribe({
       next: () => {
         this.toastService.show('edit', 'Condomínio');
+
+        this.getAllCondominiums();
+        
+        this.getAllCities();
 
         this.getAllCondominiums();
 
@@ -270,6 +278,10 @@ export class CondominiumsList {
     this.condominiumService.delete(id).subscribe({
       next: () => {
         this.toastService.show("delete", 'Condomínio');
+
+        this.getAllCondominiums();
+        
+        this.getAllCities();
 
         this.getAllCondominiums();
 
