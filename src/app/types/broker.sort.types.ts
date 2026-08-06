@@ -1,7 +1,6 @@
 export const BROKER_TABLES = [
     'nome',
     'imoveis',
-    null
 ] as const;
 
 export type BrokerTables =
