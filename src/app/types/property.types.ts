@@ -1,7 +1,7 @@
 export const PROPERTY_TYPES = [
-    'casa',
-    'apartamento',
-    'terreno',
+    'Casa',
+    'Apartamento',
+    'Terreno',
 ] as const;
 
 export type PropertyTypes =
