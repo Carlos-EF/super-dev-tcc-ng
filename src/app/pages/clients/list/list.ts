@@ -1,5 +1,5 @@
 import { Component, inject, model } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { Subject } from 'rxjs';
@@ -42,4 +42,13 @@ export class ClientsList {
       total_paginas: 0
     }
   )
+
+  clientForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+    numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
+    email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
+    tipo: ['', [Validators.required, Validators.maxLength(12)]],
+    como_encontrou: ['', [Validators.required, Validators.maxLength(18)]]
+  })
 }
