@@ -3,8 +3,10 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientResponse, ClientsFilters, PaginatedClientResponse } from '../../../models/clients.model';
-import cli from '@angular/cli';
+import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
+import { FinalityTypes } from '../../../types/finality.types';
+import { PropertyTypes } from '../../../types/property.types';
+import { ContactTypes } from '../../../types/contact.types';
 
 @Component({
   selector: 'app-list',
@@ -52,13 +54,13 @@ export class ClientsList {
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
     tipo: ['', [Validators.required, Validators.maxLength(12)]],
-    como_encontrou: ['', [Validators.required, Validators.maxLength(18)]]
+    como_encontrou: [null as ContactTypes, [Validators.required, Validators.maxLength(18)]]
   });
 
   interestedForm = this.formBuilder.group({
-    finalidade: ['', [Validators.required, Validators.maxLength(7)]],
-    procura: ['', [Validators.required, Validators.maxLength(11)]],
-    preferencia: ['', [Validators.required, Validators.maxLength(60)]]
+    finalidade: [null as FinalityTypes | null, [Validators.maxLength(7)]],
+    procura: [null as PropertyTypes | null, [Validators.maxLength(11)]],
+    preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
   ngOnInit() {
@@ -136,4 +138,58 @@ export class ClientsList {
 
     this.openModal = true;
   };
+
+  createClient(client: CreateClientRequest) {
+    this.clientService.create(
+      client
+    ).subscribe({
+      next: (client: ClientResponse) => {
+        if (client.tipo == 'Interessado') {
+          this.createInterestedClient(client.id);
+        } else {
+          this.toastService.show('create', 'cliente');
+
+          this.getAllClients();
+
+          this.clientForm.reset();
+
+          this.interestedForm.reset();
+
+          this.openModal = false;
+        }
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar os dados do cliente:', error);
+      }
+    })
+  };
+
+  createInterestedClient(id: string) {
+    const newInterestedData: CreateInterestedRequest = {
+      cliente_id: id,
+      finalidade: this.interestedForm.getRawValue().finalidade!,
+      procura: this.interestedForm.getRawValue().procura!,
+      preferencia: this.interestedForm.getRawValue().preferencia!,
+    }
+
+    this.clientService.createInterested(
+      id,
+      newInterestedData
+    ).subscribe({
+      next: (interested: InterestedResponse) => {
+        this.toastService.show('create', 'cliente');
+
+        this.getAllClients();
+
+        this.clientForm.reset();
+
+        this.interestedForm.reset();
+
+        this.openModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar os dados do interessado:', error);
+      }
+    })
+  }
 }

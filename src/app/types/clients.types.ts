@@ -1,7 +1,7 @@
 export const CLIENTS_TYPES = [
-    'interessado',
-    'proprietario',
-    'locatario',
+    'Interessado',
+    'Proprietário',
+    'Locatario',
 ] as const;
 
 export type ClientsTypes =

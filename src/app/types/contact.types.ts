@@ -4,6 +4,7 @@ export const CONTACT_TYPES = [
     'Indicação',
     'Portal Imobiliário',
     'Placa no imóvel',
+    null
 ] as const;
 
 export type ContactTypes =
