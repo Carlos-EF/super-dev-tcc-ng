@@ -3,10 +3,11 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
+import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { ContactTypes } from '../../../types/contact.types';
+import { ClientsTypes } from '../../../types/clients.types';
 
 @Component({
   selector: 'app-list',
@@ -53,7 +54,7 @@ export class ClientsList {
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
-    tipo: ['', [Validators.required, Validators.maxLength(12)]],
+    tipo: [null as ClientsTypes, [Validators.required, Validators.maxLength(12)]],
     como_encontrou: [null as ContactTypes, [Validators.required, Validators.maxLength(18)]]
   });
 
@@ -137,6 +138,34 @@ export class ClientsList {
     this.isEditMode = true;
 
     this.openModal = true;
+  };
+
+  saveClient() {
+    if (this.clientForm.invalid) {
+      this.clientForm.markAllAsTouched();
+
+      return;
+    };
+
+    if (this.isEditMode && this.selectedClient) {
+      const editClient: EditClientRequest = {
+        nome: this.clientForm.getRawValue().nome!,
+        numero: this.clientForm.getRawValue().numero!,
+        email: this.clientForm.getRawValue().email!,
+        como_encontrou: this.clientForm.getRawValue().como_encontrou!,
+      };
+    } else {
+      const newClient: CreateClientRequest = {
+        nome: this.clientForm.getRawValue().nome!,
+        codigo: this.clientForm.getRawValue().codigo!,
+        numero: this.clientForm.getRawValue().numero!,
+        email: this.clientForm.getRawValue().email!,
+        tipo: this.clientForm.getRawValue().tipo!,
+        como_encontrou: this.clientForm.getRawValue().como_encontrou!,
+      };
+
+      this.createClient(newClient);
+    }
   };
 
   createClient(client: CreateClientRequest) {
