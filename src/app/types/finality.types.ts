@@ -1,6 +1,6 @@
 export const FINALITY_TYPES = [
-    'venda',
-    'locacao',
+    'Venda',
+    'Locação',
     null
 ] as const;
 

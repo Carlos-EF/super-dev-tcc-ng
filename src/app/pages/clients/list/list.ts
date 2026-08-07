@@ -50,5 +50,11 @@ export class ClientsList {
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
     tipo: ['', [Validators.required, Validators.maxLength(12)]],
     como_encontrou: ['', [Validators.required, Validators.maxLength(18)]]
-  })
+  });
+
+  interestedForm = this.formBuilder.group({
+    finalidade: ['', [Validators.required, Validators.maxLength(7)]],
+    procura: ['', [Validators.required, Validators.maxLength(11)]],
+    preferencia: ['', [Validators.required, Validators.maxLength(60)]]
+  });
 }
