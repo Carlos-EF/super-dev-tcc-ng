@@ -3,7 +3,8 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientsFilters, PaginatedClientResponse } from '../../../models/clients.model';
+import { ClientResponse, ClientsFilters, PaginatedClientResponse } from '../../../models/clients.model';
+import cli from '@angular/cli';
 
 @Component({
   selector: 'app-list',
@@ -33,6 +34,8 @@ export class ClientsList {
 
   filters: ClientsFilters = {};
 
+  selectedClient: ClientResponse | null = null;
+
   clients = model<PaginatedClientResponse>(
     {
       clientes: [],
@@ -41,7 +44,7 @@ export class ClientsList {
       total: 0,
       total_paginas: 0
     }
-  )
+  );
 
   clientForm = this.formBuilder.group({
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
@@ -83,5 +86,54 @@ export class ClientsList {
         return console.log('Ocorreu um erro ao tentar buscar todos os clientes:', error);
       }
     })
+  };
+
+  openCreateModal() {
+    this.isEditMode = false;
+
+    this.clientForm.get('codigo')?.enable();
+
+    this.clientForm.get('tipo')?.enable();
+
+    this.openModal = true;
+  };
+
+
+  closeConfirmModal() {
+    this.confirmModal = false;
+
+    this.selectedClient = null;
+  }
+
+
+  cancelModal() {
+    this.isEditMode = false;
+
+    this.selectedClient = null;
+
+    this.openModal = false;
+
+    this.clientForm.reset();
+  };
+
+  openEditModal(client: ClientResponse) {
+    this.clientForm.patchValue({
+      nome: client.nome,
+      codigo: client.codigo,
+      numero: client.numero,
+      email: client.email,
+      tipo: client.tipo,
+      como_encontrou: client.como_encontrou
+    });
+
+    this.clientForm.get('codigo')?.disable();
+
+    this.clientForm.get('tipo')?.disable();
+
+    this.selectedClient = client;
+
+    this.isEditMode = true;
+
+    this.openModal = true;
   };
 }
