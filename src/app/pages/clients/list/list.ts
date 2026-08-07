@@ -2,7 +2,7 @@ import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
-import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ClientsFilters, PaginatedClientResponse } from '../../../models/clients.model';
 
 @Component({
@@ -57,4 +57,31 @@ export class ClientsList {
     procura: ['', [Validators.required, Validators.maxLength(11)]],
     preferencia: ['', [Validators.required, Validators.maxLength(60)]]
   });
+
+  ngOnInit() {
+    this.busca.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(
+      resultado => {
+        this.filters.busca = resultado;
+        this.getAllClients();
+      }
+    )
+  };
+
+  getAllClients() {
+    this.clientService.getAll(
+      this.filters,
+      this.page(),
+      this.perPage()
+    ).subscribe({
+      next: (clients: PaginatedClientResponse) => {
+        this.clients.set(clients)
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os clientes:', error);
+      }
+    })
+  };
 }
