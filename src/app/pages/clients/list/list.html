@@ -152,8 +152,9 @@
 
                         <label for="ml-celular">Celular <span class="req">*</span></label>
 
-                        <input type="tel" id="ml-celular" class="mono phone" placeholder="(47) 91234-5678"
-                            inputmode="numeric" formControlName="numero">
+                        <input type="tel" id="ml-celular" class="mono phone" mask="(00) 00000-0000"
+                            placeholder="(47) 91234-5678" inputmode="numeric" [dropSpecialCharacters]="false"
+                            formControlName="numero">
 
                         @if (clientForm.get('numero')?.touched && clientForm.get('numero')?.errors) {
                         <span class="hint hint-error">
@@ -221,11 +222,9 @@
                     <div class="select-wrap">
                         <select id="ml-origem" formControlName="como_encontrou">
                             <option [ngValue]="null">Selecionar…</option>
-                            <option value="Whatsapp">WhatsApp</option>
-                            <option value="Indicacao">Indicação</option>
-                            <option value="Instagram">Instagram</option>
-                            <option value="Portal imobiliario">Portal imobiliário</option>
-                            <option value="Placa no imovel">Placa no imóvel</option>
+                            @for (contact of contactTypes; track contact) {
+                            <option [value]="contact">{{ contact }}</option>
+                            }
                         </select>
                     </div>
 

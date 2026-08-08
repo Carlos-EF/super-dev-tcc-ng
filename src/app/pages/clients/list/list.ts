@@ -8,12 +8,14 @@ import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-list',
   imports: [
     ReactiveFormsModule,
     FormsModule,
+    NgxMaskDirective
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
