@@ -50,12 +50,10 @@
             <label for="f-origem">Como nos encontrou</label>
             <div class="select-wrap">
                 <select id="f-origem">
-                    <option value="">Todas as origens</option>
-                    <option>WhatsApp</option>
-                    <option>Indicação</option>
-                    <option>Instagram</option>
-                    <option>Portal imobiliário</option>
-                    <option>Placa no imóvel</option>
+                    <option [ngValue]="null">Todas as origens</option>
+                    @for (contact of contactTypes; track contact) {
+                    <option [value]="contact">{{ contact }}</option>
+                    }
                 </select>
             </div>
         </div>
@@ -80,7 +78,8 @@
 </div>
 
 @if (openModal === true) {
-<div class="modal-backdrop" [class.open]="openModal" id="modal-cliente" role="dialog" aria-modal="true" aria-labelledby="ml-title">
+<div class="modal-backdrop" [class.open]="openModal" id="modal-cliente" role="dialog" aria-modal="true"
+    aria-labelledby="ml-title">
     <div class="modal">
         <div class="modal-head">
             <div>

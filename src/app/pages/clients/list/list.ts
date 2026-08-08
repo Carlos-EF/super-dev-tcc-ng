@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
-import { ContactTypes } from '../../../types/contact.types';
+import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { ClientsTypes } from '../../../types/clients.types';
 
 @Component({
@@ -37,6 +37,8 @@ export class ClientsList {
 
   filters: ClientsFilters = {};
 
+  contactTypes = [...CONTACT_TYPES];
+
   selectedClient: ClientWithInterestResponse | null = null;
 
   clients = model<PaginatedClientResponse>(
@@ -55,7 +57,7 @@ export class ClientsList {
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
     tipo: [null as ClientsTypes, [Validators.required]],
-    como_encontrou: [null as ContactTypes, [Validators.required]]
+    como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
 
   interestedForm = this.formBuilder.group({
@@ -121,6 +123,8 @@ export class ClientsList {
     this.openModal = false;
 
     this.clientForm.reset();
+
+    this.interestedForm.reset();
   };
 
   cancelModal() {
@@ -131,6 +135,8 @@ export class ClientsList {
     this.openModal = false;
 
     this.clientForm.reset();
+
+    this.interestedForm.reset();
   };
 
   openEditModal(client: ClientWithInterestResponse) {
