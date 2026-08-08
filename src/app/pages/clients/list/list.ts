@@ -7,7 +7,7 @@ import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClien
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
-import { ClientsTypes } from '../../../types/clients.types';
+import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
 
 @Component({
   selector: 'app-list',
@@ -39,6 +39,8 @@ export class ClientsList {
 
   contactTypes = [...CONTACT_TYPES];
 
+  clientTypes = [...CLIENTS_TYPES];
+
   selectedClient: ClientWithInterestResponse | null = null;
 
   clients = model<PaginatedClientResponse>(
@@ -56,7 +58,7 @@ export class ClientsList {
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
-    tipo: [null as ClientsTypes, [Validators.required]],
+    tipo: [null as ClientsTypes | null, [Validators.required]],
     como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
 

@@ -36,14 +36,15 @@
         <div class="field">
             <label>Tipo do cliente</label>
             <div class="segmented" role="radiogroup" aria-label="Tipo do cliente">
-                <input type="radio" name="f-tipo" id="ft-todos" value="" checked>
-                <label for="ft-todos">Todos</label>
-                <input type="radio" name="f-tipo" id="ft-interessado" value="Interessado">
-                <label for="ft-interessado">Interessados</label>
-                <input type="radio" name="f-tipo" id="ft-locatario" value="Locatário">
-                <label for="ft-locatario">Locatários</label>
-                <input type="radio" name="f-tipo" id="ft-proprietario" value="Proprietário">
-                <label for="ft-proprietario">Proprietários</label>
+                <input type="radio" name="f-tipo" id="ft-todos" [value]="''" [(ngModel)]="filters.tipo"> <label
+                    for="ft-todos">Todos</label>
+                @for (type of clientTypes; track type) {
+                <input type="radio" name="f-tipo"
+                    [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')" [value]="type"
+                    [(ngModel)]="filters.tipo">
+                <label [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"> {{ type }}s
+                </label>
+                }
             </div>
         </div>
         <div class="field">
