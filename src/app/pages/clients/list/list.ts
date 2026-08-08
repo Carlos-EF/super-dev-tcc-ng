@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
+import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClientRequest, CreateInterestedRequest, EditClientRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { ContactTypes } from '../../../types/contact.types';
@@ -37,7 +37,7 @@ export class ClientsList {
 
   filters: ClientsFilters = {};
 
-  selectedClient: ClientResponse | null = null;
+  selectedClient: ClientWithInterestResponse | null = null;
 
   clients = model<PaginatedClientResponse>(
     {
@@ -117,7 +117,7 @@ export class ClientsList {
     this.clientForm.reset();
   };
 
-  openEditModal(client: ClientResponse) {
+  openEditModal(client: ClientWithInterestResponse) {
     this.clientForm.patchValue({
       nome: client.nome,
       codigo: client.codigo,
@@ -126,6 +126,16 @@ export class ClientsList {
       tipo: client.tipo,
       como_encontrou: client.como_encontrou
     });
+
+    if (client.interesse) {
+      this.interestedForm.patchValue({
+        finalidade: client.interesse.finalidade,
+        procura: client.interesse.procura,
+        preferencia: client.interesse.preferencia,
+      });
+    } else {
+      this.interestedForm.reset()
+    }
 
     this.clientForm.get('codigo')?.disable();
 
