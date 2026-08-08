@@ -3,17 +3,19 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientResponse, ClientsFilters, CreateClientRequest, CreateInterestedRequest, EditClientRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
+import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
-import { ContactTypes } from '../../../types/contact.types';
-import { ClientsTypes } from '../../../types/clients.types';
+import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
+import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-list',
   imports: [
     ReactiveFormsModule,
     FormsModule,
+    NgxMaskDirective
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
@@ -37,7 +39,11 @@ export class ClientsList {
 
   filters: ClientsFilters = {};
 
-  selectedClient: ClientResponse | null = null;
+  contactTypes = [...CONTACT_TYPES];
+
+  clientTypes = [...CLIENTS_TYPES];
+
+  selectedClient: ClientWithInterestResponse | null = null;
 
   clients = model<PaginatedClientResponse>(
     {
@@ -54,13 +60,13 @@ export class ClientsList {
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
-    tipo: [null as ClientsTypes, [Validators.required, Validators.maxLength(12)]],
-    como_encontrou: [null as ContactTypes, [Validators.required, Validators.maxLength(18)]]
+    tipo: [null as ClientsTypes | null, [Validators.required]],
+    como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
 
   interestedForm = this.formBuilder.group({
-    finalidade: [null as FinalityTypes | null, [Validators.maxLength(7)]],
-    procura: [null as PropertyTypes | null, [Validators.maxLength(11)]],
+    finalidade: [null as FinalityTypes | null],
+    procura: [null as PropertyTypes | null],
     preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
@@ -101,6 +107,11 @@ export class ClientsList {
     this.openModal = true;
   };
 
+  openConfirmModal(client: ClientWithInterestResponse) {
+    this.selectedClient = client;
+
+    this.confirmModal = true;
+  }
 
   closeConfirmModal() {
     this.confirmModal = false;
@@ -108,6 +119,17 @@ export class ClientsList {
     this.selectedClient = null;
   }
 
+  closeModal() {
+    this.isEditMode = false;
+
+    this.selectedClient = null;
+
+    this.openModal = false;
+
+    this.clientForm.reset();
+
+    this.interestedForm.reset();
+  };
 
   cancelModal() {
     this.isEditMode = false;
@@ -117,9 +139,11 @@ export class ClientsList {
     this.openModal = false;
 
     this.clientForm.reset();
+
+    this.interestedForm.reset();
   };
 
-  openEditModal(client: ClientResponse) {
+  openEditModal(client: ClientWithInterestResponse) {
     this.clientForm.patchValue({
       nome: client.nome,
       codigo: client.codigo,
@@ -128,6 +152,16 @@ export class ClientsList {
       tipo: client.tipo,
       como_encontrou: client.como_encontrou
     });
+
+    if (client.interesse) {
+      this.interestedForm.patchValue({
+        finalidade: client.interesse.finalidade,
+        procura: client.interesse.procura,
+        preferencia: client.interesse.preferencia,
+      });
+    } else {
+      this.interestedForm.reset()
+    }
 
     this.clientForm.get('codigo')?.disable();
 
@@ -154,6 +188,8 @@ export class ClientsList {
         email: this.clientForm.getRawValue().email!,
         como_encontrou: this.clientForm.getRawValue().como_encontrou!,
       };
+
+      this.editClient(this.selectedClient.id, editClient);
     } else {
       const newClient: CreateClientRequest = {
         nome: this.clientForm.getRawValue().nome!,
@@ -176,7 +212,7 @@ export class ClientsList {
         if (client.tipo == 'Interessado') {
           this.createInterestedClient(client.id);
         } else {
-          this.toastService.show('create', 'cliente');
+          this.toastService.show('create', 'Cliente');
 
           this.getAllClients();
 
@@ -193,6 +229,32 @@ export class ClientsList {
     })
   };
 
+  editClient(
+    id: string,
+    client: EditClientRequest
+  ) {
+    this.clientService.edit(id, client).subscribe({
+      next: (edited: ClientResponse) => {
+        if (edited.tipo == 'Interessado') {
+          this.editInterestedClient(edited.id);
+        } else {
+          this.toastService.show('edit', 'Cliente');
+
+          this.getAllClients();
+
+          this.clientForm.reset();
+
+          this.interestedForm.reset();
+
+          this.openModal = false;
+        }
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar os dados do cliente:', error);
+      }
+    })
+  }
+
   createInterestedClient(id: string) {
     const newInterestedData: CreateInterestedRequest = {
       cliente_id: id,
@@ -206,7 +268,7 @@ export class ClientsList {
       newInterestedData
     ).subscribe({
       next: (interested: InterestedResponse) => {
-        this.toastService.show('create', 'cliente');
+        this.toastService.show('create', 'Cliente');
 
         this.getAllClients();
 
@@ -218,6 +280,48 @@ export class ClientsList {
       },
       error: (error: Error) => {
         return console.log('Ocorreu um erro ao tentar cadastrar os dados do interessado:', error);
+      }
+    })
+  }
+
+  editInterestedClient(
+    id: string
+  ) {
+    const editInterestedData: EditInterestedRequest = {
+      finalidade: this.interestedForm.getRawValue().finalidade!,
+      procura: this.interestedForm.getRawValue().procura!,
+      preferencia: this.interestedForm.getRawValue().preferencia!,
+    }
+
+    this.clientService.editInterested(id, editInterestedData).subscribe({
+      next: (interested: InterestedResponse) => {
+        this.toastService.show('edit', 'Cliente');
+
+        this.getAllClients();
+
+        this.clientForm.reset();
+
+        this.interestedForm.reset();
+
+        this.openModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar os dados do interessado:', error);
+      }
+    });
+  }
+
+  deleteClient(id: string) {
+    this.clientService.delete(id).subscribe({
+      next: () => {
+        this.toastService.show("delete", 'Cliente');
+
+        this.getAllClients();
+
+        this.closeConfirmModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar apagar o cliente:', error);
       }
     })
   }

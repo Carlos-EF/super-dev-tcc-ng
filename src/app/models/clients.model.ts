@@ -51,7 +51,7 @@ export interface InterestedResponse {
 }
 
 export interface PaginatedClientResponse {
-    clientes: ClientResponse[];
+    clientes: ClientWithInterestResponse[];
     pagina: number;
     por_pagina: number;
     total: number;
@@ -62,4 +62,23 @@ export interface ClientsFilters {
     busca?: string;
     tipo?: ClientsTypes;
     origem?: ContactTypes;
+}
+
+export interface ClientWithInterestResponse {
+    id: string; 
+    nome: string; 
+    codigo: string; 
+    numero: string; 
+    email: string; 
+    tipo: ClientsTypes; 
+    como_encontrou?: ContactTypes | null; 
+    criado_em: string; 
+    alterado_em?: string | null; 
+    interesse?: InterestedClientData | null;
+}
+
+export interface InterestedClientData {
+    procura?: PropertyTypes | null;
+    finalidade?: FinalityTypes | null;
+    preferencia?: string | null;
 }
