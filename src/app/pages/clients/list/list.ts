@@ -101,13 +101,11 @@ export class ClientsList {
     this.openModal = true;
   };
 
-
   closeConfirmModal() {
     this.confirmModal = false;
 
     this.selectedClient = null;
   }
-
 
   cancelModal() {
     this.isEditMode = false;
