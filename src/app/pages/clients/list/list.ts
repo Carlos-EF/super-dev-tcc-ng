@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClientRequest, CreateInterestedRequest, EditClientRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
+import { ClientResponse, ClientsFilters, ClientWithInterestResponse, CreateClientRequest, CreateInterestedRequest, EditClientRequest, EditInterestedRequest, InterestedResponse, PaginatedClientResponse } from '../../../models/clients.model';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { ContactTypes } from '../../../types/contact.types';
@@ -162,6 +162,8 @@ export class ClientsList {
         email: this.clientForm.getRawValue().email!,
         como_encontrou: this.clientForm.getRawValue().como_encontrou!,
       };
+
+      this.editClient(this.selectedClient.id, editClient);
     } else {
       const newClient: CreateClientRequest = {
         nome: this.clientForm.getRawValue().nome!,
@@ -201,6 +203,32 @@ export class ClientsList {
     })
   };
 
+  editClient(
+    id: string
+    client: EditClientRequest
+  ) {
+    this.clientService.edit(id, client).subscribe({
+      next: (edited: ClientResponse) => {
+        if (edited.tipo == 'Interessado') {
+          this.editInterestedClient(edited.id);
+        } else {
+          this.toastService.show('edit', 'cliente');
+
+          this.getAllClients();
+
+          this.clientForm.reset();
+
+          this.interestedForm.reset();
+
+          this.openModal = false;
+        }
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar os dados do cliente:', error);
+      }
+    })
+  }
+
   createInterestedClient(id: string) {
     const newInterestedData: CreateInterestedRequest = {
       cliente_id: id,
@@ -228,5 +256,32 @@ export class ClientsList {
         return console.log('Ocorreu um erro ao tentar cadastrar os dados do interessado:', error);
       }
     })
+  }
+
+  editInterestedClient(
+    id: string
+  ) {
+    const editInterestedData: EditInterestedRequest = {
+      finalidade: this.interestedForm.getRawValue().finalidade!,
+      procura: this.interestedForm.getRawValue().procura!,
+      preferencia: this.interestedForm.getRawValue().preferencia!,
+    }
+
+    this.clientService.editInterested(id, editInterestedData).subscribe({
+      next: (interested: InterestedResponse) => {
+        this.toastService.show('edit', 'cliente');
+
+        this.getAllClients();
+
+        this.clientForm.reset();
+
+        this.interestedForm.reset();
+
+        this.openModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar editar os dados do interessado:', error);
+      }
+    });
   }
 }
