@@ -54,13 +54,13 @@ export class ClientsList {
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
     email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
-    tipo: [null as ClientsTypes, [Validators.required, Validators.maxLength(12)]],
-    como_encontrou: [null as ContactTypes, [Validators.required, Validators.maxLength(18)]]
+    tipo: [null as ClientsTypes, [Validators.required]],
+    como_encontrou: [null as ContactTypes, [Validators.required]]
   });
 
   interestedForm = this.formBuilder.group({
-    finalidade: [null as FinalityTypes | null, [Validators.maxLength(7)]],
-    procura: [null as PropertyTypes | null, [Validators.maxLength(11)]],
+    finalidade: [null as FinalityTypes | null],
+    procura: [null as PropertyTypes | null],
     preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
@@ -112,6 +112,16 @@ export class ClientsList {
 
     this.selectedClient = null;
   }
+
+  closeModal() {
+    this.isEditMode = false;
+
+    this.selectedClient = null;
+
+    this.openModal = false;
+
+    this.clientForm.reset();
+  };
 
   cancelModal() {
     this.isEditMode = false;
