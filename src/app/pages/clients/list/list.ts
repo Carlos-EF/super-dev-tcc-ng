@@ -101,6 +101,12 @@ export class ClientsList {
     this.openModal = true;
   };
 
+  openConfirmModal(client: ClientWithInterestResponse) {
+    this.selectedClient = client;
+
+    this.confirmModal = true;
+  }
+
   closeConfirmModal() {
     this.confirmModal = false;
 
@@ -186,7 +192,7 @@ export class ClientsList {
         if (client.tipo == 'Interessado') {
           this.createInterestedClient(client.id);
         } else {
-          this.toastService.show('create', 'cliente');
+          this.toastService.show('create', 'Cliente');
 
           this.getAllClients();
 
@@ -204,7 +210,7 @@ export class ClientsList {
   };
 
   editClient(
-    id: string
+    id: string,
     client: EditClientRequest
   ) {
     this.clientService.edit(id, client).subscribe({
@@ -212,7 +218,7 @@ export class ClientsList {
         if (edited.tipo == 'Interessado') {
           this.editInterestedClient(edited.id);
         } else {
-          this.toastService.show('edit', 'cliente');
+          this.toastService.show('edit', 'Cliente');
 
           this.getAllClients();
 
@@ -242,7 +248,7 @@ export class ClientsList {
       newInterestedData
     ).subscribe({
       next: (interested: InterestedResponse) => {
-        this.toastService.show('create', 'cliente');
+        this.toastService.show('create', 'Cliente');
 
         this.getAllClients();
 
@@ -269,7 +275,7 @@ export class ClientsList {
 
     this.clientService.editInterested(id, editInterestedData).subscribe({
       next: (interested: InterestedResponse) => {
-        this.toastService.show('edit', 'cliente');
+        this.toastService.show('edit', 'Cliente');
 
         this.getAllClients();
 
@@ -283,5 +289,20 @@ export class ClientsList {
         return console.log('Ocorreu um erro ao tentar editar os dados do interessado:', error);
       }
     });
+  }
+
+  deleteClient(id: string) {
+    this.clientService.delete(id).subscribe({
+      next: () => {
+        this.toastService.show("delete", 'Cliente');
+
+        this.getAllClients();
+
+        this.closeConfirmModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar apagar o cliente:', error);
+      }
+    })
   }
 }
