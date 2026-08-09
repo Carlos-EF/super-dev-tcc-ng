@@ -78,6 +78,129 @@
     </div>
 </div>
 
+<div class="cards-grid" id="cards-grid" aria-label="Lista de clientes">
+    @for (client of clients().clientes; track client.id) {
+    <article class="client-card" [attr.data-id]="client.id">
+
+        <div class="cc-head">
+
+            <span class="cc-avatar">
+                {{ client.nome.charAt(0).toUpperCase() }}
+            </span>
+
+            <div class="cc-id">
+                <b [title]="client.nome">{{ client.nome }}</b>
+                <span class="cod">{{ client.codigo }}</span>
+            </div>
+
+            <span class="tag" [class.tag-interessado]="client.tipo === 'Interessado'"
+                [class.tag-proprietario]="client.tipo === 'Proprietário'"
+                [class.tag-locatario]="client.tipo === 'Locatário'">
+                {{ client.tipo }}
+            </span>
+
+        </div>
+
+        <div class="cc-contacts">
+
+            <a class="wa-link" [href]="'https://wa.me/55' + client.numero.replace(/\\D/g, '')" target="_blank"
+                rel="noopener" title="Abrir conversa no WhatsApp">
+
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 3.5A11 11 0 0 0 3.3 17.3L2 22l4.8-1.3A11 11 0 1 0 20 3.5Z" />
+                </svg>
+
+                {{ client.numero }}
+
+                <span class="wa-cta">Abrir chat</span>
+            </a>
+
+            <span class="cc-line">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="m22 6-10 7L2 6" />
+                </svg>
+
+                <a class="mail-link trunc" [href]="'mailto:' + client.email" [title]="client.email">
+
+                    {{ client.email }}
+                </a>
+            </span>
+
+            <span class="cc-origem">
+                Como nos encontrou:
+                <b>{{ client.como_encontrou || '—' }}</b>
+            </span>
+
+        </div>
+
+        @if (client.interesse) {
+        <div class="cc-interest">
+
+            <div class="interest-item">
+                <span>Procura</span>
+                <b>{{ client.interesse.procura || '—' }}</b>
+            </div>
+
+            <div class="interest-item">
+                <span>Finalidade</span>
+                <b>{{ client.interesse.finalidade || '—' }}</b>
+            </div>
+
+            <div class="interest-item full">
+                <span>Preferência</span>
+                <b>{{ client.interesse.preferencia || '—' }}</b>
+            </div>
+
+        </div>
+        }
+
+        <div class="cc-foot">
+
+            <div class="cc-meta">
+                <span>
+                    Criado em
+                    <b>{{ client.criado_em | date:'dd/MM/yyyy' }}</b>
+                </span>
+            </div>
+
+            <div class="cc-actions">
+
+                <button class="icon-btn" type="button" title="Editar cliente"
+                    [attr.aria-label]="'Editar ' + client.nome" (click)="openEditModal(client)">
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
+                    </svg>
+
+                </button>
+
+                <button class="icon-btn danger" type="button" title="Excluir cliente"
+                    [attr.aria-label]="'Excluir ' + client.nome" (click)="openConfirmModal(client)">
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                    </svg>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </article>
+    } @empty {
+    <div class="empty-state">
+        <h3>Nenhum cliente encontrado</h3>
+        <p>Tente ajustar os filtros ou cadastre um novo cliente.</p>
+    </div>
+    }
+</div>
+
 @if (openModal === true) {
 <div class="modal-backdrop" [class.open]="openModal" id="modal-cliente" role="dialog" aria-modal="true"
     aria-labelledby="ml-title">

@@ -9,13 +9,15 @@ import { PropertyTypes } from '../../../types/property.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
 import { NgxMaskDirective } from 'ngx-mask';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list',
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    DatePipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
@@ -70,6 +72,10 @@ export class ClientsList {
     preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
+  constructor() {
+    this.getAllClients();
+  }
+
   ngOnInit() {
     this.busca.pipe(
       debounceTime(400),
@@ -77,6 +83,7 @@ export class ClientsList {
     ).subscribe(
       resultado => {
         this.filters.busca = resultado;
+
         this.getAllClients();
       }
     )

@@ -381,3 +381,302 @@ select {
     font-weight: 600;
     color: var(--accent);
 }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 14px;
+}
+
+.client-card {
+    background: var(--bg1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color .15s, box-shadow .15s;
+}
+
+.client-card:hover {
+    border-color: var(--line-strong)
+}
+
+.client-card.row-new {
+    animation: cardFlash 1.8s ease
+}
+
+@keyframes cardFlash {
+    0% {
+        background: var(--accent-soft);
+        border-color: var(--accent-line)
+    }
+
+    100% {
+        background: var(--bg1);
+        border-color: var(--line)
+    }
+}
+
+.cc-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px
+}
+
+.cc-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: var(--bg3);
+    border: 1px solid var(--line-strong);
+    display: grid;
+    place-items: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.cc-id {
+    flex: 1;
+    min-width: 0
+}
+
+.cc-id b {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.cc-id .cod {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-3);
+    letter-spacing: .02em
+}
+
+.tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    border: 1px solid;
+}
+
+.tag-proprietario {
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-color: var(--accent-line)
+}
+
+.tag-locatario {
+    color: var(--success);
+    background: var(--success-soft);
+    border-color: var(--success-line)
+}
+
+.tag-interessado {
+    color: var(--info);
+    background: var(--info-soft);
+    border-color: var(--info-line)
+}
+
+.cc-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.cc-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-2);
+    min-width: 0
+}
+
+.cc-line svg {
+    flex-shrink: 0;
+    color: var(--text-3)
+}
+
+.cc-line .trunc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.wa-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: .02em;
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 2px 0;
+    transition: color .15s;
+}
+
+.wa-link svg {
+    color: var(--success);
+    flex-shrink: 0
+}
+
+.wa-link .wa-cta {
+    font-family: var(--font-ui);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--success);
+    background: var(--success-soft);
+    border: 1px solid var(--success-line);
+    border-radius: 99px;
+    padding: 2px 8px;
+    opacity: 0;
+    transition: opacity .15s;
+}
+
+.wa-link:hover {
+    color: var(--text)
+}
+
+.wa-link:hover .wa-cta {
+    opacity: 1
+}
+
+.mail-link {
+    color: inherit;
+    text-decoration: none
+}
+
+.mail-link:hover {
+    color: var(--text);
+    text-decoration: underline
+}
+
+.cc-origem {
+    font-size: 11.5px;
+    color: var(--text-3)
+}
+
+.cc-origem b {
+    color: var(--text-2);
+    font-weight: 500
+}
+
+.cc-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px dashed var(--line-strong);
+    padding-top: 11px;
+    margin-top: auto;
+}
+
+.cc-bond {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--text-2);
+    min-width: 0
+}
+
+.cc-bond svg {
+    flex-shrink: 0;
+    color: var(--text-3)
+}
+
+.cc-bond .trunc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+}
+
+.cc-bond b {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text)
+}
+
+.cc-bond.empty {
+    color: var(--text-3)
+}
+
+a.cc-bond {
+    text-decoration: none;
+    transition: color .15s
+}
+
+a.cc-bond:hover {
+    color: var(--accent-strong)
+}
+
+a.cc-bond:hover svg,
+a.cc-bond:hover b {
+    color: var(--accent-strong)
+}
+
+.cc-actions {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0
+}
+
+.cc-actions .icon-btn {
+    width: 29px;
+    height: 29px;
+    color: var(--text-3)
+}
+
+.cc-actions .icon-btn:hover {
+    color: var(--text)
+}
+
+.cc-actions .icon-btn.danger:hover {
+    background: var(--danger-soft);
+    color: var(--danger)
+}
+
+.empty-state {
+    padding: 60px 24px;
+    text-align: center
+}
+
+.empty-state .es-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    border-radius: 14px;
+    background: var(--bg2);
+    border: 1px dashed var(--line-strong);
+    display: grid;
+    place-items: center;
+    color: var(--text-3);
+}
+
+.empty-state h4 {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600
+}
+
+.empty-state p {
+    font-size: 13px;
+    color: var(--text-3);
+    margin: 5px 0 18px
+}
