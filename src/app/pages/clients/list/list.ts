@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
@@ -9,13 +9,15 @@ import { PropertyTypes } from '../../../types/property.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
 import { NgxMaskDirective } from 'ngx-mask';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list',
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    DatePipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
@@ -45,6 +47,8 @@ export class ClientsList {
 
   selectedClient: ClientWithInterestResponse | null = null;
 
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+
   clients = model<PaginatedClientResponse>(
     {
       clientes: [],
@@ -70,6 +74,10 @@ export class ClientsList {
     preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
+  constructor() {
+    this.getAllClients();
+  }
+
   ngOnInit() {
     this.busca.pipe(
       debounceTime(400),
@@ -77,6 +85,7 @@ export class ClientsList {
     ).subscribe(
       resultado => {
         this.filters.busca = resultado;
+
         this.getAllClients();
       }
     )
@@ -324,5 +333,67 @@ export class ClientsList {
         return console.log('Ocorreu um erro ao tentar apagar o cliente:', error);
       }
     })
-  }
+  };
+
+  clearFilters() {
+    this.filters = {
+      busca: '',
+      tipo: undefined,
+      origem: undefined
+    };
+
+    this.searchInput.nativeElement.value = '';
+
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  getSearchValue(event: Event) {
+    const search = event.target as HTMLInputElement;
+
+    this.page.set(1);
+
+    this.busca.next(search.value);
+  };
+
+  onTypeChange() {
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  onOriginChange() {
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  changePerPagevalue(event: Event) {
+    const perPageCount = +(event.target as HTMLSelectElement).value;
+
+    this.perPage.set(perPageCount);
+
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
+
+      this.getAllClients();
+    }
+  };
+
+  nextPage(): void {
+    const totalPages = this.clients()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllClients();
+    }
+  };
 }
