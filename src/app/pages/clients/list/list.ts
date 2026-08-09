@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
 import { ClientsService } from '../../../services/clients.service';
@@ -46,6 +46,8 @@ export class ClientsList {
   clientTypes = [...CLIENTS_TYPES];
 
   selectedClient: ClientWithInterestResponse | null = null;
+
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   clients = model<PaginatedClientResponse>(
     {
@@ -333,5 +335,49 @@ export class ClientsList {
     })
   };
 
-  clearFilters() {}
+  clearFilters() {
+    this.filters = {};
+
+    this.searchInput.nativeElement.value = '';
+
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  getSearchValue(event: Event) {
+    const search = event.target as HTMLInputElement;
+
+    this.page.set(1);
+
+    this.busca.next(search.value);
+  };
+
+  changePerPagevalue(event: Event) {
+    const perPageCount = +(event.target as HTMLSelectElement).value;
+
+    this.perPage.set(perPageCount);
+
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
+
+      this.getAllClients();
+    }
+  };
+
+  nextPage(): void {
+    const totalPages = this.clients()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllClients();
+    }
+  };
 }
