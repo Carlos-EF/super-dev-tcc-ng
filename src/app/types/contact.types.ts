@@ -2,7 +2,7 @@ export const CONTACT_TYPES = [
     'WhatsApp',
     'Instagram',
     'Indicação',
-    'Portal Imobiliário',
+    'Portal imobiliário',
     'Placa no imóvel',
 ] as const;
 

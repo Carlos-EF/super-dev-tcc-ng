@@ -331,5 +331,7 @@ export class ClientsList {
         return console.log('Ocorreu um erro ao tentar apagar o cliente:', error);
       }
     })
-  }
+  };
+
+  clearFilters() {}
 }
