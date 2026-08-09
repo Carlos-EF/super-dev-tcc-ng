@@ -336,7 +336,11 @@ export class ClientsList {
   };
 
   clearFilters() {
-    this.filters = {};
+    this.filters = {
+      busca: '',
+      tipo: undefined,
+      origem: undefined
+    };
 
     this.searchInput.nativeElement.value = '';
 
@@ -351,6 +355,18 @@ export class ClientsList {
     this.page.set(1);
 
     this.busca.next(search.value);
+  };
+
+  onTypeChange() {
+    this.page.set(1);
+
+    this.getAllClients();
+  };
+
+  onOriginChange() {
+    this.page.set(1);
+
+    this.getAllClients();
   };
 
   changePerPagevalue(event: Event) {
