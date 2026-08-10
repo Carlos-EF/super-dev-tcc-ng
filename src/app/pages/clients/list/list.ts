@@ -408,4 +408,12 @@ export class ClientsList {
       this.getAllClients();
     }
   };
+
+  changePerPage(event: Event): void {
+    const value = Number((event.target as HTMLSelectElement).value);
+
+    this.perPage.set(value); this.page.set(1);
+
+    this.getAllClients();
+  }
 }

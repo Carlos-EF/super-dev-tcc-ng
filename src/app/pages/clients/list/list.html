@@ -215,6 +215,30 @@
 </div>
 }
 
+<div class="card foot-card">
+    <div class="table-foot">
+        <div class="foot-ctrl">
+            <div class="per-page">
+                <label for="per-page">Cards por página</label>
+                <div class="select-wrap"> <select id="per-page" [value]="perPage()" (change)="changePerPage($event)">
+                        <option [value]="10" selected>10</option>
+                        <option [value]="24">24</option>
+                        <option [value]="48">48</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="pager" aria-label="Paginação">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
+                    aria-label="Página anterior"> ‹
+                </button>
+                <button class="page-btn current" aria-current="page"> {{page()}} </button>
+                <button (click)="nextPage()" [disabled]="page() === (clients().total_paginas ?? 1)" class="page-btn"
+                    aria-label="Próxima página"> › </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
 @if (openModal === true) {
 <div class="modal-backdrop" [class.open]="openModal" id="modal-cliente" role="dialog" aria-modal="true"
     aria-labelledby="ml-title">
@@ -475,8 +499,8 @@
         <div class="modal-head">
             <div>
                 <h3 id="mx-title">Excluir cliente</h3>
-            </div> <button class="icon-btn" type="button" aria-label="Fechar" (click)="closeConfirmModal()"> <svg
-                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            </div> <button class="icon-btn" type="button" aria-label="Fechar" (click)="closeConfirmModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round">
                     <path d="M18 6 6 18M6 6l12 12" />
                 </svg> </button>
@@ -492,7 +516,8 @@
                 <p> Tem certeza que deseja excluir <b>{{ selectedClient?.nome }}</b>? </p>
             </div>
         </div>
-        <div class="modal-foot"> <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()"> Cancelar
+        <div class="modal-foot"> <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()">
+                Cancelar
             </button> <button class="btn btn-danger" type="button" [disabled]="!selectedClient"
                 (click)="selectedClient && deleteClient(selectedClient.id)"> <svg width="15" height="15"
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
