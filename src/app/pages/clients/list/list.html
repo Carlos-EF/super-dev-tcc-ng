@@ -35,29 +35,38 @@
             </div>
         </div>
         <div class="field"> <label>Tipo do cliente</label>
-            <div class="segmented" role="radiogroup" aria-label="Tipo do cliente"> <!-- Todos --> <input type="radio"
-                    name="f-tipo" id="ft-todos" value="" [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()">
-                <label for="ft-todos">Todos</label> @for (type of clientTypes; track type) { <input type="radio"
-                    name="f-tipo" [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"
-                    [value]="type" [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()"> <label
-                    [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"> {{ type }}s
-                </label> }
+            <div class="segmented" role="radiogroup" aria-label="Tipo do cliente">
+                <input type="radio" name="f-tipo" id="ft-todos" value="" [(ngModel)]="filters.tipo"
+                    (ngModelChange)="onTypeChange()">
+                <label for="ft-todos">Todos</label> @for (type of clientTypes; track type) {
+                <input type="radio" name="f-tipo"
+                    [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')" [value]="type"
+                    [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()">
+                <label [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')">
+                    {{ type }}s
+                </label>
+                }
             </div>
         </div>
         <div class="field"> <label for="f-origem">Como nos encontrou</label>
-            <div class="select-wrap"> <select id="f-origem" [(ngModel)]="filters.origem"
-                    (ngModelChange)="onOriginChange()">
-                    <option [ngValue]="undefined">Todas as origens</option> @for (contact of contactTypes; track
-                    contact) { <option [ngValue]="contact"> {{ contact }} </option> }
-                </select> </div>
+            <div class="select-wrap">
+                <select id="f-origem" [(ngModel)]="filters.origem" (ngModelChange)="onOriginChange()">
+                    <option [ngValue]="undefined">Todas as origens</option>
+                    @for (contact of contactTypes; track contact) {
+                    <option [ngValue]="contact">
+                        {{ contact }}
+                    </option>
+                    }
+                </select>
+            </div>
         </div>
         <div class="field">
             <label for="f-ordem">Ordenar por</label>
             <div class="select-wrap">
-                <select id="f-ordem">
+                <select [(ngModel)]="filters.ordem" (ngModelChange)="onOrderChange()" id="f-ordem">
                     <option value="nome-asc">Nome (A–Z)</option>
                     <option value="nome-desc">Nome (Z–A)</option>
-                    <option value="codigo">Código</option>
+                    <option value="code">Código</option>
                 </select>
             </div>
         </div>

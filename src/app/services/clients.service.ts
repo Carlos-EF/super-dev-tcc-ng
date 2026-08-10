@@ -29,6 +29,10 @@ export class ClientsService {
             params = params.set('origem', filters.origem);
         }
 
+        if (filters?.ordem) {
+            params = params.set('ordem', filters.ordem);
+        }
+
         params = params.set('pagina', pagina);
 
         params = params.set('por_pagina', porPagina);

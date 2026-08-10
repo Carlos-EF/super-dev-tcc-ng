@@ -39,7 +39,12 @@ export class ClientsList {
 
   page = model(1);
 
-  filters: ClientsFilters = {};
+  filters: ClientsFilters = {
+    busca: '',
+    tipo: undefined,
+    origem: undefined,
+    ordem: 'nome-asc'
+  };
 
   contactTypes = [...CONTACT_TYPES];
 
@@ -339,7 +344,8 @@ export class ClientsList {
     this.filters = {
       busca: '',
       tipo: undefined,
-      origem: undefined
+      origem: undefined,
+      ordem: 'nome-asc'
     };
 
     this.searchInput.nativeElement.value = '';
@@ -368,6 +374,12 @@ export class ClientsList {
 
     this.getAllClients();
   };
+
+  onOrderChange() {
+    this.page.set(1);
+
+    this.getAllClients();
+  }
 
   changePerPagevalue(event: Event) {
     const perPageCount = +(event.target as HTMLSelectElement).value;

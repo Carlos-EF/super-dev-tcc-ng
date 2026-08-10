@@ -1,6 +1,7 @@
 import { ClientsTypes } from "../types/clients.types";
 import { ContactTypes } from "../types/contact.types";
 import { FinalityTypes } from "../types/finality.types";
+import { OrderClientsTypes } from "../types/order.clients.types";
 import { PropertyTypes } from "../types/property.types";
 
 export interface CreateClientRequest {
@@ -62,6 +63,7 @@ export interface ClientsFilters {
     busca?: string;
     tipo?: ClientsTypes;
     origem?: ContactTypes;
+    ordem?: OrderClientsTypes;
 }
 
 export interface ClientWithInterestResponse {
