@@ -41,7 +41,8 @@
                     name="f-tipo" [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"
                     [value]="type" [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()"> <label
                     [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"> {{ type }}s
-                </label> } </div>
+                </label> }
+            </div>
         </div>
         <div class="field"> <label for="f-origem">Como nos encontrou</label>
             <div class="select-wrap"> <select id="f-origem" [(ngModel)]="filters.origem"
@@ -135,7 +136,8 @@
                 <path d="m21 21-4.3-4.3" />
             </svg>
             <span class="trunc" [title]="client.interesse?.preferencia || client.interesse?.procura"> Procura:
-                {{ client.interesse?.procura || client.interesse?.preferencia }} </span>
+                {{ client.interesse?.procura }} para {{(client.interesse?.finalidade?.toLowerCase())}} -
+                {{client.interesse?.preferencia }} </span>
         </span>
         } @else {
         <span class="cc-bond empty">
@@ -253,7 +255,6 @@
                         [class.invalid]="clientForm.get('codigo')?.invalid && clientForm.get('codigo')?.touched">
 
                         <label for="ml-codigo">Código <span class="req">*</span></label>
-
                         <input type="text" id="ml-codigo" class="mono" placeholder="1234" maxlength="4"
                             formControlName="codigo">
 
@@ -277,7 +278,6 @@
                         [class.invalid]="clientForm.get('numero')?.invalid && clientForm.get('numero')?.touched">
 
                         <label for="ml-celular">Celular <span class="req">*</span></label>
-
                         <input type="tel" id="ml-celular" class="mono phone" mask="(00) 00000-0000"
                             placeholder="(47) 91234-5678" inputmode="numeric" [dropSpecialCharacters]="false"
                             formControlName="numero">
@@ -299,7 +299,6 @@
                         [class.invalid]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
 
                         <label for="ml-email">E-mail <span class="req">*</span></label>
-
                         <input type="email" id="ml-email" placeholder="maria@email.com" formControlName="email">
 
                         @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors) {
@@ -321,19 +320,25 @@
                 <div class="field" [class.invalid]="clientForm.get('tipo')?.invalid && clientForm.get('tipo')?.touched">
 
                     <label id="ml-tipo-label">Tipo do cliente <span class="req">*</span></label>
-
-                    <div class="segmented" role="radiogroup" aria-labelledby="ml-tipo-label">
-
-                        <input type="radio" id="mt-interessado" value="Interessado" formControlName="tipo">
+                    <div class="segmented" [class.is-disabled]="isEditMode" role="radiogroup"
+                        aria-labelledby="ml-tipo-label">
+                        <input [disabled]="isEditMode" type="radio" id="mt-interessado" value="Interessado"
+                            formControlName="tipo">
                         <label for="mt-interessado">Interessado</label>
 
-                        <input type="radio" id="mt-cliente" value="Locatário" formControlName="tipo">
+                        <input [disabled]="isEditMode" type="radio" id="mt-cliente" value="Locatário"
+                            formControlName="tipo">
                         <label for="mt-cliente">Locatário</label>
 
-                        <input type="radio" id="mt-proprietario" value="Proprietário" formControlName="tipo">
+                        <input [disabled]="isEditMode" type="radio" id="mt-proprietario" value="Proprietário"
+                            formControlName="tipo">
                         <label for="mt-proprietario">Proprietário</label>
-
                     </div>
+
+                    @if (isEditMode) {
+                    <span class="hint"> O tipo do cliente não pode ser alterado após o cadastro.
+                    </span>
+                    }
 
                     @if (clientForm.get('tipo')?.touched && clientForm.get('tipo')?.errors?.['required']) {
                     <span class="hint hint-error">Escolha o tipo do cliente.</span>
