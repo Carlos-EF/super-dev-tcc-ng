@@ -35,28 +35,38 @@
             </div>
         </div>
         <div class="field"> <label>Tipo do cliente</label>
-            <div class="segmented" role="radiogroup" aria-label="Tipo do cliente"> <!-- Todos --> <input type="radio"
-                    name="f-tipo" id="ft-todos" value="" [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()">
-                <label for="ft-todos">Todos</label> @for (type of clientTypes; track type) { <input type="radio"
-                    name="f-tipo" [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"
-                    [value]="type" [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()"> <label
-                    [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')"> {{ type }}s
-                </label> } </div>
+            <div class="segmented" role="radiogroup" aria-label="Tipo do cliente">
+                <input type="radio" name="f-tipo" id="ft-todos" value="" [(ngModel)]="filters.tipo"
+                    (ngModelChange)="onTypeChange()">
+                <label for="ft-todos">Todos</label> @for (type of clientTypes; track type) {
+                <input type="radio" name="f-tipo"
+                    [id]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')" [value]="type"
+                    [(ngModel)]="filters.tipo" (ngModelChange)="onTypeChange()">
+                <label [for]="'ft-' + type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')">
+                    {{ type }}s
+                </label>
+                }
+            </div>
         </div>
         <div class="field"> <label for="f-origem">Como nos encontrou</label>
-            <div class="select-wrap"> <select id="f-origem" [(ngModel)]="filters.origem"
-                    (ngModelChange)="onOriginChange()">
-                    <option [ngValue]="undefined">Todas as origens</option> @for (contact of contactTypes; track
-                    contact) { <option [ngValue]="contact"> {{ contact }} </option> }
-                </select> </div>
+            <div class="select-wrap">
+                <select id="f-origem" [(ngModel)]="filters.origem" (ngModelChange)="onOriginChange()">
+                    <option [ngValue]="undefined">Todas as origens</option>
+                    @for (contact of contactTypes; track contact) {
+                    <option [ngValue]="contact">
+                        {{ contact }}
+                    </option>
+                    }
+                </select>
+            </div>
         </div>
         <div class="field">
             <label for="f-ordem">Ordenar por</label>
             <div class="select-wrap">
-                <select id="f-ordem">
+                <select [(ngModel)]="filters.ordem" (ngModelChange)="onOrderChange()" id="f-ordem">
                     <option value="nome-asc">Nome (A–Z)</option>
                     <option value="nome-desc">Nome (Z–A)</option>
-                    <option value="codigo">Código</option>
+                    <option value="code">Código</option>
                 </select>
             </div>
         </div>
@@ -135,7 +145,8 @@
                 <path d="m21 21-4.3-4.3" />
             </svg>
             <span class="trunc" [title]="client.interesse?.preferencia || client.interesse?.procura"> Procura:
-                {{ client.interesse?.procura || client.interesse?.preferencia }} </span>
+                {{ client.interesse?.procura }} para {{(client.interesse?.finalidade?.toLowerCase())}} -
+                {{client.interesse?.preferencia }} </span>
         </span>
         } @else {
         <span class="cc-bond empty">
@@ -204,6 +215,30 @@
 </div>
 }
 
+<div class="card foot-card">
+    <div class="table-foot">
+        <div class="foot-ctrl">
+            <div class="per-page">
+                <label for="per-page">Cards por página</label>
+                <div class="select-wrap"> <select id="per-page" [value]="perPage()" (change)="changePerPage($event)">
+                        <option [value]="10" selected>10</option>
+                        <option [value]="24">24</option>
+                        <option [value]="48">48</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="pager" aria-label="Paginação">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
+                    aria-label="Página anterior"> ‹
+                </button>
+                <button class="page-btn current" aria-current="page"> {{page()}} </button>
+                <button (click)="nextPage()" [disabled]="page() === (clients().total_paginas ?? 1)" class="page-btn"
+                    aria-label="Próxima página"> › </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
 @if (openModal === true) {
 <div class="modal-backdrop" [class.open]="openModal" id="modal-cliente" role="dialog" aria-modal="true"
     aria-labelledby="ml-title">
@@ -253,7 +288,6 @@
                         [class.invalid]="clientForm.get('codigo')?.invalid && clientForm.get('codigo')?.touched">
 
                         <label for="ml-codigo">Código <span class="req">*</span></label>
-
                         <input type="text" id="ml-codigo" class="mono" placeholder="1234" maxlength="4"
                             formControlName="codigo">
 
@@ -277,7 +311,6 @@
                         [class.invalid]="clientForm.get('numero')?.invalid && clientForm.get('numero')?.touched">
 
                         <label for="ml-celular">Celular <span class="req">*</span></label>
-
                         <input type="tel" id="ml-celular" class="mono phone" mask="(00) 00000-0000"
                             placeholder="(47) 91234-5678" inputmode="numeric" [dropSpecialCharacters]="false"
                             formControlName="numero">
@@ -299,7 +332,6 @@
                         [class.invalid]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
 
                         <label for="ml-email">E-mail <span class="req">*</span></label>
-
                         <input type="email" id="ml-email" placeholder="maria@email.com" formControlName="email">
 
                         @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors) {
@@ -321,19 +353,25 @@
                 <div class="field" [class.invalid]="clientForm.get('tipo')?.invalid && clientForm.get('tipo')?.touched">
 
                     <label id="ml-tipo-label">Tipo do cliente <span class="req">*</span></label>
-
-                    <div class="segmented" role="radiogroup" aria-labelledby="ml-tipo-label">
-
-                        <input type="radio" id="mt-interessado" value="Interessado" formControlName="tipo">
+                    <div class="segmented" [class.is-disabled]="isEditMode" role="radiogroup"
+                        aria-labelledby="ml-tipo-label">
+                        <input [disabled]="isEditMode" type="radio" id="mt-interessado" value="Interessado"
+                            formControlName="tipo">
                         <label for="mt-interessado">Interessado</label>
 
-                        <input type="radio" id="mt-cliente" value="Locatário" formControlName="tipo">
+                        <input [disabled]="isEditMode" type="radio" id="mt-cliente" value="Locatário"
+                            formControlName="tipo">
                         <label for="mt-cliente">Locatário</label>
 
-                        <input type="radio" id="mt-proprietario" value="Proprietário" formControlName="tipo">
+                        <input [disabled]="isEditMode" type="radio" id="mt-proprietario" value="Proprietário"
+                            formControlName="tipo">
                         <label for="mt-proprietario">Proprietário</label>
-
                     </div>
+
+                    @if (isEditMode) {
+                    <span class="hint"> O tipo do cliente não pode ser alterado após o cadastro.
+                    </span>
+                    }
 
                     @if (clientForm.get('tipo')?.touched && clientForm.get('tipo')?.errors?.['required']) {
                     <span class="hint hint-error">Escolha o tipo do cliente.</span>
@@ -461,8 +499,8 @@
         <div class="modal-head">
             <div>
                 <h3 id="mx-title">Excluir cliente</h3>
-            </div> <button class="icon-btn" type="button" aria-label="Fechar" (click)="closeConfirmModal()"> <svg
-                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            </div> <button class="icon-btn" type="button" aria-label="Fechar" (click)="closeConfirmModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round">
                     <path d="M18 6 6 18M6 6l12 12" />
                 </svg> </button>
@@ -478,7 +516,8 @@
                 <p> Tem certeza que deseja excluir <b>{{ selectedClient?.nome }}</b>? </p>
             </div>
         </div>
-        <div class="modal-foot"> <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()"> Cancelar
+        <div class="modal-foot"> <button class="btn btn-ghost" type="button" (click)="closeConfirmModal()">
+                Cancelar
             </button> <button class="btn btn-danger" type="button" [disabled]="!selectedClient"
                 (click)="selectedClient && deleteClient(selectedClient.id)"> <svg width="15" height="15"
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

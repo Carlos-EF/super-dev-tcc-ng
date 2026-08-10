@@ -229,12 +229,12 @@
                 <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
                     aria-label="Página anterior"> ‹ </button>
                 <button class="page-btn current" aria-current="page"> {{page()}} </button>
-                <button (click)="nextPage()" 
-                [disabled]="page() === (condominiums().total_paginas ?? 1)"
-                class="page-btn" aria-label="Próxima página"> › </button>
+                <button (click)="nextPage()" [disabled]="page() === (condominiums().total_paginas ?? 1)"
+                    class="page-btn" aria-label="Próxima página"> › </button>
             </nav>
         </div>
     </div>
+
     } @else {
     <div class="empty-state">
         <div class="es-icon">
