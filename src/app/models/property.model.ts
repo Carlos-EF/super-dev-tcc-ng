@@ -173,3 +173,13 @@ export interface CreateLandRequest {
     zoneamento: ZoningTypes | null;
     coeficiente: number | null;
 }
+
+export interface EditLandRequest {
+    area_total: number | null;
+    medida_esquerda: number | null;
+    medida_direita: number | null;
+    medida_frente: number | null;
+    medida_fundo: number | null;
+    zoneamento: ZoningTypes | null;
+    coeficiente: number | null;
+}
