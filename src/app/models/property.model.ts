@@ -25,7 +25,7 @@ export interface PropertyResponse {
     alterado_em: Date;
 }
 
-export interface CreatePropertyResponse {
+export interface CreatePropertyRequest {
     proprietario: string | null;
     corretor: string | null;
     codigo: string;
@@ -45,7 +45,7 @@ export interface CreatePropertyResponse {
     valor_condominio: number | null;
 }
 
-export interface EditPropertyResponse {
+export interface EditPropertyRequest {
     proprietario: string | null;
     corretor: string | null;
     finalidade: FinalityTypes;
@@ -78,4 +78,17 @@ export interface HouseResponse {
     mobilia: [FurnitureTypes] | null;
     criado_em: Date;
     alterado_em: Date;
+}
+
+export interface CreateHouseResquest {
+    imovel_id: string;
+    metragem: number | null;
+    quartos: number | null;
+    suites: number | null;
+    banheiros: number | null;
+    garagens: number | null;
+    andares: number | null;
+    salas: number | null;
+    esta_mobiliado: FurnishedTypes | null;
+    mobilia: [FurnitureTypes] | null;
 }
