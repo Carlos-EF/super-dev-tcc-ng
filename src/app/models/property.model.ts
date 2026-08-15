@@ -162,3 +162,14 @@ export interface LandResponse {
     criado_em: Date;
     alterado_em: Date;
 }
+
+export interface CreateLandRequest {
+    imovel_id: string;
+    area_total: number | null;
+    medida_esquerda: number | null;
+    medida_direita: number | null;
+    medida_frente: number | null;
+    medida_fundo: number | null;
+    zoneamento: ZoningTypes | null;
+    coeficiente: number | null;
+}
