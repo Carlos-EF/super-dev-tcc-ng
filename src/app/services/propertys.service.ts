@@ -24,5 +24,11 @@ export class PropertysService {
             this.url, {
             params
         });
-    }
+    };
+
+    delete(id: string): Observable<void> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.delete<void>(urlWithId);
+    };
 }
