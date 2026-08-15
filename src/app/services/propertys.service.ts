@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { PaginatedPropertyResponse } from '../models/property.model';
+import { CompletePropertyResponse, CreatePropertyRequest, PaginatedPropertyResponse } from '../models/property.model';
 
 @Service()
 export class PropertysService {
@@ -30,5 +30,11 @@ export class PropertysService {
         const urlWithId = `${this.url}/${id}`;
 
         return this.httpClient.delete<void>(urlWithId);
+    };
+
+    create(
+        form: CreatePropertyRequest
+    ): Observable<CompletePropertyResponse> {
+        return this.httpClient.post<CompletePropertyResponse>(this.url, form);
     };
 }
