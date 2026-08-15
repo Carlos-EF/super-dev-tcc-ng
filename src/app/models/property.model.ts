@@ -1,6 +1,7 @@
 import { FinalityTypes } from "../types/finality.types";
 import { FurnishedTypes, FurnitureTypes } from "../types/furnished.types";
 import { PropertyTypes } from "../types/property.types";
+import { ZoningTypes } from "../types/zoning.types";
 
 export interface PropertyResponse {
     id: string;
@@ -80,7 +81,7 @@ export interface HouseResponse {
     alterado_em: Date;
 }
 
-export interface CreateHouseResquest {
+export interface CreateHouseRequest {
     imovel_id: string;
     metragem: number | null;
     quartos: number | null;
@@ -93,7 +94,8 @@ export interface CreateHouseResquest {
     mobilia: [FurnitureTypes] | null;
 
 }
-export interface EditHouseResquest {
+
+export interface EditHouseRequest {
     metragem: number | null;
     quartos: number | null;
     suites: number | null;
@@ -121,7 +123,7 @@ export interface ApartmentResponse {
     alterado_em: Date;
 }
 
-export interface CreateApartmentResquest {
+export interface CreateApartmentRequest {
     imovel_id: string;
     metragem: number | null;
     quartos: number | null;
@@ -134,7 +136,8 @@ export interface CreateApartmentResquest {
     mobilia: [FurnitureTypes] | null;
 
 }
-export interface EditApartmentResquest {
+
+export interface EditApartmentRequest {
     metragem: number | null;
     quartos: number | null;
     suites: number | null;
@@ -144,4 +147,18 @@ export interface EditApartmentResquest {
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
     mobilia: [FurnitureTypes] | null;
+}
+
+export interface LandResponse {
+    id: string;
+    imovel_id: string;
+    area_total: number | null;
+    medida_esquerda: number | null;
+    medida_direita: number | null;
+    medida_frente: number | null;
+    medida_fundo: number | null;
+    zoneamento: ZoningTypes | null;
+    coeficiente: number | null;
+    criado_em: Date;
+    alterado_em: Date;
 }
