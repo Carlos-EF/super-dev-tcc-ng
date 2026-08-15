@@ -91,4 +91,16 @@ export interface CreateHouseResquest {
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
     mobilia: [FurnitureTypes] | null;
+
+}
+export interface EditHouseResquest {
+    metragem: number | null;
+    quartos: number | null;
+    suites: number | null;
+    banheiros: number | null;
+    garagens: number | null;
+    andares: number | null;
+    salas: number | null;
+    esta_mobiliado: FurnishedTypes | null;
+    mobilia: [FurnitureTypes] | null;
 }
