@@ -43,3 +43,22 @@ export interface CreatePropertyResponse {
     valor_iptu: number | null;
     valor_condominio: number | null;
 }
+
+export interface EditPropertyResponse {
+    proprietario: string | null;
+    corretor: string | null;
+    finalidade: FinalityTypes;
+    tipo: PropertyTypes;
+    em_condominio: boolean;
+    condominio: string | null;
+    cep: string;
+    logradouro: string;
+    numero: number;
+    bairro: string;
+    uf: string;
+    cidade: string;
+    complemento: string | null;
+    valor: number | null;
+    valor_iptu: number | null;
+    valor_condominio: number | null;
+}
