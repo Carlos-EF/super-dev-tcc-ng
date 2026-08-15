@@ -183,3 +183,45 @@ export interface EditLandRequest {
     zoneamento: ZoningTypes | null;
     coeficiente: number | null;
 }
+
+export interface PaginatedPropertyResponse {
+    imoveis: [];
+    pagina: number;
+    por_pagina: number;
+    total: number;
+    total_paginas: number;
+}
+
+export interface HouseData {
+    metragem?: number | null;
+    quartos?: number | null;
+    suites?: number | null;
+    banheiros?: number | null;
+    garagens?: number | null;
+    andares?: number | null;
+    salas?: number | null;
+    esta_mobiliado?: FurnishedTypes | null;
+    mobilia?: [FurnitureTypes] | null;
+}
+
+export interface ApartmentData {
+    metragem?: number | null;
+    quartos?: number | null;
+    suites?: number | null;
+    banheiros?: number | null;
+    garagens?: number | null;
+    andares?: number | null;
+    salas?: number | null;
+    esta_mobiliado?: FurnishedTypes | null;
+    mobilia?: [FurnitureTypes] | null;
+}
+
+export interface LandData {
+    area_total?: number | null;
+    medida_esquerda?: number | null;
+    medida_direita?: number | null;
+    medida_frente?: number | null;
+    medida_fundo?: number | null;
+    zoneamento?: ZoningTypes | null;
+    coeficiente?: number | null;
+}
