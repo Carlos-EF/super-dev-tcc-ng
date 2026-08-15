@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse } from '../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse } from '../models/property.model';
 
 @Service()
 export class PropertysService {
@@ -64,4 +64,13 @@ export class PropertysService {
 
         return this.httpClient.post<LandResponse>(urlWithId, form);
     };
+
+    edit(
+        id: string,
+        form: EditPropertyRequest
+    ): Observable<CompletePropertyResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.put<CompletePropertyResponse>(urlWithId, form);
+    }
 }
