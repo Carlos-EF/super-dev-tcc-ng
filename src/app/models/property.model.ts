@@ -185,7 +185,7 @@ export interface EditLandRequest {
 }
 
 export interface PaginatedPropertyResponse {
-    imoveis: [];
+    imoveis: [CompletePropertyResponse];
     pagina: number;
     por_pagina: number;
     total: number;
@@ -224,4 +224,30 @@ export interface LandData {
     medida_fundo?: number | null;
     zoneamento?: ZoningTypes | null;
     coeficiente?: number | null;
+}
+
+export interface CompletePropertyResponse {
+    id: string;
+    proprietario: string | null;
+    corretor: string | null;
+    codigo: string;
+    finalidade: FinalityTypes;
+    tipo: PropertyTypes;
+    em_condominio: boolean;
+    condominio: string | null;
+    cep: string;
+    logradouro: string;
+    numero: number;
+    bairro: string;
+    uf: string;
+    cidade: string;
+    complemento: string | null;
+    valor: number | null;
+    valor_iptu: number | null;
+    valor_condominio: number | null;
+    casa?: HouseData | null;
+    apartamento?: ApartmentData | null;
+    terreno?: LandData | null;
+    criado_em: Date;
+    alterado_em: Date;
 }
