@@ -104,3 +104,44 @@ export interface EditHouseResquest {
     esta_mobiliado: FurnishedTypes | null;
     mobilia: [FurnitureTypes] | null;
 }
+
+export interface ApartmentResponse {
+    id: string;
+    imovel_id: string;
+    metragem: number | null;
+    quartos: number | null;
+    suites: number | null;
+    banheiros: number | null;
+    garagens: number | null;
+    andares: number | null;
+    salas: number | null;
+    esta_mobiliado: FurnishedTypes | null;
+    mobilia: [FurnitureTypes] | null;
+    criado_em: Date;
+    alterado_em: Date;
+}
+
+export interface CreateApartmentResquest {
+    imovel_id: string;
+    metragem: number | null;
+    quartos: number | null;
+    suites: number | null;
+    banheiros: number | null;
+    garagens: number | null;
+    andares: number | null;
+    salas: number | null;
+    esta_mobiliado: FurnishedTypes | null;
+    mobilia: [FurnitureTypes] | null;
+
+}
+export interface EditApartmentResquest {
+    metragem: number | null;
+    quartos: number | null;
+    suites: number | null;
+    banheiros: number | null;
+    garagens: number | null;
+    andares: number | null;
+    salas: number | null;
+    esta_mobiliado: FurnishedTypes | null;
+    mobilia: [FurnitureTypes] | null;
+}
