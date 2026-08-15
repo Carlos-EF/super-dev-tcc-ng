@@ -3,6 +3,7 @@ import { Home } from './pages/home/home';
 import { CondominiumsList } from './pages/condominiums/list/list';
 import { BrokersList } from './pages/brokers/list/list';
 import { ClientsList } from './pages/clients/list/list';
+import { PropertyList } from './pages/propertys/list/list';
 
 export const routes: Routes = [
     {
@@ -25,5 +26,9 @@ export const routes: Routes = [
     {
         path:'clients/list',
         component: ClientsList
+    },
+    {
+        path: 'propertys/list',
+        component: PropertyList
     }
 ];
