@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse } from '../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse } from '../models/property.model';
 
 @Service()
 export class PropertysService {
@@ -72,5 +72,56 @@ export class PropertysService {
         const urlWithId = `${this.url}/${id}`;
 
         return this.httpClient.put<CompletePropertyResponse>(urlWithId, form);
-    }
+    };
+
+    editHouse(
+        id: string,
+        form: EditHouseRequest
+    ): Observable<HouseResponse> {
+        const urlWithId = `${this.url}/${id}/house`;
+
+        return this.httpClient.put<HouseResponse>(urlWithId, form);
+    };
+
+    editApartment(
+        id: string,
+        form: EditApartmentRequest
+    ): Observable<ApartmentResponse> {
+        const urlWithId = `${this.url}/${id}/apartment`;
+
+        return this.httpClient.put<ApartmentResponse>(urlWithId, form);
+    };
+
+    editLand(
+        id: string,
+        form: EditLandRequest
+    ): Observable<LandResponse> {
+        const urlWithId = `${this.url}/${id}/land`;
+
+        return this.httpClient.put<LandResponse>(urlWithId, form);
+    };
+
+    getById(id: string): Observable<CompletePropertyResponse> {
+        const urlWithId = `${this.url}/${id}`;
+
+        return this.httpClient.get<CompletePropertyResponse>(urlWithId);
+    };
+
+    getHouseById(id: string): Observable<HouseResponse> {
+        const urlWithId = `${this.url}/${id}/house`;
+
+        return this.httpClient.get<HouseResponse>(urlWithId);
+    };
+
+    getApartmentById(id: string): Observable<ApartmentResponse> {
+        const urlWithId = `${this.url}/${id}/apartment`;
+
+        return this.httpClient.get<ApartmentResponse>(urlWithId);
+    };
+
+    getLandById(id: string): Observable<LandResponse> {
+        const urlWithId = `${this.url}/${id}/land`;
+
+        return this.httpClient.get<LandResponse>(urlWithId);
+    };
 }
