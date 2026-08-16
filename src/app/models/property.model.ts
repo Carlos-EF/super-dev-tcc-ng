@@ -76,7 +76,7 @@ export interface HouseResponse {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
+    mobilia: FurnitureTypes[] | null;
     criado_em: Date;
     alterado_em: Date;
 }
@@ -91,8 +91,7 @@ export interface CreateHouseRequest {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
-
+    mobilia: FurnitureTypes[] | null;
 }
 
 export interface EditHouseRequest {
@@ -104,7 +103,7 @@ export interface EditHouseRequest {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
+    mobilia: FurnitureTypes[] | null;
 }
 
 export interface ApartmentResponse {
@@ -118,7 +117,7 @@ export interface ApartmentResponse {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
+    mobilia: FurnitureTypes[] | null;
     criado_em: Date;
     alterado_em: Date;
 }
@@ -133,8 +132,7 @@ export interface CreateApartmentRequest {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
-
+    mobilia: FurnitureTypes[] | null;
 }
 
 export interface EditApartmentRequest {
@@ -146,7 +144,7 @@ export interface EditApartmentRequest {
     andares: number | null;
     salas: number | null;
     esta_mobiliado: FurnishedTypes | null;
-    mobilia: [FurnitureTypes] | null;
+    mobilia: FurnitureTypes[] | null;
 }
 
 export interface LandResponse {
@@ -185,7 +183,7 @@ export interface EditLandRequest {
 }
 
 export interface PaginatedPropertyResponse {
-    imoveis: [CompletePropertyResponse];
+    imoveis: CompletePropertyResponse[];
     pagina: number;
     por_pagina: number;
     total: number;
@@ -201,7 +199,7 @@ export interface HouseData {
     andares?: number | null;
     salas?: number | null;
     esta_mobiliado?: FurnishedTypes | null;
-    mobilia?: [FurnitureTypes] | null;
+    mobilia?: FurnitureTypes[] | null;
 }
 
 export interface ApartmentData {
@@ -213,7 +211,7 @@ export interface ApartmentData {
     andares?: number | null;
     salas?: number | null;
     esta_mobiliado?: FurnishedTypes | null;
-    mobilia?: [FurnitureTypes] | null;
+    mobilia?: FurnitureTypes[] | null;
 }
 
 export interface LandData {
