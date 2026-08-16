@@ -234,4 +234,74 @@
             </div>
         </section>
     </div>
+
+    <aside class="ficha" aria-label="Resumo do imóvel">
+        <div class="ficha-head">
+            <h3>Ficha do imóvel</h3>
+            <span class="ficha-cod" id="f-codigo">—</span>
+        </div>
+        <div class="ficha-body">
+            <div class="ficha-type">
+                <div class="ficha-type-icon" id="f-tipo-icon"></div>
+                <div>
+                    <div class="v empty" id="f-tipo-label">Tipo não definido</div>
+                    <div class="k" id="f-tipo-sub">Escolha o tipo na etapa 1</div>
+                </div>
+            </div>
+            <div class="ficha-row">
+                <span class="k" id="f-valor-k">Valor solicitado</span>
+                <span class="ficha-price" id="f-valor">R$ —</span>
+                <span class="hint" id="f-extras" style="color:var(--text-3);font-size:11.5px"></span>
+            </div>
+            <div class="ficha-total" id="f-total" hidden>
+                <div class="t-line"><span>Aluguel</span><b id="t-aluguel">—</b></div>
+                <div class="t-line" id="t-cond-line"><span>Condomínio</span><b id="t-cond">—</b></div>
+                <div class="t-line"><span>IPTU</span><b id="t-iptu">—</b></div>
+                <div class="t-line total"><span>Total mensal</span><b id="t-total">—</b></div>
+            </div>
+            <div class="ficha-chips" id="f-chips">
+                <span class="chip" data-empty>Finalidade e tipo aparecem aqui</span>
+            </div>
+            <div class="ficha-row">
+                <span class="k">Endereço</span>
+                <span class="v empty" id="f-endereco">Informe o CEP na etapa 1</span>
+            </div>
+            <div class="ficha-feats" id="f-feats" hidden>
+                <span class="feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.7">
+                        <path
+                            d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                    </svg><b id="f-quartos">0</b> qtos</span>
+                <span class="feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.7">
+                        <path
+                            d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 4 0" />
+                    </svg><b id="f-banheiros">0</b> ban</span>
+                <span class="feat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.7">
+                        <path d="M5 17h14M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                        <circle cx="7.5" cy="17" r="1.5" />
+                        <circle cx="16.5" cy="17" r="1.5" />
+                    </svg><b id="f-vagas">0</b> vagas</span>
+            </div>
+            <div class="ficha-row">
+                <span class="k">Responsáveis</span>
+                <span class="v empty" id="f-prop">Proprietário não selecionado</span>
+                <span class="v empty" id="f-corr">Corretor não selecionado</span>
+            </div>
+            <div class="ficha-row">
+                <span class="k">Fotos</span>
+                <div class="ficha-photos" id="f-photos">
+                    <div class="ph"></div>
+                    <div class="ph"></div>
+                    <div class="ph"></div>
+                    <div class="ph"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ficha-foot">
+            <span class="pulse" aria-hidden="true"></span>
+            Rascunho — atualizado em tempo real
+        </div>
+    </aside>
 </div>
