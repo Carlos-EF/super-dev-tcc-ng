@@ -6,13 +6,15 @@ import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { ContactTypes } from '../../../types/contact.types';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-create',
   imports: [
     FormsModule,
     ReactiveFormsModule,
-  ],
+    RouterLink
+],
   templateUrl: './create.html',
   styleUrl: './create.scss',
 })

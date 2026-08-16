@@ -1,1 +1,237 @@
-<p>create works!</p>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <a routerLink="/propertys/list">Imóveis</a>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m9 6 6 6-6 6" />
+    </svg>
+    <span>Novo imóvel</span>
+</nav>
+<h1 class="page-title">Cadastrar imóvel</h1>
+<p class="page-sub">Preencha os dados em três etapas. A ficha ao lado mostra o anúncio tomando forma.</p>
+
+<div class="stepper" role="tablist" aria-label="Etapas do cadastro">
+    <button class="step current" data-step="1" role="tab" aria-selected="true">
+        <span class="step-dot">1</span>
+        <span class="step-name">Dados do imóvel</span>
+    </button>
+    <div class="step-line" data-line="1"></div>
+    <button class="step" data-step="2" role="tab" aria-selected="false">
+        <span class="step-dot">2</span>
+        <span class="step-name">Valores e características</span>
+    </button>
+    <div class="step-line" data-line="2"></div>
+    <button class="step" data-step="3" role="tab" aria-selected="false">
+        <span class="step-dot">3</span>
+        <span class="step-name">Fotos e finalização</span>
+    </button>
+</div>
+
+<div class="content-grid">
+    <div class="wizard">
+        <section class="wizard-step active" data-panel="1">
+            <div class="card">
+                <div class="section-head">
+                    <div class="section-title"><span class="n">01</span> Responsáveis</div>
+                    <div class="section-desc">Quem é o dono do imóvel e quem cuida da negociação.</div>
+                </div>
+                <div class="form-grid cols-2">
+                    <div class="field">
+                        <label for="proprietario">Proprietário <span class="req">*</span></label>
+                        <div class="input-action">
+                            <div class="select-wrap">
+                                <select id="proprietario">
+                                    <option value="">Selecionar…</option>
+                                    <option value="p1">Maria Aparecida Souza — (47) 99812-3456</option>
+                                    <option value="p2">Carlos Eduardo Lima — (47) 98455-7810</option>
+                                    <option value="p3">Helena Prust Wagner — (47) 99120-6633</option>
+                                    <option value="p4">Osmar Kretzschmar — (47) 98877-2041</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn-side" title="Cadastrar novo proprietário"
+                                aria-label="Cadastrar novo proprietário" data-open-modal="modal-proprietario">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="corretor">Corretor <span class="req">*</span></label>
+                        <div class="input-action">
+                            <div class="select-wrap">
+                                <select id="corretor">
+                                    <option value="">Selecionar…</option>
+                                    <option value="c1">Ana Beatriz Ramos — CRECI 18.902F</option>
+                                    <option value="c2">João Pereira Filho — CRECI 23.481F</option>
+                                    <option value="c3">Ricardo Tavares — CRECI 31.276F</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn-side" title="Cadastrar novo corretor"
+                                aria-label="Cadastrar novo corretor" data-open-modal="modal-corretor">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-head">
+                    <div class="section-title"><span class="n">02</span> Identificação</div>
+                    <div class="section-desc">Código interno e classificação do imóvel.</div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-grid cols-2">
+                        <div class="field">
+                            <label for="codigo">Código de referência <span class="req">*</span></label>
+                            <input type="text" id="codigo" class="mono" placeholder="AP-0001" maxlength="12">
+                        </div>
+                        <div class="field">
+                            <label>Finalidade <span class="req">*</span></label>
+                            <div class="segmented" role="radiogroup" aria-label="Finalidade">
+                                <input type="radio" name="finalidade" id="fin-venda" value="Venda">
+                                <label for="fin-venda">Venda</label>
+                                <input type="radio" name="finalidade" id="fin-locacao" value="Locação">
+                                <label for="fin-locacao">Locação</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label id="tipo-label">Tipo do imóvel <span class="req">*</span></label>
+                        <div class="tile-group" role="radiogroup" aria-labelledby="tipo-label">
+                            <input type="radio" name="tipo" id="tipo-ap" value="Apartamento">
+                            <label class="tile" for="tipo-ap">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="5" y="3" width="14" height="18" rx="1.5" />
+                                    <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+                                    <path d="M10.5 21v-3h3v3" />
+                                </svg>
+                                <span>Apartamento</span>
+                            </label>
+                            <input type="radio" name="tipo" id="tipo-casa" value="Casa">
+                            <label class="tile" for="tipo-casa">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 10.5 12 3l9 7.5" />
+                                    <path d="M5 9.5V21h14V9.5" />
+                                    <path d="M9.5 21v-6h5v6" />
+                                </svg>
+                                <span>Casa</span>
+                            </label>
+                            <input type="radio" name="tipo" id="tipo-terreno" value="Terreno">
+                            <label class="tile" for="tipo-terreno">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 20h18" />
+                                    <path d="M5 20l3.5-9 3 5.5L14 9l5 11" stroke-dasharray="0" />
+                                    <circle cx="17.5" cy="5.5" r="1.8" />
+                                </svg>
+                                <span>Terreno</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-head">
+                    <div class="section-title"><span class="n">03</span> Localização</div>
+                    <div class="section-desc">Informe o CEP para preencher o endereço automaticamente.</div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-grid cols-2">
+                        <div class="field">
+                            <label>Fica em condomínio?</label>
+                            <div class="segmented" role="radiogroup" aria-label="Fica em condomínio">
+                                <input type="radio" name="condominio" id="cond-nao" value="nao" checked>
+                                <label for="cond-nao">Não</label>
+                                <input type="radio" name="condominio" id="cond-sim" value="sim">
+                                <label for="cond-sim">Sim</label>
+                            </div>
+                        </div>
+                        <div class="field" id="field-condominio" hidden>
+                            <label for="nome-condominio">Condomínio</label>
+                            <div class="input-action">
+                                <div class="select-wrap">
+                                    <select id="nome-condominio">
+                                        <option value="">Selecionar…</option>
+                                        <option value="k1">Residencial Águas Claras</option>
+                                        <option value="k2">Ed. Jardim das Palmeiras</option>
+                                        <option value="k3">Villa Toscana Residence</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn-side" title="Cadastrar novo condomínio"
+                                    aria-label="Cadastrar novo condomínio" data-open-modal="modal-condominio">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <path d="M12 5v14M5 12h14" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="address-editable" class="form-grid">
+                        <div class="form-grid cols-3">
+                            <div class="field">
+                                <label for="cep">CEP <span class="req">*</span></label>
+                                <div class="control">
+                                    <input type="text" id="cep" class="mono" placeholder="00000-000" maxlength="9"
+                                        inputmode="numeric">
+                                    <span class="suffix-icon" id="cep-status">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                            <circle cx="11" cy="11" r="7" />
+                                            <path d="m21 21-4.3-4.3" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <span class="hint">Endereço é buscado ao digitar o CEP completo</span>
+                            </div>
+                            <div class="field" style="grid-column:span 2">
+                                <label for="rua">Rua <span class="req">*</span></label>
+                                <input type="text" id="rua" placeholder="Preenchido pelo CEP">
+                            </div>
+                        </div>
+                        <div class="form-grid cols-3">
+                            <div class="field">
+                                <label for="numero">Número <span class="req">*</span></label>
+                                <input type="text" id="numero" placeholder="230" inputmode="numeric">
+                            </div>
+                            <div class="field">
+                                <label for="bairro">Bairro <span class="req">*</span></label>
+                                <input type="text" id="bairro" placeholder="Preenchido pelo CEP">
+                            </div>
+                            <div class="field">
+                                <label for="cidade">Cidade / UF <span class="req">*</span></label>
+                                <input type="text" id="cidade" placeholder="Preenchido pelo CEP">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="address-condo" hidden>
+                        <div class="ro-address" id="ro-address" aria-live="polite"></div>
+                    </div>
+                    <div class="field">
+                        <label for="complemento">Complemento <span style="color:var(--text-3);font-weight:400"
+                                id="complemento-hint"></span></label>
+                        <input type="text" id="complemento" placeholder="Apartamento 101, bloco B…">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <span></span>
+                <button class="btn btn-primary" data-goto="2">
+                    Avançar para valores
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
