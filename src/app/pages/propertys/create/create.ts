@@ -4,6 +4,8 @@ import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
+import { ClientsTypes } from '../../../types/clients.types';
+import { ContactTypes } from '../../../types/contact.types';
 
 @Component({
   selector: 'app-create',
@@ -72,5 +74,25 @@ export class CreateProperty {
     medida_fundo: [null as number | null],
     zoneamento: [null as ZoningTypes | null],
     coeficiente: [null as number | null]
+  });
+
+  brokerForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4),]],
+    creci: ['', [Validators.required, Validators.minLength(7), Validators.maxLength(7), Validators.pattern(/^\d{2}\.\d{3}F$/)]],
+    numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
+    email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
+    data_nascimento: [null as string | null, [Validators.minLength(10), Validators.maxLength(10)]],
+    rg: [null as string | null, [Validators.minLength(9), Validators.maxLength(9)]],
+    cpf: [null as string | null, [Validators.minLength(14), Validators.maxLength(14)]]
+  });
+
+  clientForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+    numero: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(15)]],
+    email: ['', [Validators.required, Validators.email, Validators.minLength(3), Validators.maxLength(60)]],
+    tipo: ['Proprietário' as ClientsTypes, [Validators.required]],
+    como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
 }
