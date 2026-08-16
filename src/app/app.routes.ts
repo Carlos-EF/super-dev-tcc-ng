@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { Home } from './pages/home/home';
-import { CondominiumsList } from './pages/condominiums/list/list';
-import { BrokersList } from './pages/brokers/list/list';
-import { ClientsList } from './pages/clients/list/list';
-import { PropertyList } from './pages/propertys/list/list';
+import { ListCondominiums } from './pages/condominiums/list/list';
+import { ListBrokers } from './pages/brokers/list/list';
+import { ListClients } from './pages/clients/list/list';
+import { ListProperty } from './pages/propertys/list/list';
+import { CreateProperty } from './pages/propertys/create/create';
 
 export const routes: Routes = [
     {
@@ -17,18 +18,22 @@ export const routes: Routes = [
     },
     {
         path:'condominiums/list',
-        component: CondominiumsList
+        component: ListCondominiums
     },
     {
         path: 'brokers/list',
-        component: BrokersList
+        component: ListBrokers
     },
     {
         path:'clients/list',
-        component: ClientsList
+        component: ListClients
     },
     {
         path: 'propertys/list',
-        component: PropertyList
-    }
+        component: ListProperty
+    },
+    {
+        path: 'propertys/create',
+        component: CreateProperty
+    },
 ];

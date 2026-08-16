@@ -22,7 +22,7 @@ import { CondTables } from '../../../types/cond.sort.types';
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
-export class CondominiumsList {
+export class ListCondominiums {
   private readonly formBuilder = inject(FormBuilder);
   private readonly condominiumService = inject(CondominiumService);
   private readonly cepService = inject(SearchCepService);

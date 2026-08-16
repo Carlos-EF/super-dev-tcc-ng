@@ -1,1 +1,164 @@
-<p>list works!</p>
+<nav class="breadcrumb" aria-label="breadcrumb">
+    <a routerLink="/home">Início</a>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="m9 6 6 6-6 6" />
+    </svg>
+    <span>Imóveis</span>
+</nav>
+<div class="page-head">
+    <div>
+        <h1 class="page-title">Imóveis</h1>
+    </div>
+    <button routerLink="/propertys/create"
+     class="btn btn-primary" id="btn-novo">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+        Cadastrar imóvel
+    </button>
+</div>
+
+<div class="card filters-card">
+    <div class="filters-main">
+        <div class="field">
+            <label for="f-busca">Buscar</label>
+            <div class="control has-prefix">
+                <span class="prefix">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m21 21-4.3-4.3" />
+                    </svg>
+                </span>
+                <input type="search" id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…">
+            </div>
+        </div>
+        <div class="field">
+            <label>Finalidade</label>
+            <div class="segmented" role="radiogroup" aria-label="Finalidade">
+                <input type="radio" name="f-fin" id="ff-todos" value="" checked>
+                <label for="ff-todos">Todos</label>
+                <input type="radio" name="f-fin" id="ff-venda" value="Venda">
+                <label for="ff-venda">Venda</label>
+                <input type="radio" name="f-fin" id="ff-locacao" value="Locação">
+                <label for="ff-locacao">Locação</label>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-ordem">Ordenar por</label>
+            <div class="select-wrap">
+                <select id="f-ordem">
+                    <option value="recentes">Mais recentes</option>
+                    <option value="preco-asc">Menor preço</option>
+                    <option value="preco-desc">Maior preço</option>
+                    <option value="codigo">Código</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-ghost btn-more" id="btn-more" aria-expanded="false" aria-controls="filters-more">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M4 6h16M7 12h10M10 18h4" />
+            </svg>
+            Mais filtros
+            <span class="fcount" id="f-count" hidden>0</span>
+            <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </button>
+        <button class="btn btn-ghost btn-clear" id="btn-limpar" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round">
+                <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            Limpar
+        </button>
+    </div>
+
+    <div class="filters-more" id="filters-more" hidden>
+        <div class="field">
+            <label for="f-tipo">Tipo do imóvel</label>
+            <div class="select-wrap">
+                <select id="f-tipo">
+                    <option value="">Todos os tipos</option>
+                    <option>Apartamento</option>
+                    <option>Casa</option>
+                    <option>Terreno</option>
+                    <option>Sala comercial</option>
+                    <option>Galpão</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-cond">Condomínio</label>
+            <div class="select-wrap">
+                <select id="f-cond">
+                    <option value="">Todos</option>
+                    <option value="__none">(Sem condomínio)</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-corretor">Corretor</label>
+            <div class="select-wrap">
+                <select id="f-corretor">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-prop">Proprietário</label>
+            <div class="select-wrap">
+                <select id="f-prop">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-bairro">Bairro</label>
+            <div class="select-wrap">
+                <select id="f-bairro">
+                    <option value="">Todos os bairros</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-preco-min">Faixa de preço</label>
+            <div class="range-pair">
+                <div class="control has-prefix">
+                    <span class="prefix">R$</span>
+                    <input type="text" id="f-preco-min" class="mono" placeholder="mín" inputmode="numeric">
+                </div>
+                <span class="sep">—</span>
+                <div class="control has-prefix">
+                    <span class="prefix">R$</span>
+                    <input type="text" id="f-preco-max" class="mono" placeholder="máx" inputmode="numeric">
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="f-quartos">Quartos</label>
+            <div class="select-wrap">
+                <select id="f-quartos">
+                    <option value="0">Qualquer</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label>Status</label>
+            <div class="segmented" role="radiogroup" aria-label="Status">
+                <input type="radio" name="f-status" id="fs-todos" value="" checked>
+                <label for="fs-todos">Todos</label>
+                <input type="radio" name="f-status" id="fs-pub" value="Publicado">
+                <label for="fs-pub">Publicado</label>
+                <input type="radio" name="f-status" id="fs-rasc" value="Rascunho">
+                <label for="fs-rasc">Rascunho</label>
+            </div>
+        </div>
+    </div>
