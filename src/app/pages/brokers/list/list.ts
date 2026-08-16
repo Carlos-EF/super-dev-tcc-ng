@@ -20,7 +20,7 @@ import { NgxMaskDirective } from 'ngx-mask';
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
-export class BrokersList {
+export class ListBrokers {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
   private readonly toastService = inject(ToastService);

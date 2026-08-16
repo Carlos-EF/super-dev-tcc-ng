@@ -7,4 +7,4 @@ import { RouterLink } from "@angular/router";
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
-export class PropertyList {}
+export class ListProperty {}

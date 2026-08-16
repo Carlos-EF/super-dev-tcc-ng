@@ -22,7 +22,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
-export class ClientsList {
+export class ListClients {
   private readonly formBuilder = inject(FormBuilder);
   private readonly clientService = inject(ClientsService);
   private readonly toastService = inject(ToastService);
