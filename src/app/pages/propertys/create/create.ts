@@ -14,6 +14,8 @@ import { ClientsService } from '../../../services/clients.service';
 import { ClientResponse } from '../../../models/clients.model';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
+import { CondominiumService } from '../../../services/condominium.service';
+import { CondominiumResponse } from '../../../models/condominium.model';
 
 @Component({
   selector: 'app-create',
@@ -31,9 +33,12 @@ export class CreateProperty {
   private readonly brokerService = inject(BrokerService);
   private readonly clientsService = inject(ClientsService);
   private readonly cepService = inject(SearchCepService);
+  private readonly condominiumService = inject(CondominiumService);
+
 
   brokers = model<BrokerResponse[]>([]);
   owners = model<ClientResponse[]>([]);
+  condominiums = model<CondominiumResponse[]>([]);
 
   propertyForm = this.formBuilder.group({
     proprietario: [null as string | null],
@@ -115,7 +120,9 @@ export class CreateProperty {
   constructor() {
     this.getAllBrokers();
 
-    this.getAllOwners();
+    this.getAllCondominums();
+
+    this.getAllCondominums();
   };
 
   getAllBrokers() {
@@ -136,6 +143,17 @@ export class CreateProperty {
       },
       error: (error: Error) => {
         console.log('Ocorreu um erro ao tentar buscar clientes:', error);
+      }
+    })
+  };
+
+  getAllCondominums() {
+    this.condominiumService.getAllForList().subscribe({
+      next: (condominiums: CondominiumResponse[]) => {
+        this.condominiums.set(condominiums);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar condomínios:', error);
       }
     })
   };

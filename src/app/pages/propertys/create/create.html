@@ -168,9 +168,9 @@
                                     <div class="select-wrap">
                                         <select formControlName="condominio" id="nome-condominio">
                                             <option value="">Selecionar…</option>
-                                            <option value="k1">Residencial Águas Claras</option>
-                                            <option value="k2">Ed. Jardim das Palmeiras</option>
-                                            <option value="k3">Villa Toscana Residence</option>
+                                            @for (condominium of condominiums(); track condominium.id) {
+                                                <option value="id">{{condominium.nome}}</option>
+                                            }
                                         </select>
                                     </div>
                                     <button type="button" class="btn-side" title="Cadastrar novo condomínio"

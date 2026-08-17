@@ -43,6 +43,13 @@ export class CondominiumService {
         );
     };
 
+    getAllForList(): Observable<CondominiumResponse[]> {
+        const urlForList = `${this.url}/list`;
+
+        return this.httpClient.get<CondominiumResponse[]>(
+            urlForList);
+    };
+
     getAllCities(): Observable<CitiesResponse> {
         const citiesUrl = `${this.url}/cities`;
 
