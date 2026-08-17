@@ -153,11 +153,9 @@
                             <div class="field">
                                 <label>Fica em condomínio?</label>
                                 <div class="segmented" role="radiogroup" aria-label="Fica em condomínio">
-                                    <input type="radio" formControlName="em_condominio" id="cond-nao"
-                                        [value]="false">
+                                    <input type="radio" formControlName="em_condominio" id="cond-nao" [value]="false">
                                     <label for="cond-nao">Não</label>
-                                    <input type="radio" formControlName="em_condominio" id="cond-sim"
-                                        [value]="true">
+                                    <input type="radio" formControlName="em_condominio" id="cond-sim" [value]="true">
                                     <label for="cond-sim">Sim</label>
                                 </div>
                             </div>
@@ -169,11 +167,12 @@
                                         <select formControlName="condominio" id="nome-condominio">
                                             <option value="">Selecionar…</option>
                                             @for (condominium of condominiums(); track condominium.id) {
-                                                <option value="id">{{condominium.nome}}</option>
+                                            <option value="id">{{condominium.nome}}</option>
                                             }
                                         </select>
                                     </div>
-                                    <button type="button" class="btn-side" title="Cadastrar novo condomínio"
+                                    <button type="button" (click)="openCreateModal()"
+                                     class="btn-side" title="Cadastrar novo condomínio"
                                         aria-label="Cadastrar novo condomínio" data-open-modal="modal-condominio">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -328,3 +327,166 @@
         </div>
     </aside>
 </div>
+
+
+@if (openModal === true) {
+<form [formGroup]="condominiumForm">
+    <div class="modal-backdrop" [class.open]="openModal" id="modal-condominio" role="dialog" aria-modal="true"
+        aria-labelledby="mk-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mk-title">Cadastrar condomínio</h3>
+                    <p id="mk-sub"> O endereço do condomínio será usado nos imóveis vinculados a ele. </p>
+                </div> <button type="button" (click)="closeModal()" class="icon-btn" aria-label="Fechar"> <svg
+                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg> </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field" id="field-mk-nome">
+                        <label for="mk-nome">Nome do condomínio
+                            <span class="req">*</span></label>
+                        <input formControlName="nome" type="text" id="mk-nome" placeholder="Residencial Primavera">
+                        @if (condominiumForm.get('nome')?.touched && condominiumForm.get('nome')?.invalid)
+                        {
+                        <span class="error-message">
+                            @if (condominiumForm.get('nome')?.errors?.['required']) {
+                            O nome é obrigatório.
+                            }
+                            @if (condominiumForm.get('nome')?.errors?.['minlength']) {
+                            O nome deve ter pelo menos 3 caracteres.
+                            } @if (condominiumForm.get('nome')?.errors?.['maxlength']) {
+                            O nome deve ter no máximo 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="mk-cep">CEP <span class="req">*</span></label>
+                            <div class="control">
+                                <input type="text" mask="00000-000" [dropSpecialCharacters]="false"
+                                    formControlName="cep" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
+                                    inputmode="numeric">
+                                <button type="button" class="suffix-icon" id="mk-cep-status" (click)="searchCepForCondominium()"
+                                    aria-label="Buscar CEP"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                        <circle cx="11" cy="11" r="7"></circle>
+                                        <path d="m21 21-4.3-4.3"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @if (condominiumForm.get('cep')?.touched && condominiumForm.get('cep')?.invalid)
+                            {
+                            <span class="error-message">
+                                @if (condominiumForm.get('cep')?.errors?.['required']) {
+                                O CEP é obrigatório.
+                                } @if (condominiumForm.get('cep')?.errors?.['minlength'] ||
+                                condominiumForm.get('cep')?.errors?.['maxlength']) {
+                                O CEP deve estar no formato 00000-000.
+                                }
+                            </span>
+                            }
+                            <span class="hint">Endereço é buscado ao digitar o CEP completo.</span>
+                        </div>
+                        <div class="field" style="grid-column:span 2">
+                            <label for="mk-rua">Logradouro <span class="req">*</span></label>
+                            <input type="text" formControlName="logradouro" id="mk-rua"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('logradouro')?.touched &&
+                            condominiumForm.get('logradouro')?.invalid)
+                            {
+                            <span class="error-message">
+                                @if (condominiumForm.get('logradouro')?.errors?.['required']) {
+                                O logradouro é obrigatório.
+                                } @if (condominiumForm.get('logradouro')?.errors?.['minlength']) {
+                                O logradouro deve ter pelo menos 3 caracteres.
+                                } @if (condominiumForm.get('logradouro')?.errors?.['maxlength']) {
+                                O logradouro deve ter no máximo 60 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-grid cols-4">
+                        <div class="field">
+                            <label for="mk-numero">Número <span class="req">*</span></label>
+                            <input type="number" id="mk-numero" formControlName="numero" placeholder="480"
+                                inputmode="numeric">
+                            @if (condominiumForm.get('numero')?.touched && condominiumForm.get('numero')?.invalid)
+                            {
+                            <span class="error-message"> O número é obrigatório. </span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label for="mk-bairro">Bairro <span class="req">*</span></label>
+                            <input type="text" id="mk-bairro" formControlName="bairro"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('bairro')?.touched && condominiumForm.get('bairro')?.invalid) {
+                            <span class="error-message"> @if (condominiumForm.get('bairro')?.errors?.['required'])
+                                {
+                                O bairro é obrigatório.
+                                } @if (condominiumForm.get('bairro')?.errors?.['minlength']) {
+                                O bairro deve ter pelo menos 3 caracteres.
+                                }
+                                @if (condominiumForm.get('bairro')?.errors?.['maxlength']) {
+                                O bairro deve ter no máximo 50
+                                caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label for="mk-cidade">Cidade <span class="req">*</span></label>
+                            <input type="text" id="mk-cidade" formControlName="cidade"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('cidade')?.touched && condominiumForm.get('cidade')?.invalid) {
+                            <span class="error-message">
+                                @if (condominiumForm.get('cidade')?.errors?.['required']) {
+                                A cidade é obrigatória.
+                                } @if (condominiumForm.get('cidade')?.errors?.['minlength']) {
+                                A cidade deve ter pelo menos 5 caracteres.
+                                } @if (condominiumForm.get('cidade')?.errors?.['maxlength']) {
+                                A cidade deve ter no máximo 50 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"> <label for="mk-uf">UF <span class="req">*</span></label>
+                            <input type="text" id="mk-uf" formControlName="uf" placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('uf')?.touched && condominiumForm.get('uf')?.invalid) {
+                            <span class="error-message">
+                                @if (condominiumForm.get('uf')?.errors?.['required']) {
+                                A UF é obrigatória.
+                                }
+                                @if (condominiumForm.get('uf')?.errors?.['minlength'] ||
+                                condominiumForm.get('uf')?.errors?.['maxlength']) {
+                                A UF deve conter 2 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" (click)="cancelModal()" class="btn btn-ghost">
+                    Cancelar
+                </button>
+                <button type="button" (click)="saveCondominium()" class="btn btn-primary" id="mk-salvar"> <svg
+                        width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span id="mk-salvar-label">
+                        Salvar condomínio
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+}
