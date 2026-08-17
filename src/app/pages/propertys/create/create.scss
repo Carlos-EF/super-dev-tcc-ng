@@ -495,7 +495,6 @@ select {
 
 .form-footer {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     margin-top: 20px;
 }
@@ -1060,4 +1059,232 @@ input[type="number"]::-webkit-outer-spin-button {
     border: none;
     border-top: 1px dashed var(--line-strong);
     margin: 20px 0
+}
+
+.qty-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    transition: border-color .15s, background .15s;
+}
+
+.qty:hover {
+    border-color: var(--line-strong);
+    background: var(--bg3);
+}
+
+.qty-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--line);
+    color: var(--text-3);
+}
+
+.qty-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.qty-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-2);
+    line-height: 1.3;
+}
+
+.qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.qty-ctrl button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    background: var(--bg1);
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    line-height: 1;
+    transition: all .15s;
+}
+
+.qty-ctrl button:hover {
+    border-color: var(--accent);
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+}
+
+.qty-value {
+    min-width: 20px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.control.has-suffix {
+    position: relative;
+}
+
+.control.has-suffix input {
+    padding-right: 44px;
+}
+
+.control .suffix {
+    position: absolute;
+    right: 12px;
+    color: var(--text-3);
+    font-size: 12px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.check-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    padding: 9px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg2);
+    color: var(--text-2);
+    font-size: 12.5px;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.check:hover {
+    border-color: var(--line-strong);
+    background: var(--bg3);
+    color: var(--text);
+}
+
+.check input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+
+    margin: 0;
+
+    border: 1.5px solid var(--line-strong);
+    border-radius: 5px;
+
+    background: var(--bg1);
+
+    display: grid;
+    place-items: center;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .1s ease;
+}
+
+.check input[type="checkbox"]:hover {
+    border-color: var(--accent);
+    background: var(--bg2);
+}
+
+.check input[type="checkbox"]:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.check input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.check input[type="checkbox"]:checked::after {
+    content: '';
+
+    width: 5px;
+    height: 9px;
+
+    border: solid #14100A;
+    border-width: 0 2px 2px 0;
+
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.check span {
+    line-height: 1.3;
+}
+
+.field input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.field input[type="number"]::-webkit-inner-spin-button,
+.field input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+@media (max-width: 900px) {
+
+    .qty-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .check-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .qty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .check-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .qty {
+        padding: 10px;
+    }
 }
