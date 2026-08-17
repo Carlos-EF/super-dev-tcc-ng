@@ -42,7 +42,7 @@
                                     <select id="proprietario">
                                         <option value="">Selecionar…</option>
                                         @for (owner of owners(); track owner.id) {
-                                            <option value="id">{{owner.nome}} — {{owner.numero}}</option>
+                                        <option value="id">{{owner.nome}} — {{owner.numero}}</option>
                                         }
                                     </select>
                                 </div>
@@ -87,7 +87,8 @@
                         <div class="form-grid cols-2">
                             <div class="field">
                                 <label for="codigo">Código de referência <span class="req">*</span></label>
-                                <input type="text" id="codigo" class="mono" placeholder="AP-0001" maxlength="12">
+                                <input type="text" id="codigo" formControlName="codigo" class="mono" placeholder="0001"
+                                    maxlength="4">
                             </div>
                             <div class="field">
                                 <label>Finalidade <span class="req">*</span></label>
@@ -187,19 +188,21 @@
                                         <input type="text" id="cep" formControlName="cep" mask="00000-000"
                                             [dropSpecialCharacters]="false" class="mono" placeholder="00000-000"
                                             maxlength="9" inputmode="numeric">
-                                        <span class="suffix-icon" id="cep-status">
+                                        <button type="button" class="suffix-icon" id="mk-cep-status"
+                                            (click)="searchCepForProperty()" aria-label="Buscar CEP">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                                                <circle cx="11" cy="11" r="7" />
-                                                <path d="m21 21-4.3-4.3" />
+                                                <circle cx="11" cy="11" r="7"></circle>
+                                                <path d="m21 21-4.3-4.3"></path>
                                             </svg>
-                                        </span>
+                                        </button>
                                     </div>
                                     <span class="hint">Endereço é buscado ao digitar o CEP completo</span>
                                 </div>
                                 <div class="field" style="grid-column:span 2">
                                     <label for="rua">Rua <span class="req">*</span></label>
-                                    <input type="text" id="rua" formControlName="rua" placeholder="Preenchido pelo CEP">
+                                    <input type="text" id="rua" formControlName="logradouro"
+                                        placeholder="Preenchido pelo CEP">
                                 </div>
                             </div>
                             <div class="form-grid cols-2">

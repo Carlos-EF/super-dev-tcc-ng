@@ -12,6 +12,8 @@ import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse } from '../../../models/broker.model';
 import { ClientsService } from '../../../services/clients.service';
 import { ClientResponse } from '../../../models/clients.model';
+import { SearchCepService } from '../../../services/search.cep.service';
+import { CepResponse } from '../../../models/cep.model';
 
 @Component({
   selector: 'app-create',
@@ -28,6 +30,7 @@ export class CreateProperty {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
   private readonly clientsService = inject(ClientsService);
+  private readonly cepService = inject(SearchCepService);
 
   brokers = model<BrokerResponse[]>([]);
   owners = model<ClientResponse[]>([]);
@@ -119,10 +122,10 @@ export class CreateProperty {
     this.brokerService.getAllForList().subscribe({
       next: (brokers: BrokerResponse[]) => {
         this.brokers.set(brokers);
-       },
-       error: (error: Error) => {
+      },
+      error: (error: Error) => {
         console.log('Ocorreu um erro ao tentar buscar corretores:', error);
-       }
+      }
     })
   };
 
@@ -130,10 +133,32 @@ export class CreateProperty {
     this.clientsService.getAllOwners().subscribe({
       next: (clients: ClientResponse[]) => {
         this.owners.set(clients);
-       },
-       error: (error: Error) => {
+      },
+      error: (error: Error) => {
         console.log('Ocorreu um erro ao tentar buscar clientes:', error);
-       }
+      }
     })
+  };
+
+  searchCepForProperty() {
+    const cep: string = this.propertyForm.get('cep')?.getRawValue();
+
+    const cleanCep = cep.replace('-', '').trim();
+
+    if (cleanCep.length == 8) {
+      this.cepService.get(cleanCep).subscribe({
+        next: (response: CepResponse) => {
+          return this.propertyForm.patchValue({
+            logradouro: response.street,
+            bairro: response.neighborhood,
+            cidade: response.city,
+            uf: response.state
+          });
+        },
+        error: (error: Error) => {
+          return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        }
+      })
+    }
   };
 }
