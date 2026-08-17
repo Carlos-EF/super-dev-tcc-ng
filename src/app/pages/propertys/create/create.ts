@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
@@ -8,6 +8,8 @@ import { ClientsTypes } from '../../../types/clients.types';
 import { ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
+import { BrokerService } from '../../../services/broker.service';
+import { BrokerResponse } from '../../../models/broker.model';
 
 @Component({
   selector: 'app-create',
@@ -16,12 +18,15 @@ import { NgxMaskDirective } from 'ngx-mask';
     ReactiveFormsModule,
     RouterLink,
     NgxMaskDirective
-],
+  ],
   templateUrl: './create.html',
   styleUrl: './create.scss',
 })
 export class CreateProperty {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly brokerService = inject(BrokerService);
+
+  brokers = model<BrokerResponse[]>([]);
 
   propertyForm = this.formBuilder.group({
     proprietario: [null as string | null],
@@ -99,4 +104,19 @@ export class CreateProperty {
     tipo: ['Proprietário' as ClientsTypes, [Validators.required]],
     como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
+
+  constructor() {
+    this.getAllBrokers();
+  };
+
+  getAllBrokers() {
+    this.brokerService.getAllForList().subscribe({
+      next: (brokers: BrokerResponse[]) => {
+        this.brokers.set(brokers);
+       },
+       error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar corretores:', error);
+       }
+    })
+  };
 }

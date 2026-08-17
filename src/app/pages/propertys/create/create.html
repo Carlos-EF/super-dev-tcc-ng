@@ -62,9 +62,9 @@
                                 <div class="select-wrap">
                                     <select id="corretor">
                                         <option value="">Selecionar…</option>
-                                        <option value="c1">Ana Beatriz Ramos — CRECI 18.902F</option>
-                                        <option value="c2">João Pereira Filho — CRECI 23.481F</option>
-                                        <option value="c3">Ricardo Tavares — CRECI 31.276F</option>
+                                        @for (broker of brokers(); track broker.id) {
+                                        <option value="id">{{broker.nome}} — CRECI {{broker.creci}}</option>
+                                        }
                                     </select>
                                 </div>
                                 <button type="button" class="btn-side" title="Cadastrar novo corretor"
@@ -93,9 +93,11 @@
                             <div class="field">
                                 <label>Finalidade <span class="req">*</span></label>
                                 <div class="segmented" role="radiogroup" aria-label="Finalidade">
-                                    <input type="radio" name="finalidade" formControlName="finalidade" id="fin-venda" value="Venda">
+                                    <input type="radio" name="finalidade" formControlName="finalidade" id="fin-venda"
+                                        value="Venda">
                                     <label for="fin-venda">Venda</label>
-                                    <input type="radio" name="finalidade" id="fin-locacao" formControlName="finalidade" value="Locação">
+                                    <input type="radio" name="finalidade" id="fin-locacao" formControlName="finalidade"
+                                        value="Locação">
                                     <label for="fin-locacao">Locação</label>
                                 </div>
                             </div>
@@ -183,8 +185,9 @@
                                 <div class="field">
                                     <label for="cep">CEP <span class="req">*</span></label>
                                     <div class="control">
-                                        <input type="text" id="cep" formControlName="cep" mask="00000-000" [dropSpecialCharacters]="false" class="mono"
-                                            placeholder="00000-000" maxlength="9" inputmode="numeric">
+                                        <input type="text" id="cep" formControlName="cep" mask="00000-000"
+                                            [dropSpecialCharacters]="false" class="mono" placeholder="00000-000"
+                                            maxlength="9" inputmode="numeric">
                                         <span class="suffix-icon" id="cep-status">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -247,7 +250,7 @@
             </section>
         </form>
     </div>
-    
+
     <aside class="ficha" aria-label="Resumo do imóvel">
         <div class="ficha-head">
             <h3>Ficha do imóvel</h3>
