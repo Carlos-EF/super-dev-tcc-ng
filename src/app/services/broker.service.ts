@@ -35,6 +35,14 @@ export class BrokerService {
         );
     };
 
+    getAllForList(): Observable<BrokerResponse[]> {
+        const urlForList = `${this.url}/list`
+
+        return this.httpClient.get<BrokerResponse[]>(
+            urlForList,
+        );
+    };
+
     getById(id: string): Observable<BrokerResponse> {
         const urlWithId = `${this.url}/${id}`;
 

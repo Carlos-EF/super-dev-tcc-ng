@@ -214,15 +214,6 @@ button:focus-visible {
     padding-left: 38px
 }
 
-.control .suffix-icon {
-    position: absolute;
-    right: 10px;
-    color: var(--text-3);
-    pointer-events: none;
-    display: grid;
-    place-items: center
-}
-
 select {
     padding-right: 34px;
     cursor: pointer
@@ -920,4 +911,33 @@ select {
     grid-template-columns: 1fr 320px;
     gap: 24px;
     align-items: start
+}
+
+.suffix-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+}
+
+.control .suffix-icon {
+    position: absolute;
+    right: 10px;
+    color: var(--text-3);
+    display: grid;
+    place-items: center
+}
+
+.suffix-icon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.suffix-icon:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }

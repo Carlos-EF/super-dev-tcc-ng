@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
@@ -7,19 +7,38 @@ import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
+import { NgxMaskDirective } from 'ngx-mask';
+import { BrokerService } from '../../../services/broker.service';
+import { BrokerResponse } from '../../../models/broker.model';
+import { ClientsService } from '../../../services/clients.service';
+import { ClientResponse } from '../../../models/clients.model';
+import { SearchCepService } from '../../../services/search.cep.service';
+import { CepResponse } from '../../../models/cep.model';
+import { CondominiumService } from '../../../services/condominium.service';
+import { CondominiumResponse } from '../../../models/condominium.model';
 
 @Component({
   selector: 'app-create',
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    RouterLink
-],
+    RouterLink,
+    NgxMaskDirective
+  ],
   templateUrl: './create.html',
   styleUrl: './create.scss',
 })
 export class CreateProperty {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly brokerService = inject(BrokerService);
+  private readonly clientsService = inject(ClientsService);
+  private readonly cepService = inject(SearchCepService);
+  private readonly condominiumService = inject(CondominiumService);
+
+
+  brokers = model<BrokerResponse[]>([]);
+  owners = model<ClientResponse[]>([]);
+  condominiums = model<CondominiumResponse[]>([]);
 
   propertyForm = this.formBuilder.group({
     proprietario: [null as string | null],
@@ -28,7 +47,7 @@ export class CreateProperty {
     finalidade: [null as FinalityTypes | null, Validators.required],
     tipo: [null as PropertyTypes | null, Validators.required],
     em_condominio: [false, Validators.required],
-    condominio: [null as string | null],
+    condominio: [''],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     numero: [null as number | null, Validators.required],
@@ -97,4 +116,67 @@ export class CreateProperty {
     tipo: ['Proprietário' as ClientsTypes, [Validators.required]],
     como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
+
+  constructor() {
+    this.getAllBrokers();
+
+    this.getAllCondominums();
+
+    this.getAllCondominums();
+  };
+
+  getAllBrokers() {
+    this.brokerService.getAllForList().subscribe({
+      next: (brokers: BrokerResponse[]) => {
+        this.brokers.set(brokers);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar corretores:', error);
+      }
+    })
+  };
+
+  getAllOwners() {
+    this.clientsService.getAllOwners().subscribe({
+      next: (clients: ClientResponse[]) => {
+        this.owners.set(clients);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar clientes:', error);
+      }
+    })
+  };
+
+  getAllCondominums() {
+    this.condominiumService.getAllForList().subscribe({
+      next: (condominiums: CondominiumResponse[]) => {
+        this.condominiums.set(condominiums);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar condomínios:', error);
+      }
+    })
+  };
+
+  searchCepForProperty() {
+    const cep: string = this.propertyForm.get('cep')?.getRawValue();
+
+    const cleanCep = cep.replace('-', '').trim();
+
+    if (cleanCep.length == 8) {
+      this.cepService.get(cleanCep).subscribe({
+        next: (response: CepResponse) => {
+          return this.propertyForm.patchValue({
+            logradouro: response.street,
+            bairro: response.neighborhood,
+            cidade: response.city,
+            uf: response.state
+          });
+        },
+        error: (error: Error) => {
+          return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        }
+      })
+    }
+  };
 }

@@ -43,6 +43,12 @@ export class ClientsService {
         });
     }
 
+    getAllOwners(): Observable<ClientResponse[]> {
+        const urlForList = `${this.url}/owners`;
+
+        return this.httpClient.get<ClientResponse[]>(urlForList);
+    }
+
     delete(id: string): Observable<void> {
         const urlWithId = `${this.url}/${id}`;
 
