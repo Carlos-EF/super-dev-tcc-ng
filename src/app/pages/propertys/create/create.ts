@@ -10,6 +10,8 @@ import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse } from '../../../models/broker.model';
+import { ClientsService } from '../../../services/clients.service';
+import { ClientResponse } from '../../../models/clients.model';
 
 @Component({
   selector: 'app-create',
@@ -25,8 +27,10 @@ import { BrokerResponse } from '../../../models/broker.model';
 export class CreateProperty {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
+  private readonly clientsService = inject(ClientsService);
 
   brokers = model<BrokerResponse[]>([]);
+  owners = model<ClientResponse[]>([]);
 
   propertyForm = this.formBuilder.group({
     proprietario: [null as string | null],
@@ -107,6 +111,8 @@ export class CreateProperty {
 
   constructor() {
     this.getAllBrokers();
+
+    this.getAllOwners();
   };
 
   getAllBrokers() {
@@ -116,6 +122,17 @@ export class CreateProperty {
        },
        error: (error: Error) => {
         console.log('Ocorreu um erro ao tentar buscar corretores:', error);
+       }
+    })
+  };
+
+  getAllOwners() {
+    this.clientsService.getAllOwners().subscribe({
+      next: (clients: ClientResponse[]) => {
+        this.owners.set(clients);
+       },
+       error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar clientes:', error);
        }
     })
   };

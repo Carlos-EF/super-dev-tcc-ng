@@ -41,10 +41,9 @@
                                 <div class="select-wrap">
                                     <select id="proprietario">
                                         <option value="">Selecionar…</option>
-                                        <option value="p1">Maria Aparecida Souza — (47) 99812-3456</option>
-                                        <option value="p2">Carlos Eduardo Lima — (47) 98455-7810</option>
-                                        <option value="p3">Helena Prust Wagner — (47) 99120-6633</option>
-                                        <option value="p4">Osmar Kretzschmar — (47) 98877-2041</option>
+                                        @for (owner of owners(); track owner.id) {
+                                            <option value="id">{{owner.nome}} — {{owner.numero}}</option>
+                                        }
                                     </select>
                                 </div>
                                 <button type="button" class="btn-side" title="Cadastrar novo proprietário"
