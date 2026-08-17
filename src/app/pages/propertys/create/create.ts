@@ -5,13 +5,13 @@ import { PropertyTypes } from '../../../types/property.types';
 import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
-import { ContactTypes } from '../../../types/contact.types';
+import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse } from '../../../models/broker.model';
 import { ClientsService } from '../../../services/clients.service';
-import { ClientResponse } from '../../../models/clients.model';
+import { ClientResponse, CreateClientRequest } from '../../../models/clients.model';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 import { CondominiumService } from '../../../services/condominium.service';
@@ -42,11 +42,17 @@ export class CreateProperty {
   owners = model<ClientResponse[]>([]);
   condominiums = model<CondominiumResponse[]>([]);
 
-  openModal: boolean = false;
+  contactTypes = [...CONTACT_TYPES];
+
+  openCondominiumModal: boolean = false;
+
+  openClientModal: boolean = false;
+
+  openBrokerModal: boolean = false;
 
   propertyForm = this.formBuilder.group({
-    proprietario: [null as string | null],
-    corretor: [null as string | null],
+    proprietario: [''],
+    corretor: [''],
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     finalidade: [null as FinalityTypes | null, Validators.required],
     tipo: [null as PropertyTypes | null, Validators.required],
@@ -134,9 +140,9 @@ export class CreateProperty {
   constructor() {
     this.getAllBrokers();
 
-    this.getAllCondominums();
+    this.getAllOwners();
 
-    this.getAllCondominums();
+    this.getAllCondominiums();
   };
 
   getAllBrokers() {
@@ -161,7 +167,7 @@ export class CreateProperty {
     })
   };
 
-  getAllCondominums() {
+  getAllCondominiums() {
     this.condominiumService.getAllForList().subscribe({
       next: (condominiums: CondominiumResponse[]) => {
         this.condominiums.set(condominiums);
@@ -216,18 +222,38 @@ export class CreateProperty {
     }
   };
 
-   openCreateModal() {
-    this.openModal = true;
+  openCreateCondominiumModal() {
+    this.openCondominiumModal = true;
+  };
+
+  openCreateBrokerModal() {
+    this.openBrokerModal = true;
+  };
+
+  openCreateClientModal() {
+    this.openClientModal = true;
   };
 
   cancelModal() {
-    this.openModal = false;
+    this.openCondominiumModal = false;
 
     this.condominiumForm.reset();
+
+    this.openClientModal = false;
+
+    this.clientForm.reset();
+
+    this.openBrokerModal = false;
+
+    this.brokerForm.reset();
   };
 
   closeModal() {
-    this.openModal = false;
+    this.openCondominiumModal = false;
+
+    this.openBrokerModal = false;
+
+    this.openClientModal = false;
   };
 
   saveCondominium() {
@@ -251,8 +277,20 @@ export class CreateProperty {
 
   createCondominium(condominium: CreateCondominiumRequest) {
     this.condominiumService.create(condominium).subscribe({
-      next: () => {
+      next: (condominium: CondominiumResponse) => {
         this.toastService.show('create', 'Condomínio');
+
+        this.propertyForm.patchValue({
+          condominio: condominium.id,
+          cep: condominium.cep,
+          logradouro: condominium.logradouro,
+          numero: condominium.numero,
+          bairro: condominium.bairro,
+          uf: condominium.uf,
+          cidade: condominium.cidade,
+        });
+
+        this.getAllCondominiums();
 
         this.closeModal();
       },
@@ -260,6 +298,47 @@ export class CreateProperty {
         return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
       }
     })
-  }
-}
+  };
 
+  saveClient() {
+    if (this.clientForm.invalid) {
+      this.clientForm.markAllAsTouched();
+
+      return;
+    };
+
+    const newClient: CreateClientRequest = {
+      nome: this.clientForm.getRawValue().nome!,
+      codigo: this.clientForm.getRawValue().codigo!,
+      numero: this.clientForm.getRawValue().numero!,
+      email: this.clientForm.getRawValue().email!,
+      tipo: this.clientForm.getRawValue().tipo!,
+      como_encontrou: this.clientForm.getRawValue().como_encontrou!,
+    };
+
+    this.createClient(newClient);
+  };
+
+  createClient(client: CreateClientRequest) {
+    this.clientsService.create(
+      client
+    ).subscribe({
+      next: (client: ClientResponse) => {
+        this.toastService.show('create', 'Cliente');
+
+        this.propertyForm.patchValue({
+          proprietario: client.id
+        });
+
+        this.getAllOwners();
+
+        this.clientForm.reset();
+
+        this.openClientModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar os dados do cliente:', error);
+      }
+    })
+  };
+}

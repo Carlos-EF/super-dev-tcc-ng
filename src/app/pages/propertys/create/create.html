@@ -39,14 +39,15 @@
                             <label for="proprietario">Proprietário <span class="req">*</span></label>
                             <div class="input-action">
                                 <div class="select-wrap">
-                                    <select id="proprietario">
+                                    <select id="proprietario" formControlName="proprietario">
                                         <option value="">Selecionar…</option>
                                         @for (owner of owners(); track owner.id) {
-                                        <option value="id">{{owner.nome}} — {{owner.numero}}</option>
+                                        <option [value]="owner.id">{{owner.nome}} — {{owner.numero}}</option>
                                         }
                                     </select>
                                 </div>
-                                <button type="button" class="btn-side" title="Cadastrar novo proprietário"
+                                <button type="button" (click)="openCreateClientModal()" 
+                                class="btn-side" title="Cadastrar novo proprietário"
                                     aria-label="Cadastrar novo proprietário" data-open-modal="modal-proprietario">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round">
@@ -59,10 +60,10 @@
                             <label for="corretor">Corretor <span class="req">*</span></label>
                             <div class="input-action">
                                 <div class="select-wrap">
-                                    <select id="corretor">
+                                    <select id="corretor" formControlName="corretor">
                                         <option value="">Selecionar…</option>
                                         @for (broker of brokers(); track broker.id) {
-                                        <option value="id">{{broker.nome}} — CRECI {{broker.creci}}</option>
+                                        <option [value]="broker.id">{{broker.nome}} — CRECI {{broker.creci}}</option>
                                         }
                                     </select>
                                 </div>
@@ -167,13 +168,13 @@
                                         <select formControlName="condominio" id="nome-condominio">
                                             <option value="">Selecionar…</option>
                                             @for (condominium of condominiums(); track condominium.id) {
-                                            <option value="id">{{condominium.nome}}</option>
+                                            <option [value]="condominium.id">{{condominium.nome}}</option>
                                             }
                                         </select>
                                     </div>
-                                    <button type="button" (click)="openCreateModal()"
-                                     class="btn-side" title="Cadastrar novo condomínio"
-                                        aria-label="Cadastrar novo condomínio" data-open-modal="modal-condominio">
+                                    <button type="button" (click)="openCreateCondominiumModal()" class="btn-side"
+                                        title="Cadastrar novo condomínio" aria-label="Cadastrar novo condomínio"
+                                        data-open-modal="modal-condominio">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                             <path d="M12 5v14M5 12h14" />
@@ -329,10 +330,10 @@
 </div>
 
 
-@if (openModal === true) {
+@if (openCondominiumModal === true) {
 <form [formGroup]="condominiumForm">
-    <div class="modal-backdrop" [class.open]="openModal" id="modal-condominio" role="dialog" aria-modal="true"
-        aria-labelledby="mk-title">
+    <div class="modal-backdrop" [class.open]="openCondominiumModal" id="modal-condominio" role="dialog"
+        aria-modal="true" aria-labelledby="mk-title">
         <div class="modal">
             <div class="modal-head">
                 <div>
@@ -371,9 +372,10 @@
                                 <input type="text" mask="00000-000" [dropSpecialCharacters]="false"
                                     formControlName="cep" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
                                     inputmode="numeric">
-                                <button type="button" class="suffix-icon" id="mk-cep-status" (click)="searchCepForCondominium()"
-                                    aria-label="Buscar CEP"> <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <button type="button" class="suffix-icon" id="mk-cep-status"
+                                    (click)="searchCepForCondominium()" aria-label="Buscar CEP"> <svg width="15"
+                                        height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
                                         <circle cx="11" cy="11" r="7"></circle>
                                         <path d="m21 21-4.3-4.3"></path>
                                     </svg>
@@ -490,3 +492,167 @@
     </div>
 </form>
 }
+
+<div class="modal-backdrop" [class.open]="openClientModal" id="modal-cliente" role="dialog" aria-modal="true"
+    aria-labelledby="ml-title">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h3 id="ml-title">Cadastrar cliente</h3>
+                <p id="ml-sub">O cliente ficará disponível para vínculos com imóveis e negociações.</p>
+            </div>
+
+            <button class="icon-btn" (click)="closeModal()" aria-label="Fechar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <form [formGroup]="clientForm" class="form-grid">
+
+                <div class="form-grid cols-2">
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('nome')?.invalid && clientForm.get('nome')?.touched">
+
+                        <label for="ml-nome">Nome completo <span class="req">*</span></label>
+
+                        <input type="text" id="ml-nome" placeholder="Maria da Silva" formControlName="nome">
+
+                        @if (clientForm.get('nome')?.touched && clientForm.get('nome')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('nome')?.errors?.['required']) {
+                            Informe o nome do cliente.
+                            }
+                            @if (clientForm.get('nome')?.errors?.['minlength']) {
+                            Mínimo de 3 caracteres.
+                            }
+                            @if (clientForm.get('nome')?.errors?.['maxlength']) {
+                            Máximo de 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('codigo')?.invalid && clientForm.get('codigo')?.touched">
+
+                        <label for="ml-codigo">Código <span class="req">*</span></label>
+                        <input type="text" id="ml-codigo" class="mono" placeholder="1234" maxlength="4"
+                            formControlName="codigo">
+
+                        @if (clientForm.get('codigo')?.touched && clientForm.get('codigo')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('codigo')?.errors?.['required']) {
+                            Informe o código.
+                            }
+                            @if (clientForm.get('codigo')?.errors?.['minlength'] ||
+                            clientForm.get('codigo')?.errors?.['maxlength']) {
+                            O código deve ter exatamente 4 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-grid cols-2">
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('numero')?.invalid && clientForm.get('numero')?.touched">
+
+                        <label for="ml-celular">Celular <span class="req">*</span></label>
+                        <input type="tel" id="ml-celular" class="mono phone" mask="(00) 00000-0000"
+                            placeholder="(47) 91234-5678" inputmode="numeric" [dropSpecialCharacters]="false"
+                            formControlName="numero">
+
+                        @if (clientForm.get('numero')?.touched && clientForm.get('numero')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('numero')?.errors?.['required']) {
+                            Informe o celular.
+                            }
+                            @if (clientForm.get('numero')?.errors?.['minlength'] ||
+                            clientForm.get('numero')?.errors?.['maxlength']) {
+                            Use o formato (47) 91234-5678.
+                            }
+                        </span>
+                        }
+                    </div>
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
+
+                        <label for="ml-email">E-mail <span class="req">*</span></label>
+                        <input type="email" id="ml-email" placeholder="maria@email.com" formControlName="email">
+
+                        @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('email')?.errors?.['required']) {
+                            Informe o e-mail.
+                            }
+                            @if (clientForm.get('email')?.errors?.['email']) {
+                            Informe um e-mail válido.
+                            }
+                            @if (clientForm.get('email')?.errors?.['maxlength']) {
+                            Máximo de 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="field" [class.invalid]="clientForm.get('tipo')?.invalid && clientForm.get('tipo')?.touched">
+
+                    <label id="ml-tipo-label">Tipo do cliente <span class="req">*</span></label>
+                    <div class="segmented" role="radiogroup" aria-labelledby="ml-tipo-label">
+                        <input checked type="radio" id="mt-proprietario" value="Proprietário" formControlName="tipo">
+                        <label for="mt-proprietario">Proprietário</label>
+                    </div>
+
+                    @if (clientForm.get('tipo')?.touched && clientForm.get('tipo')?.errors?.['required']) {
+                    <span class="hint hint-error">Escolha o tipo do cliente.</span>
+                    }
+                </div>
+
+                <div class="field"
+                    [class.invalid]="clientForm.get('como_encontrou')?.invalid && clientForm.get('como_encontrou')?.touched">
+
+                    <label for="ml-origem">Como nos encontrou <span class="req">*</span></label>
+
+                    <div class="select-wrap">
+                        <select id="ml-origem" formControlName="como_encontrou">
+                            <option [ngValue]="null">Selecionar…</option>
+                            @for (contact of contactTypes; track contact) {
+                            <option [value]="contact">{{ contact }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    @if (clientForm.get('como_encontrou')?.touched &&
+                    clientForm.get('como_encontrou')?.errors?.['required']) {
+                    <span class="hint hint-error">Selecione a origem do contato.</span>
+                    }
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-foot">
+            <button class="btn btn-ghost" type="button" (click)="closeModal()">
+                Cancelar
+            </button>
+
+            <button class="btn btn-primary" type="button" [disabled]="clientForm.invalid" (click)="saveClient()">
+
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+
+                <span>Salvar cliente</span>
+            </button>
+        </div>
+    </div>
+</div>
