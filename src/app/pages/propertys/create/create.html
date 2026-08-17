@@ -46,9 +46,9 @@
                                         }
                                     </select>
                                 </div>
-                                <button type="button" (click)="openCreateClientModal()" 
-                                class="btn-side" title="Cadastrar novo proprietário"
-                                    aria-label="Cadastrar novo proprietário" data-open-modal="modal-proprietario">
+                                <button type="button" (click)="openCreateClientModal()" class="btn-side"
+                                    title="Cadastrar novo proprietário" aria-label="Cadastrar novo proprietário"
+                                    data-open-modal="modal-proprietario">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round">
                                         <path d="M12 5v14M5 12h14" />
@@ -67,7 +67,8 @@
                                         }
                                     </select>
                                 </div>
-                                <button type="button" class="btn-side" title="Cadastrar novo corretor"
+                                <button type="button" (click)="openCreateBrokerModal()"
+                                 class="btn-side" title="Cadastrar novo corretor"
                                     aria-label="Cadastrar novo corretor" data-open-modal="modal-corretor">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round">
@@ -656,3 +657,187 @@
         </div>
     </div>
 </div>
+
+@if (openBrokerModal == true) {
+<form [formGroup]="brokerForm">
+    <div class="modal-backdrop open" role="dialog" aria-modal="true" aria-labelledby="mc-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mc-title">
+                        Cadastrar corretor
+                    </h3>
+                    <p>O corretor ficará disponível para responder pelos imóveis e negociações.</p>
+                </div>
+                <button type="button" (click)="closeModal()" class="icon-btn" aria-label="Fechar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">01</span> Informações necessárias
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-grid cols-2">
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('nome')?.touched && brokerForm.get('nome')?.invalid">
+                            <label for="mc-nome">Nome completo <span class="req">*</span>
+                            </label> <input type="text" id="mc-nome" formControlName="nome" placeholder="João Pereira">
+                            @if (brokerForm.get('nome')?.touched && brokerForm.get('nome')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('nome')?.errors?.['required']) {
+                                O nome é obrigatório.
+                                }
+                                @if (brokerForm.get('nome')?.errors?.['minlength']) {
+                                O nome deve ter pelo menos 3 caracteres. }
+                                @if
+                                (brokerForm.get('nome')?.errors?.['maxlength']) {
+                                O nome deve ter no máximo 60 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid">
+                            <label for="mc-codigo">Código <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-codigo" class="mono" formControlName="codigo"
+                                placeholder="0001 ou CR01">
+                            @if (brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('codigo')?.errors?.['required']) {
+                                O código é
+                                obrigatório.
+                                }
+                                @if (brokerForm.get('codigo')?.errors?.['minlength'] ||
+                                brokerForm.get('codigo')?.errors?.['maxlength']) {
+                                O código deve ter exatamente 4
+                                caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid">
+                            <label for="mc-creci">CRECI <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-creci" class="mono" formControlName="creci" mask="00.000A"
+                                [dropSpecialCharacters]="false" placeholder="00.000F">
+                            @if (brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('creci')?.errors?.['required']) {
+                                O CRECI é obrigatório.
+                                }
+                                @if (brokerForm.get('creci')?.errors?.['minlength'] ||
+                                brokerForm.get('creci')?.errors?.['maxlength'] ||
+                                brokerForm.get('creci')?.errors?.['pattern']) {
+                                O CRECI deve estar no formato 00.000F.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('numero')?.touched && brokerForm.get('numero')?.invalid">
+                            <label for="mc-celular">Celular <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-celular" [dropSpecialCharacters]="false" class="mono"
+                                formControlName="numero" mask="(00) 00000-0000" placeholder="(00) 00000-0000">
+                            @if (brokerForm.get('numero')?.touched && brokerForm.get('numero')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('numero')?.errors?.['required']) {
+                                O celular
+                                é obrigatório. }
+                                @if (brokerForm.get('numero')?.errors?.['minlength'] ||
+                                brokerForm.get('numero')?.errors?.['maxlength']) {
+                                O celular deve estar no formato (00)
+                                00000-0000.
+                                } </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('email')?.touched && brokerForm.get('email')?.invalid">
+                            <label for="mc-email">E-mail <span class="req">*</span>
+                            </label>
+                            <input type="email" id="mc-email" formControlName="email"
+                                placeholder="joao@imobiliaria.com">
+                            @if (brokerForm.get('email')?.touched && brokerForm.get('email')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('email')?.errors?.['required']) {
+                                O e-mail é
+                                obrigatório.
+                                }
+                                @if (brokerForm.get('email')?.errors?.['email']) {
+                                Informe um e-mail
+                                válido.
+                                }
+                                @if (brokerForm.get('email')?.errors?.['maxlength']) {
+                                O e-mail deve ter no
+                                máximo 60 caracteres.
+                                } </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <hr class="form-divider">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">02</span> Informações pessoais
+                        <span class="opt">(Opcional)</span>
+                    </div>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field"
+                        [class.invalid]="brokerForm.get('data_nascimento')?.touched && brokerForm.get('data_nascimento')?.invalid">
+                        <label for="mc-nascimento">Data de nascimento</label>
+                        <input type="text" id="mc-nascimento" class="mono" formControlName="data_nascimento"
+                            mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="dd/mm/aaaa">
+                        @if (brokerForm.get('data_nascimento')?.touched &&
+                        brokerForm.get('data_nascimento')?.invalid) {
+
+                        <span class="error-message"> A data deve estar no formato dd/mm/aaaa. </span>
+                        }
+                    </div>
+                    <div class="field" [class.invalid]="brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid">
+                        <label for="mc-rg">RG</label>
+                        <input type="text" id="mc-rg" [dropSpecialCharacters]="false" class="mono" formControlName="rg"
+                            mask="0.000.000" placeholder="0.000.000">
+                        @if (brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid) {
+                        <span class="error-message">
+                            O RG deve estar no formato
+                            0.000.000.
+                        </span>
+                        }
+                    </div>
+                    <div class="field"
+                        [class.invalid]="brokerForm.get('cpf')?.touched && brokerForm.get('cpf')?.invalid">
+                        <label for="mc-cpf">CPF</label>
+                        <input type="text" id="mc-cpf" class="mono" formControlName="cpf"
+                            [dropSpecialCharacters]="false" mask="000.000.000-00" placeholder="000.000.000-00">
+                        @if (brokerForm.get('cpf')?.touched && brokerForm.get('cpf')?.invalid) {
+                        <span class="error-message">
+                            O CPF deve estar no formato 000.000.000-00.
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" (click)="cancelModal()" class="btn btn-ghost"> Cancelar
+                </button>
+                <button type="button" (click)="saveBroker()" class="btn btn-primary"> <svg width="15" height="15"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    Salvar corretor
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+}

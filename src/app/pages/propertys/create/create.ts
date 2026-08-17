@@ -9,7 +9,7 @@ import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
-import { BrokerResponse } from '../../../models/broker.model';
+import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
 import { ClientsService } from '../../../services/clients.service';
 import { ClientResponse, CreateClientRequest } from '../../../models/clients.model';
 import { SearchCepService } from '../../../services/search.cep.service';
@@ -340,5 +340,47 @@ export class CreateProperty {
         return console.log('Ocorreu um erro ao tentar cadastrar os dados do cliente:', error);
       }
     })
+  };
+
+  saveBroker() {
+    if (this.brokerForm.invalid) {
+      this.brokerForm.markAllAsTouched();
+
+      return;
+    }
+
+    const newBroker: CreateBrokerRequest = {
+      nome: this.brokerForm.getRawValue().nome!,
+      creci: this.brokerForm.getRawValue().creci!,
+      codigo: this.brokerForm.getRawValue().codigo!,
+      numero: this.brokerForm.getRawValue().numero!,
+      email: this.brokerForm.getRawValue().email!,
+      data_nascimento: this.brokerForm.getRawValue().data_nascimento!,
+      rg: this.brokerForm.getRawValue().rg!,
+      cpf: this.brokerForm.getRawValue().cpf!
+    }
+
+    this.createBroker(newBroker);
+  };
+
+  createBroker(broker: CreateBrokerRequest) {
+    this.brokerService.create(broker).subscribe({
+      next: (broker: BrokerResponse) => {
+        this.toastService.show('create', 'corretor');
+
+        this.getAllBrokers();
+
+        this.propertyForm.patchValue({
+          corretor: broker.id
+        });
+
+        this.brokerForm.reset();
+
+        this.openBrokerModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar criar o corretor:', error);
+      }
+    });
   };
 }
