@@ -50,6 +50,8 @@ export class CreateProperty {
 
   openBrokerModal: boolean = false;
 
+  currentStep = 1;
+
   propertyForm = this.formBuilder.group({
     proprietario: [''],
     corretor: [''],
@@ -382,5 +384,23 @@ export class CreateProperty {
         return console.log('Ocorreu um erro ao tentar criar o corretor:', error);
       }
     });
+  };
+
+  nextStep(): void {
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  };
+
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  };
+
+  goToStep(step: number): void {
+    if (step >= 1 && step <= 3) {
+      this.currentStep = step;
+    }
   };
 }
