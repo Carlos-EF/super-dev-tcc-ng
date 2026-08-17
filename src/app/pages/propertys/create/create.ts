@@ -5,17 +5,18 @@ import { PropertyTypes } from '../../../types/property.types';
 import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
-import { ContactTypes } from '../../../types/contact.types';
+import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
-import { BrokerResponse } from '../../../models/broker.model';
+import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
 import { ClientsService } from '../../../services/clients.service';
-import { ClientResponse } from '../../../models/clients.model';
+import { ClientResponse, CreateClientRequest } from '../../../models/clients.model';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 import { CondominiumService } from '../../../services/condominium.service';
-import { CondominiumResponse } from '../../../models/condominium.model';
+import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-create',
@@ -34,15 +35,26 @@ export class CreateProperty {
   private readonly clientsService = inject(ClientsService);
   private readonly cepService = inject(SearchCepService);
   private readonly condominiumService = inject(CondominiumService);
+  private readonly toastService = inject(ToastService);
 
 
   brokers = model<BrokerResponse[]>([]);
   owners = model<ClientResponse[]>([]);
   condominiums = model<CondominiumResponse[]>([]);
 
+  contactTypes = [...CONTACT_TYPES];
+
+  openCondominiumModal: boolean = false;
+
+  openClientModal: boolean = false;
+
+  openBrokerModal: boolean = false;
+
+  currentStep = 1;
+
   propertyForm = this.formBuilder.group({
-    proprietario: [null as string | null],
-    corretor: [null as string | null],
+    proprietario: [''],
+    corretor: [''],
     codigo: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
     finalidade: [null as FinalityTypes | null, Validators.required],
     tipo: [null as PropertyTypes | null, Validators.required],
@@ -117,12 +129,22 @@ export class CreateProperty {
     como_encontrou: [null as ContactTypes | null, [Validators.required]]
   });
 
+  condominiumForm = this.formBuilder.group({
+    nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+    logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
+    numero: [null as number | null, Validators.required],
+    bairro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+    uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
+    cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
+  });
+
   constructor() {
     this.getAllBrokers();
 
-    this.getAllCondominums();
+    this.getAllOwners();
 
-    this.getAllCondominums();
+    this.getAllCondominiums();
   };
 
   getAllBrokers() {
@@ -147,7 +169,7 @@ export class CreateProperty {
     })
   };
 
-  getAllCondominums() {
+  getAllCondominiums() {
     this.condominiumService.getAllForList().subscribe({
       next: (condominiums: CondominiumResponse[]) => {
         this.condominiums.set(condominiums);
@@ -177,6 +199,208 @@ export class CreateProperty {
           return console.log('Ocorreu um erro ao buscar o CEP:', error);
         }
       })
+    }
+  };
+
+  searchCepForCondominium() {
+    const cep: string = this.condominiumForm.get('cep')?.getRawValue();
+
+    const cleanCep = cep.replace('-', '').trim();
+
+    if (cleanCep.length == 8) {
+      this.cepService.get(cleanCep).subscribe({
+        next: (response: CepResponse) => {
+          return this.condominiumForm.patchValue({
+            logradouro: response.street,
+            bairro: response.neighborhood,
+            cidade: response.city,
+            uf: response.state
+          });
+        },
+        error: (error: Error) => {
+          return console.log('Ocorreu um erro ao buscar o CEP:', error);
+        }
+      })
+    }
+  };
+
+  openCreateCondominiumModal() {
+    this.openCondominiumModal = true;
+  };
+
+  openCreateBrokerModal() {
+    this.openBrokerModal = true;
+  };
+
+  openCreateClientModal() {
+    this.openClientModal = true;
+  };
+
+  cancelModal() {
+    this.openCondominiumModal = false;
+
+    this.condominiumForm.reset();
+
+    this.openClientModal = false;
+
+    this.clientForm.reset();
+
+    this.openBrokerModal = false;
+
+    this.brokerForm.reset();
+  };
+
+  closeModal() {
+    this.openCondominiumModal = false;
+
+    this.openBrokerModal = false;
+
+    this.openClientModal = false;
+  };
+
+  saveCondominium() {
+    if (this.condominiumForm.invalid) {
+      this.condominiumForm.markAllAsTouched();
+
+      return;
+    }
+    const newCondominium: CreateCondominiumRequest = {
+      nome: this.condominiumForm.getRawValue().nome!,
+      cep: this.condominiumForm.getRawValue().cep!,
+      logradouro: this.condominiumForm.getRawValue().logradouro!,
+      numero: this.condominiumForm.getRawValue().numero!,
+      bairro: this.condominiumForm.getRawValue().bairro!,
+      uf: this.condominiumForm.getRawValue().uf!,
+      cidade: this.condominiumForm.getRawValue().cidade!
+    }
+
+    this.createCondominium(newCondominium);
+  };
+
+  createCondominium(condominium: CreateCondominiumRequest) {
+    this.condominiumService.create(condominium).subscribe({
+      next: (condominium: CondominiumResponse) => {
+        this.toastService.show('create', 'Condomínio');
+
+        this.propertyForm.patchValue({
+          condominio: condominium.id,
+          cep: condominium.cep,
+          logradouro: condominium.logradouro,
+          numero: condominium.numero,
+          bairro: condominium.bairro,
+          uf: condominium.uf,
+          cidade: condominium.cidade,
+        });
+
+        this.getAllCondominiums();
+
+        this.closeModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar condomínio:', error);
+      }
+    })
+  };
+
+  saveClient() {
+    if (this.clientForm.invalid) {
+      this.clientForm.markAllAsTouched();
+
+      return;
+    };
+
+    const newClient: CreateClientRequest = {
+      nome: this.clientForm.getRawValue().nome!,
+      codigo: this.clientForm.getRawValue().codigo!,
+      numero: this.clientForm.getRawValue().numero!,
+      email: this.clientForm.getRawValue().email!,
+      tipo: this.clientForm.getRawValue().tipo!,
+      como_encontrou: this.clientForm.getRawValue().como_encontrou!,
+    };
+
+    this.createClient(newClient);
+  };
+
+  createClient(client: CreateClientRequest) {
+    this.clientsService.create(
+      client
+    ).subscribe({
+      next: (client: ClientResponse) => {
+        this.toastService.show('create', 'Cliente');
+
+        this.propertyForm.patchValue({
+          proprietario: client.id
+        });
+
+        this.getAllOwners();
+
+        this.clientForm.reset();
+
+        this.openClientModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar cadastrar os dados do cliente:', error);
+      }
+    })
+  };
+
+  saveBroker() {
+    if (this.brokerForm.invalid) {
+      this.brokerForm.markAllAsTouched();
+
+      return;
+    }
+
+    const newBroker: CreateBrokerRequest = {
+      nome: this.brokerForm.getRawValue().nome!,
+      creci: this.brokerForm.getRawValue().creci!,
+      codigo: this.brokerForm.getRawValue().codigo!,
+      numero: this.brokerForm.getRawValue().numero!,
+      email: this.brokerForm.getRawValue().email!,
+      data_nascimento: this.brokerForm.getRawValue().data_nascimento!,
+      rg: this.brokerForm.getRawValue().rg!,
+      cpf: this.brokerForm.getRawValue().cpf!
+    }
+
+    this.createBroker(newBroker);
+  };
+
+  createBroker(broker: CreateBrokerRequest) {
+    this.brokerService.create(broker).subscribe({
+      next: (broker: BrokerResponse) => {
+        this.toastService.show('create', 'corretor');
+
+        this.getAllBrokers();
+
+        this.propertyForm.patchValue({
+          corretor: broker.id
+        });
+
+        this.brokerForm.reset();
+
+        this.openBrokerModal = false;
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar criar o corretor:', error);
+      }
+    });
+  };
+
+  nextStep(): void {
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  };
+
+  previousStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  };
+
+  goToStep(step: number): void {
+    if (step >= 1 && step <= 3) {
+      this.currentStep = step;
     }
   };
 }

@@ -9,17 +9,20 @@
 <p class="page-sub">Preencha os dados em três etapas. A ficha ao lado mostra o anúncio tomando forma.</p>
 
 <div class="stepper" role="tablist" aria-label="Etapas do cadastro">
-    <button class="step current" data-step="1" role="tab" aria-selected="true">
+    <button class="step" (click)="goToStep(1)"
+     [class.current]="currentStep == 1" data-step="1" role="tab" [aria-selected]="currentStep == 1">
         <span class="step-dot">1</span>
         <span class="step-name">Dados do imóvel</span>
     </button>
     <div class="step-line" data-line="1"></div>
-    <button class="step" data-step="2" role="tab" aria-selected="false">
+    <button class="step" (click)="goToStep(2)"
+     [class.current]="currentStep == 2" data-step="2" role="tab" [aria-selected]="currentStep == 2">
         <span class="step-dot">2</span>
         <span class="step-name">Valores e características</span>
     </button>
     <div class="step-line" data-line="2"></div>
-    <button class="step" data-step="3" role="tab" aria-selected="false">
+    <button class="step" (click)="goToStep(3)"
+     [class.current]="currentStep == 3" data-step="3" role="tab" [aria-selected]="currentStep == 3">
         <span class="step-dot">3</span>
         <span class="step-name">Fotos e finalização</span>
     </button>
@@ -28,6 +31,7 @@
 <div class="content-grid">
     <div class="wizard">
         <form [formGroup]="propertyForm">
+            @if (currentStep == 1) {
             <section class="wizard-step active" data-panel="1">
                 <div class="card">
                     <div class="section-head">
@@ -39,15 +43,16 @@
                             <label for="proprietario">Proprietário <span class="req">*</span></label>
                             <div class="input-action">
                                 <div class="select-wrap">
-                                    <select id="proprietario">
+                                    <select id="proprietario" formControlName="proprietario">
                                         <option value="">Selecionar…</option>
                                         @for (owner of owners(); track owner.id) {
-                                        <option value="id">{{owner.nome}} — {{owner.numero}}</option>
+                                        <option [value]="owner.id">{{owner.nome}} — {{owner.numero}}</option>
                                         }
                                     </select>
                                 </div>
-                                <button type="button" class="btn-side" title="Cadastrar novo proprietário"
-                                    aria-label="Cadastrar novo proprietário" data-open-modal="modal-proprietario">
+                                <button type="button" (click)="openCreateClientModal()" class="btn-side"
+                                    title="Cadastrar novo proprietário" aria-label="Cadastrar novo proprietário"
+                                    data-open-modal="modal-proprietario">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round">
                                         <path d="M12 5v14M5 12h14" />
@@ -59,15 +64,16 @@
                             <label for="corretor">Corretor <span class="req">*</span></label>
                             <div class="input-action">
                                 <div class="select-wrap">
-                                    <select id="corretor">
+                                    <select id="corretor" formControlName="corretor">
                                         <option value="">Selecionar…</option>
                                         @for (broker of brokers(); track broker.id) {
-                                        <option value="id">{{broker.nome}} — CRECI {{broker.creci}}</option>
+                                        <option [value]="broker.id">{{broker.nome}} — CRECI {{broker.creci}}</option>
                                         }
                                     </select>
                                 </div>
-                                <button type="button" class="btn-side" title="Cadastrar novo corretor"
-                                    aria-label="Cadastrar novo corretor" data-open-modal="modal-corretor">
+                                <button type="button" (click)="openCreateBrokerModal()" class="btn-side"
+                                    title="Cadastrar novo corretor" aria-label="Cadastrar novo corretor"
+                                    data-open-modal="modal-corretor">
                                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round">
                                         <path d="M12 5v14M5 12h14" />
@@ -153,11 +159,9 @@
                             <div class="field">
                                 <label>Fica em condomínio?</label>
                                 <div class="segmented" role="radiogroup" aria-label="Fica em condomínio">
-                                    <input type="radio" formControlName="em_condominio" id="cond-nao"
-                                        [value]="false">
+                                    <input type="radio" formControlName="em_condominio" id="cond-nao" [value]="false">
                                     <label for="cond-nao">Não</label>
-                                    <input type="radio" formControlName="em_condominio" id="cond-sim"
-                                        [value]="true">
+                                    <input type="radio" formControlName="em_condominio" id="cond-sim" [value]="true">
                                     <label for="cond-sim">Sim</label>
                                 </div>
                             </div>
@@ -169,12 +173,13 @@
                                         <select formControlName="condominio" id="nome-condominio">
                                             <option value="">Selecionar…</option>
                                             @for (condominium of condominiums(); track condominium.id) {
-                                                <option value="id">{{condominium.nome}}</option>
+                                            <option [value]="condominium.id">{{condominium.nome}}</option>
                                             }
                                         </select>
                                     </div>
-                                    <button type="button" class="btn-side" title="Cadastrar novo condomínio"
-                                        aria-label="Cadastrar novo condomínio" data-open-modal="modal-condominio">
+                                    <button type="button" (click)="openCreateCondominiumModal()" class="btn-side"
+                                        title="Cadastrar novo condomínio" aria-label="Cadastrar novo condomínio"
+                                        data-open-modal="modal-condominio">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                                             stroke="currentColor" stroke-width="2" stroke-linecap="round">
                                             <path d="M12 5v14M5 12h14" />
@@ -246,16 +251,616 @@
 
                 <div class="form-footer">
                     <span></span>
-                    <button class="btn btn-primary" data-goto="2">
+                    <button class="btn btn-primary" (click)="nextStep()" data-goto="2">
                         Avançar >>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
                     </button>
                 </div>
             </section>
+            }
         </form>
+
+        @if (currentStep == 2) {
+        <section class="wizard-step active">
+            <div class="card">
+                <div class="section-head">
+                    <div class="section-title"><span class="n">01</span> Valores</div>
+                    <div class="section-desc">Valores em reais. Campos de condomínio aparecem apenas quando aplicável.
+                    </div>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label for="valor">Valor solicitado <span class="req">*</span></label>
+                        <div class="control has-prefix">
+                            <span class="prefix">R$</span>
+                            <input type="text" id="valor" [formControl]="propertyForm.controls.valor" class="mono"
+                                placeholder="0,00" inputmode="numeric">
+                        </div>
+                    </div>
+                    @if (propertyForm.get('em_condominio')?.value === true) {
+                    <div class="field" id="field-valor-cond">
+                        <label for="valor-condominio">Condomínio <span style="color:var(--text-3);font-weight:400">/
+                                mês</span></label>
+                        <div class="control has-prefix">
+                            <span class="prefix">R$</span>
+                            <input type="text" [formControl]="propertyForm.controls.valor_condominio"
+                                id="valor-condominio" class="mono" placeholder="0,00" inputmode="numeric">
+                        </div>
+                    </div>
+                    }
+                    <div class="field">
+                        <label for="iptu">IPTU <span style="color:var(--text-3);font-weight:400" id="iptu-period">/
+                                ano</span></label>
+                        <div class="control has-prefix">
+                            <span class="prefix">R$</span>
+                            <input type="text" id="iptu" [formControl]="propertyForm.controls.valor_iptu" class="mono"
+                                placeholder="0,00" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">02</span> Características
+                    </div>
+
+                    <div class="section-desc">
+                        Características do imóvel.
+                    </div>
+                </div>
+
+                @if (propertyForm.get('tipo')?.value === 'Casa') {
+                <div class="form-grid cols-3">
+                    <div class="field">
+                        <label for="casa-metragem">Metragem</label>
+                        <div class="control has-suffix">
+                            <input type="number" id="casa-metragem" [formControl]="houseForm.controls.metragem"
+                                placeholder="0,00" min="0" step="0.01">
+                            <span class="suffix">m²</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="qty-grid">
+
+                    <div class="qty" data-qty="quartos">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+                                <path d="M3 18h18" />
+                                <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                                <path d="M7 10h4" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Quartos</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir quartos">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar quartos">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="suites">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 20h20" />
+                                <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+                                <path d="M9 9h6" />
+                                <path d="M9 13h6" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Sendo suítes</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir suítes">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar suítes">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="banheiros">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
+                                <path d="M6 12V5a2 2 0 0 1 4 0" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Banheiros</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir banheiros">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar banheiros">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="garagens">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 17h14" />
+                                <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                                <circle cx="7.5" cy="17" r="1.5" />
+                                <circle cx="16.5" cy="17" r="1.5" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Vagas de garagem</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir vagas">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar vagas">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="andares">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 20h16" />
+                                <path d="M6 20V8l6-4 6 4v12" />
+                                <path d="M10 20v-4h4v4" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Andares</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir andares">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar andares">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="salas">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
+                                <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
+                                <path d="M5 18v2" />
+                                <path d="M19 18v2" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Salas</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir salas">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar salas">+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-grid" style="margin-top:16px">
+
+                    <div class="field">
+                        <label>Está mobiliado?</label>
+
+                        <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
+
+                            <input type="radio" name="mobiliado-casa" id="casa-mob-nao" value="Não">
+                            <label for="casa-mob-nao">Não</label>
+
+                            <input type="radio" name="mobiliado-casa" id="casa-mob-semi" value="Semimobiliado">
+                            <label for="casa-mob-semi">Semimobiliado</label>
+
+                            <input type="radio" name="mobiliado-casa" id="casa-mob-sim" value="Sim">
+                            <label for="casa-mob-sim">Sim</label>
+
+                        </div>
+                    </div>
+
+                    <div class="field" id="field-mobilia-casa">
+                        <label>
+                            O que fica no imóvel
+                            <span id="mobilia-count-casa"></span>
+                        </label>
+
+                        <div class="check-grid">
+
+                            <label class="check">
+                                <input type="checkbox" value="Cozinha planejada">
+                                <span>Cozinha planejada</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Armários nos quartos">
+                                <span>Armários nos quartos</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Armários nos banheiros">
+                                <span>Armários nos banheiros</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Ar-condicionado">
+                                <span>Ar-condicionado</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Eletrodomésticos">
+                                <span>Eletrodomésticos</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Sofá">
+                                <span>Sofá</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Mesa de jantar">
+                                <span>Mesa de jantar</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Camas">
+                                <span>Camas</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Cortinas e persianas">
+                                <span>Cortinas e persianas</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Iluminação planejada">
+                                <span>Iluminação planejada</span>
+                            </label>
+
+                        </div>
+                    </div>
+
+                </div>
+                }
+
+                @if (propertyForm.get('tipo')?.value === 'Apartamento') {
+                <div class="form-grid cols-3">
+
+                    <div class="field">
+                        <label for="apartamento-metragem">Metragem</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="apartamento-metragem"
+                                [formControl]="apartmentForm.controls.metragem" placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m²</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="qty-grid">
+                    <div class="qty" data-qty="quartos">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+                                <path d="M3 18h18" />
+                                <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                                <path d="M7 10h4" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Quartos</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir quartos">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar quartos">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="suites">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 20h20" />
+                                <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+                                <path d="M9 9h6" />
+                                <path d="M9 13h6" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Sendo suítes</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir suítes">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar suítes">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="banheiros">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
+                                <path d="M6 12V5a2 2 0 0 1 4 0" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Banheiros</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir banheiros">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar banheiros">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="garagens">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 17h14" />
+                                <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                                <circle cx="7.5" cy="17" r="1.5" />
+                                <circle cx="16.5" cy="17" r="1.5" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Vagas de garagem</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir vagas">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar vagas">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="andares">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 20h16" />
+                                <path d="M6 20V8l6-4 6 4v12" />
+                                <path d="M10 20v-4h4v4" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Andares</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir andares">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar andares">+</button>
+                        </div>
+                    </div>
+
+                    <div class="qty" data-qty="salas">
+                        <span class="qty-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
+                                <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
+                                <path d="M5 18v2" />
+                                <path d="M19 18v2" />
+                            </svg>
+                        </span>
+
+                        <div class="qty-meta">
+                            <div class="qty-label">Salas</div>
+                        </div>
+
+                        <div class="qty-ctrl">
+                            <button type="button" data-dir="-1" aria-label="Diminuir salas">−</button>
+                            <span class="qty-value">0</span>
+                            <button type="button" data-dir="1" aria-label="Aumentar salas">+</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-grid" style="margin-top:16px">
+
+                    <div class="field">
+                        <label>Está mobiliado?</label>
+
+                        <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
+
+                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-nao" value="Não">
+                            <label for="apt-mob-nao">Não</label>
+
+                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-semi" value="Semimobiliado">
+                            <label for="apt-mob-semi">Semimobiliado</label>
+
+                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-sim" value="Sim">
+                            <label for="apt-mob-sim">Sim</label>
+
+                        </div>
+                    </div>
+
+                    <div class="field" id="field-mobilia-apartamento">
+
+                        <label>
+                            O que fica no imóvel
+                            <span id="mobilia-count-apartamento"></span>
+                        </label>
+
+                        <div class="check-grid">
+
+                            <label class="check">
+                                <input type="checkbox" value="Cozinha planejada">
+                                <span>Cozinha planejada</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Armários nos quartos">
+                                <span>Armários nos quartos</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Armários nos banheiros">
+                                <span>Armários nos banheiros</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Ar-condicionado">
+                                <span>Ar-condicionado</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Eletrodomésticos">
+                                <span>Eletrodomésticos</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Sofá">
+                                <span>Sofá</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Mesa de jantar">
+                                <span>Mesa de jantar</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Camas">
+                                <span>Camas</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Cortinas e persianas">
+                                <span>Cortinas e persianas</span>
+                            </label>
+
+                            <label class="check">
+                                <input type="checkbox" value="Iluminação planejada">
+                                <span>Iluminação planejada</span>
+                            </label>
+
+                        </div>
+                    </div>
+
+                </div>
+                }
+
+                @if (propertyForm.get('tipo')?.value == 'Terreno') {
+                <div class="form-grid cols-3">
+
+                    <div class="field">
+                        <label for="area-total">Área total</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="area-total" [formControl]="landForm.controls.area_total"
+                                placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m²</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="medida-esquerda">Medida esquerda</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="medida-esquerda" [formControl]="landForm.controls.medida_esquerda"
+                                placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="medida-direita">Medida direita</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="medida-direita" [formControl]="landForm.controls.medida_direita"
+                                placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="medida-frente">Medida frente</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="medida-frente" [formControl]="landForm.controls.medida_frente"
+                                placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="medida-fundo">Medida fundo</label>
+
+                        <div class="control has-suffix">
+                            <input type="number" id="medida-fundo" [formControl]="landForm.controls.medida_fundo"
+                                placeholder="0,00" min="0" step="0.01">
+
+                            <span class="suffix">m</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="zoneamento">Zoneamento</label>
+
+                        <select id="zoneamento" [formControl]="landForm.controls.zoneamento">
+                            <option [ngValue]="null">
+                                Selecione
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="coeficiente">Coeficiente</label>
+
+                        <div class="control">
+                            <input type="number" id="coeficiente" [formControl]="landForm.controls.coeficiente"
+                                placeholder="0,00" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="form-footer">
+                <button class="btn btn-ghost" (click)="previousStep()" data-goto="2">
+                   << Voltar
+                </button>
+                <button class="btn btn-primary" (click)="nextStep()" data-goto="2">
+                    Avançar >>
+                </button>
+            </div>
+        </section>
+        }
     </div>
 
     <aside class="ficha" aria-label="Resumo do imóvel">
@@ -328,3 +933,517 @@
         </div>
     </aside>
 </div>
+
+
+@if (openCondominiumModal === true) {
+<form [formGroup]="condominiumForm">
+    <div class="modal-backdrop" [class.open]="openCondominiumModal" id="modal-condominio" role="dialog"
+        aria-modal="true" aria-labelledby="mk-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mk-title">Cadastrar condomínio</h3>
+                    <p id="mk-sub"> O endereço do condomínio será usado nos imóveis vinculados a ele. </p>
+                </div> <button type="button" (click)="closeModal()" class="icon-btn" aria-label="Fechar"> <svg
+                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg> </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field" id="field-mk-nome">
+                        <label for="mk-nome">Nome do condomínio
+                            <span class="req">*</span></label>
+                        <input formControlName="nome" type="text" id="mk-nome" placeholder="Residencial Primavera">
+                        @if (condominiumForm.get('nome')?.touched && condominiumForm.get('nome')?.invalid)
+                        {
+                        <span class="error-message">
+                            @if (condominiumForm.get('nome')?.errors?.['required']) {
+                            O nome é obrigatório.
+                            }
+                            @if (condominiumForm.get('nome')?.errors?.['minlength']) {
+                            O nome deve ter pelo menos 3 caracteres.
+                            } @if (condominiumForm.get('nome')?.errors?.['maxlength']) {
+                            O nome deve ter no máximo 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="mk-cep">CEP <span class="req">*</span></label>
+                            <div class="control">
+                                <input type="text" mask="00000-000" [dropSpecialCharacters]="false"
+                                    formControlName="cep" id="mk-cep" class="mono" placeholder="00000-000" maxlength="9"
+                                    inputmode="numeric">
+                                <button type="button" class="suffix-icon" id="mk-cep-status"
+                                    (click)="searchCepForCondominium()" aria-label="Buscar CEP"> <svg width="15"
+                                        height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <circle cx="11" cy="11" r="7"></circle>
+                                        <path d="m21 21-4.3-4.3"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            @if (condominiumForm.get('cep')?.touched && condominiumForm.get('cep')?.invalid)
+                            {
+                            <span class="error-message">
+                                @if (condominiumForm.get('cep')?.errors?.['required']) {
+                                O CEP é obrigatório.
+                                } @if (condominiumForm.get('cep')?.errors?.['minlength'] ||
+                                condominiumForm.get('cep')?.errors?.['maxlength']) {
+                                O CEP deve estar no formato 00000-000.
+                                }
+                            </span>
+                            }
+                            <span class="hint">Endereço é buscado ao digitar o CEP completo.</span>
+                        </div>
+                        <div class="field" style="grid-column:span 2">
+                            <label for="mk-rua">Logradouro <span class="req">*</span></label>
+                            <input type="text" formControlName="logradouro" id="mk-rua"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('logradouro')?.touched &&
+                            condominiumForm.get('logradouro')?.invalid)
+                            {
+                            <span class="error-message">
+                                @if (condominiumForm.get('logradouro')?.errors?.['required']) {
+                                O logradouro é obrigatório.
+                                } @if (condominiumForm.get('logradouro')?.errors?.['minlength']) {
+                                O logradouro deve ter pelo menos 3 caracteres.
+                                } @if (condominiumForm.get('logradouro')?.errors?.['maxlength']) {
+                                O logradouro deve ter no máximo 60 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-grid cols-4">
+                        <div class="field">
+                            <label for="mk-numero">Número <span class="req">*</span></label>
+                            <input type="number" id="mk-numero" formControlName="numero" placeholder="480"
+                                inputmode="numeric">
+                            @if (condominiumForm.get('numero')?.touched && condominiumForm.get('numero')?.invalid)
+                            {
+                            <span class="error-message"> O número é obrigatório. </span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label for="mk-bairro">Bairro <span class="req">*</span></label>
+                            <input type="text" id="mk-bairro" formControlName="bairro"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('bairro')?.touched && condominiumForm.get('bairro')?.invalid) {
+                            <span class="error-message"> @if (condominiumForm.get('bairro')?.errors?.['required'])
+                                {
+                                O bairro é obrigatório.
+                                } @if (condominiumForm.get('bairro')?.errors?.['minlength']) {
+                                O bairro deve ter pelo menos 3 caracteres.
+                                }
+                                @if (condominiumForm.get('bairro')?.errors?.['maxlength']) {
+                                O bairro deve ter no máximo 50
+                                caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field">
+                            <label for="mk-cidade">Cidade <span class="req">*</span></label>
+                            <input type="text" id="mk-cidade" formControlName="cidade"
+                                placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('cidade')?.touched && condominiumForm.get('cidade')?.invalid) {
+                            <span class="error-message">
+                                @if (condominiumForm.get('cidade')?.errors?.['required']) {
+                                A cidade é obrigatória.
+                                } @if (condominiumForm.get('cidade')?.errors?.['minlength']) {
+                                A cidade deve ter pelo menos 5 caracteres.
+                                } @if (condominiumForm.get('cidade')?.errors?.['maxlength']) {
+                                A cidade deve ter no máximo 50 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"> <label for="mk-uf">UF <span class="req">*</span></label>
+                            <input type="text" id="mk-uf" formControlName="uf" placeholder="Preenchido pelo CEP">
+                            @if (condominiumForm.get('uf')?.touched && condominiumForm.get('uf')?.invalid) {
+                            <span class="error-message">
+                                @if (condominiumForm.get('uf')?.errors?.['required']) {
+                                A UF é obrigatória.
+                                }
+                                @if (condominiumForm.get('uf')?.errors?.['minlength'] ||
+                                condominiumForm.get('uf')?.errors?.['maxlength']) {
+                                A UF deve conter 2 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" (click)="cancelModal()" class="btn btn-ghost">
+                    Cancelar
+                </button>
+                <button type="button" (click)="saveCondominium()" class="btn btn-primary" id="mk-salvar"> <svg
+                        width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    <span id="mk-salvar-label">
+                        Salvar condomínio
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+}
+
+@if (openClientModal === true) {
+<div class="modal-backdrop" [class.open]="openClientModal" id="modal-cliente" role="dialog" aria-modal="true"
+    aria-labelledby="ml-title">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h3 id="ml-title">Cadastrar cliente</h3>
+                <p id="ml-sub">O cliente ficará disponível para vínculos com imóveis e negociações.</p>
+            </div>
+
+            <button class="icon-btn" (click)="closeModal()" aria-label="Fechar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <form [formGroup]="clientForm" class="form-grid">
+
+                <div class="form-grid cols-2">
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('nome')?.invalid && clientForm.get('nome')?.touched">
+
+                        <label for="ml-nome">Nome completo <span class="req">*</span></label>
+
+                        <input type="text" id="ml-nome" placeholder="Maria da Silva" formControlName="nome">
+
+                        @if (clientForm.get('nome')?.touched && clientForm.get('nome')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('nome')?.errors?.['required']) {
+                            Informe o nome do cliente.
+                            }
+                            @if (clientForm.get('nome')?.errors?.['minlength']) {
+                            Mínimo de 3 caracteres.
+                            }
+                            @if (clientForm.get('nome')?.errors?.['maxlength']) {
+                            Máximo de 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('codigo')?.invalid && clientForm.get('codigo')?.touched">
+
+                        <label for="ml-codigo">Código <span class="req">*</span></label>
+                        <input type="text" id="ml-codigo" class="mono" placeholder="1234" maxlength="4"
+                            formControlName="codigo">
+
+                        @if (clientForm.get('codigo')?.touched && clientForm.get('codigo')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('codigo')?.errors?.['required']) {
+                            Informe o código.
+                            }
+                            @if (clientForm.get('codigo')?.errors?.['minlength'] ||
+                            clientForm.get('codigo')?.errors?.['maxlength']) {
+                            O código deve ter exatamente 4 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-grid cols-2">
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('numero')?.invalid && clientForm.get('numero')?.touched">
+
+                        <label for="ml-celular">Celular <span class="req">*</span></label>
+                        <input type="tel" id="ml-celular" class="mono phone" mask="(00) 00000-0000"
+                            placeholder="(47) 91234-5678" inputmode="numeric" [dropSpecialCharacters]="false"
+                            formControlName="numero">
+
+                        @if (clientForm.get('numero')?.touched && clientForm.get('numero')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('numero')?.errors?.['required']) {
+                            Informe o celular.
+                            }
+                            @if (clientForm.get('numero')?.errors?.['minlength'] ||
+                            clientForm.get('numero')?.errors?.['maxlength']) {
+                            Use o formato (47) 91234-5678.
+                            }
+                        </span>
+                        }
+                    </div>
+
+                    <div class="field"
+                        [class.invalid]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
+
+                        <label for="ml-email">E-mail <span class="req">*</span></label>
+                        <input type="email" id="ml-email" placeholder="maria@email.com" formControlName="email">
+
+                        @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors) {
+                        <span class="hint hint-error">
+                            @if (clientForm.get('email')?.errors?.['required']) {
+                            Informe o e-mail.
+                            }
+                            @if (clientForm.get('email')?.errors?.['email']) {
+                            Informe um e-mail válido.
+                            }
+                            @if (clientForm.get('email')?.errors?.['maxlength']) {
+                            Máximo de 60 caracteres.
+                            }
+                        </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="field" [class.invalid]="clientForm.get('tipo')?.invalid && clientForm.get('tipo')?.touched">
+
+                    <label id="ml-tipo-label">Tipo do cliente <span class="req">*</span></label>
+                    <div class="segmented" role="radiogroup" aria-labelledby="ml-tipo-label">
+                        <input checked type="radio" id="mt-proprietario" value="Proprietário" formControlName="tipo">
+                        <label for="mt-proprietario">Proprietário</label>
+                    </div>
+
+                    @if (clientForm.get('tipo')?.touched && clientForm.get('tipo')?.errors?.['required']) {
+                    <span class="hint hint-error">Escolha o tipo do cliente.</span>
+                    }
+                </div>
+
+                <div class="field"
+                    [class.invalid]="clientForm.get('como_encontrou')?.invalid && clientForm.get('como_encontrou')?.touched">
+
+                    <label for="ml-origem">Como nos encontrou <span class="req">*</span></label>
+
+                    <div class="select-wrap">
+                        <select id="ml-origem" formControlName="como_encontrou">
+                            <option [ngValue]="null">Selecionar…</option>
+                            @for (contact of contactTypes; track contact) {
+                            <option [value]="contact">{{ contact }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    @if (clientForm.get('como_encontrou')?.touched &&
+                    clientForm.get('como_encontrou')?.errors?.['required']) {
+                    <span class="hint hint-error">Selecione a origem do contato.</span>
+                    }
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal-foot">
+            <button class="btn btn-ghost" type="button" (click)="closeModal()">
+                Cancelar
+            </button>
+
+            <button class="btn btn-primary" type="button" [disabled]="clientForm.invalid" (click)="saveClient()">
+
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+
+                <span>Salvar cliente</span>
+            </button>
+        </div>
+    </div>
+</div>
+}
+
+@if (openBrokerModal == true) {
+<form [formGroup]="brokerForm">
+    <div class="modal-backdrop open" role="dialog" aria-modal="true" aria-labelledby="mc-title">
+        <div class="modal">
+            <div class="modal-head">
+                <div>
+                    <h3 id="mc-title">
+                        Cadastrar corretor
+                    </h3>
+                    <p>O corretor ficará disponível para responder pelos imóveis e negociações.</p>
+                </div>
+                <button type="button" (click)="closeModal()" class="icon-btn" aria-label="Fechar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">01</span> Informações necessárias
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-grid cols-2">
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('nome')?.touched && brokerForm.get('nome')?.invalid">
+                            <label for="mc-nome">Nome completo <span class="req">*</span>
+                            </label> <input type="text" id="mc-nome" formControlName="nome" placeholder="João Pereira">
+                            @if (brokerForm.get('nome')?.touched && brokerForm.get('nome')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('nome')?.errors?.['required']) {
+                                O nome é obrigatório.
+                                }
+                                @if (brokerForm.get('nome')?.errors?.['minlength']) {
+                                O nome deve ter pelo menos 3 caracteres. }
+                                @if
+                                (brokerForm.get('nome')?.errors?.['maxlength']) {
+                                O nome deve ter no máximo 60 caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid">
+                            <label for="mc-codigo">Código <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-codigo" class="mono" formControlName="codigo"
+                                placeholder="0001 ou CR01">
+                            @if (brokerForm.get('codigo')?.touched && brokerForm.get('codigo')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('codigo')?.errors?.['required']) {
+                                O código é
+                                obrigatório.
+                                }
+                                @if (brokerForm.get('codigo')?.errors?.['minlength'] ||
+                                brokerForm.get('codigo')?.errors?.['maxlength']) {
+                                O código deve ter exatamente 4
+                                caracteres.
+                                }
+                            </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-grid cols-3">
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid">
+                            <label for="mc-creci">CRECI <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-creci" class="mono" formControlName="creci" mask="00.000A"
+                                [dropSpecialCharacters]="false" placeholder="00.000F">
+                            @if (brokerForm.get('creci')?.touched && brokerForm.get('creci')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('creci')?.errors?.['required']) {
+                                O CRECI é obrigatório.
+                                }
+                                @if (brokerForm.get('creci')?.errors?.['minlength'] ||
+                                brokerForm.get('creci')?.errors?.['maxlength'] ||
+                                brokerForm.get('creci')?.errors?.['pattern']) {
+                                O CRECI deve estar no formato 00.000F.
+                                }
+                            </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('numero')?.touched && brokerForm.get('numero')?.invalid">
+                            <label for="mc-celular">Celular <span class="req">*</span>
+                            </label>
+                            <input type="text" id="mc-celular" [dropSpecialCharacters]="false" class="mono"
+                                formControlName="numero" mask="(00) 00000-0000" placeholder="(00) 00000-0000">
+                            @if (brokerForm.get('numero')?.touched && brokerForm.get('numero')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('numero')?.errors?.['required']) {
+                                O celular
+                                é obrigatório. }
+                                @if (brokerForm.get('numero')?.errors?.['minlength'] ||
+                                brokerForm.get('numero')?.errors?.['maxlength']) {
+                                O celular deve estar no formato (00)
+                                00000-0000.
+                                } </span>
+                            }
+                        </div>
+                        <div class="field"
+                            [class.invalid]="brokerForm.get('email')?.touched && brokerForm.get('email')?.invalid">
+                            <label for="mc-email">E-mail <span class="req">*</span>
+                            </label>
+                            <input type="email" id="mc-email" formControlName="email"
+                                placeholder="joao@imobiliaria.com">
+                            @if (brokerForm.get('email')?.touched && brokerForm.get('email')?.invalid) {
+                            <span class="error-message">
+                                @if (brokerForm.get('email')?.errors?.['required']) {
+                                O e-mail é
+                                obrigatório.
+                                }
+                                @if (brokerForm.get('email')?.errors?.['email']) {
+                                Informe um e-mail
+                                válido.
+                                }
+                                @if (brokerForm.get('email')?.errors?.['maxlength']) {
+                                O e-mail deve ter no
+                                máximo 60 caracteres.
+                                } </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <hr class="form-divider">
+                <div class="section-head">
+                    <div class="section-title">
+                        <span class="n">02</span> Informações pessoais
+                        <span class="opt">(Opcional)</span>
+                    </div>
+                </div>
+                <div class="form-grid cols-3">
+                    <div class="field"
+                        [class.invalid]="brokerForm.get('data_nascimento')?.touched && brokerForm.get('data_nascimento')?.invalid">
+                        <label for="mc-nascimento">Data de nascimento</label>
+                        <input type="text" id="mc-nascimento" class="mono" formControlName="data_nascimento"
+                            mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="dd/mm/aaaa">
+                        @if (brokerForm.get('data_nascimento')?.touched &&
+                        brokerForm.get('data_nascimento')?.invalid) {
+
+                        <span class="error-message"> A data deve estar no formato dd/mm/aaaa. </span>
+                        }
+                    </div>
+                    <div class="field" [class.invalid]="brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid">
+                        <label for="mc-rg">RG</label>
+                        <input type="text" id="mc-rg" [dropSpecialCharacters]="false" class="mono" formControlName="rg"
+                            mask="0.000.000" placeholder="0.000.000">
+                        @if (brokerForm.get('rg')?.touched && brokerForm.get('rg')?.invalid) {
+                        <span class="error-message">
+                            O RG deve estar no formato
+                            0.000.000.
+                        </span>
+                        }
+                    </div>
+                    <div class="field"
+                        [class.invalid]="brokerForm.get('cpf')?.touched && brokerForm.get('cpf')?.invalid">
+                        <label for="mc-cpf">CPF</label>
+                        <input type="text" id="mc-cpf" class="mono" formControlName="cpf"
+                            [dropSpecialCharacters]="false" mask="000.000.000-00" placeholder="000.000.000-00">
+                        @if (brokerForm.get('cpf')?.touched && brokerForm.get('cpf')?.invalid) {
+                        <span class="error-message">
+                            O CPF deve estar no formato 000.000.000-00.
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot">
+                <button type="button" (click)="cancelModal()" class="btn btn-ghost"> Cancelar
+                </button>
+                <button type="button" (click)="saveBroker()" class="btn btn-primary"> <svg width="15" height="15"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    Salvar corretor
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+}
