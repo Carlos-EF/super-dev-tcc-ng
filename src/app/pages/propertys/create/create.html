@@ -93,9 +93,9 @@
                             <div class="field">
                                 <label>Finalidade <span class="req">*</span></label>
                                 <div class="segmented" role="radiogroup" aria-label="Finalidade">
-                                    <input type="radio" name="finalidade" id="fin-venda" value="Venda">
+                                    <input type="radio" name="finalidade" formControlName="finalidade" id="fin-venda" value="Venda">
                                     <label for="fin-venda">Venda</label>
-                                    <input type="radio" name="finalidade" id="fin-locacao" value="Locação">
+                                    <input type="radio" name="finalidade" id="fin-locacao" formControlName="finalidade" value="Locação">
                                     <label for="fin-locacao">Locação</label>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                 <div class="field">
                                     <label for="cep">CEP <span class="req">*</span></label>
                                     <div class="control">
-                                        <input type="text" id="cep" formControlName="cep" class="mono"
+                                        <input type="text" id="cep" formControlName="cep" mask="00000-000" [dropSpecialCharacters]="false" class="mono"
                                             placeholder="00000-000" maxlength="9" inputmode="numeric">
                                         <span class="suffix-icon" id="cep-status">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -237,7 +237,7 @@
                 <div class="form-footer">
                     <span></span>
                     <button class="btn btn-primary" data-goto="2">
-                        Avançar para valores
+                        Avançar >>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14M13 6l6 6-6 6" />
@@ -247,6 +247,7 @@
             </section>
         </form>
     </div>
+    
     <aside class="ficha" aria-label="Resumo do imóvel">
         <div class="ficha-head">
             <h3>Ficha do imóvel</h3>

@@ -7,13 +7,15 @@ import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { ContactTypes } from '../../../types/contact.types';
 import { RouterLink } from "@angular/router";
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-create',
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    NgxMaskDirective
 ],
   templateUrl: './create.html',
   styleUrl: './create.scss',
