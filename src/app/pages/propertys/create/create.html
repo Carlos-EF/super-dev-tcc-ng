@@ -153,13 +153,16 @@
                             <div class="field">
                                 <label>Fica em condomínio?</label>
                                 <div class="segmented" role="radiogroup" aria-label="Fica em condomínio">
-                                    <input type="radio" name="condominio" id="cond-nao" value="nao" checked>
+                                    <input type="radio" formControlName="em_condominio" id="cond-nao"
+                                        [value]="false">
                                     <label for="cond-nao">Não</label>
-                                    <input type="radio" name="condominio" id="cond-sim" value="sim">
+                                    <input type="radio" formControlName="em_condominio" id="cond-sim"
+                                        [value]="true">
                                     <label for="cond-sim">Sim</label>
                                 </div>
                             </div>
-                            <div class="field" id="field-condominio" hidden>
+                            @if (propertyForm.controls.em_condominio.value === true) {
+                            <div class="field" id="field-condominio">
                                 <label for="nome-condominio">Condomínio</label>
                                 <div class="input-action">
                                     <div class="select-wrap">
@@ -179,7 +182,11 @@
                                     </button>
                                 </div>
                             </div>
+                            }
                         </div>
+
+                        @if (propertyForm.get('em_condominio')?.getRawValue() === false) {
+
                         <div id="address-editable" class="form-grid">
                             <div class="form-grid cols-3">
                                 <div class="field">
@@ -227,9 +234,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="address-condo" hidden>
-                            <div class="ro-address" id="ro-address" aria-live="polite"></div>
-                        </div>
+                        }
                         <div class="field">
                             <label for="complemento">Complemento <span style="color:var(--text-3);font-weight:400"
                                     id="complemento-hint"></span></label>

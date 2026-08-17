@@ -42,7 +42,7 @@ export class CreateProperty {
     finalidade: [null as FinalityTypes | null, Validators.required],
     tipo: [null as PropertyTypes | null, Validators.required],
     em_condominio: [false, Validators.required],
-    condominio: [null as string | null],
+    condominio: [''],
     cep: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
     logradouro: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(60)]],
     numero: [null as number | null, Validators.required],
