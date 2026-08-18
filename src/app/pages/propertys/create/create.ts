@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { CreateHouseRequest, HouseResponse } from '../../../models/property.model';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, HouseResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
@@ -475,7 +475,6 @@ export class CreateProperty {
       newHouseData
     ).subscribe({
       next: (house: HouseResponse) => {
-
         this.toastService.show('create', 'Casa');
 
         this.houseForm.reset();
@@ -486,6 +485,43 @@ export class CreateProperty {
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados da casa:',
+          error
+        );
+      }
+    });
+  };
+
+  createApartment(id: string): void {
+    const apartmentValues = this.apartmentForm.getRawValue();
+
+    const newApartmentData: CreateApartmentRequest = {
+      imovel_id: id,
+      metragem: apartmentValues.metragem,
+      quartos: apartmentValues.quartos,
+      suites: apartmentValues.suites,
+      banheiros: apartmentValues.banheiros,
+      garagens: apartmentValues.garagens,
+      andares: apartmentValues.andares,
+      salas: apartmentValues.salas,
+      esta_mobiliado: apartmentValues.esta_mobiliado,
+      mobilia: apartmentValues.mobilia,
+    };
+
+    this.propertyService.createApartment(
+      id,
+      newApartmentData
+    ).subscribe({
+      next: (apartment: ApartmentResponse) => {
+        this.toastService.show('create', 'Apartamento');
+
+        this.apartmentForm.reset();
+
+        console.log('Apartamento cadastrado com sucesso:', apartment);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados da apartamento:',
           error
         );
       }
