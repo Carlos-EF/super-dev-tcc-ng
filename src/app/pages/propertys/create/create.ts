@@ -3,7 +3,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
 import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/furnished.types';
-import { ZoningTypes } from '../../../types/zoning.types';
+import { ZONING_TYPES, ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { Router, RouterLink } from "@angular/router";
@@ -48,6 +48,7 @@ export class CreateProperty {
 
   contactTypes = [...CONTACT_TYPES];
   furnitureTypes = [...FURNITURE_TYPES];
+  zoningTypes = [...ZONING_TYPES];
 
   openCondominiumModal: boolean = false;
 
@@ -475,27 +476,25 @@ export class CreateProperty {
 
   toggleFurniture(
     form: typeof this.houseForm | typeof this.apartmentForm,
-    item: FurnitureTypes,
-    checked: boolean
+    item: FurnitureTypes
   ): void {
 
     const value = form.controls.mobilia.value ?? [];
 
-    if (checked) {
-
-      if (!value.includes(item)) {
-        form.controls.mobilia.setValue([
-          ...value,
-          item
-        ]);
-      }
+    if (value.includes(item)) {
+      form.controls.mobilia.setValue(
+        value.filter(furniture => furniture !== item)
+      );
 
       return;
     }
 
-    form.controls.mobilia.setValue(
-      value.filter(furniture => furniture !== item)
-    );
+    form.controls.mobilia.setValue([
+      ...value,
+      item
+    ]);
+
+    console.log(form.controls.mobilia.value);
   };
 
   createHouse(id: string): void {
