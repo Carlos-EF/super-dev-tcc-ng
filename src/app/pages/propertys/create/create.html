@@ -9,20 +9,20 @@
 <p class="page-sub">Preencha os dados em três etapas. A ficha ao lado mostra o anúncio tomando forma.</p>
 
 <div class="stepper" role="tablist" aria-label="Etapas do cadastro">
-    <button class="step" (click)="goToStep(1)"
-     [class.current]="currentStep == 1" data-step="1" role="tab" [aria-selected]="currentStep == 1">
+    <button class="step" (click)="goToStep(1)" [class.current]="currentStep == 1" data-step="1" role="tab"
+        [aria-selected]="currentStep == 1">
         <span class="step-dot">1</span>
         <span class="step-name">Dados do imóvel</span>
     </button>
     <div class="step-line" data-line="1"></div>
-    <button class="step" (click)="goToStep(2)"
-     [class.current]="currentStep == 2" data-step="2" role="tab" [aria-selected]="currentStep == 2">
+    <button class="step" (click)="goToStep(2)" [class.current]="currentStep == 2" data-step="2" role="tab"
+        [aria-selected]="currentStep == 2">
         <span class="step-dot">2</span>
         <span class="step-name">Valores e características</span>
     </button>
     <div class="step-line" data-line="2"></div>
-    <button class="step" (click)="goToStep(3)"
-     [class.current]="currentStep == 3" data-step="3" role="tab" [aria-selected]="currentStep == 3">
+    <button class="step" (click)="goToStep(3)" [class.current]="currentStep == 3" data-step="3" role="tab"
+        [aria-selected]="currentStep == 3">
         <span class="step-dot">3</span>
         <span class="step-name">Fotos e finalização</span>
     </button>
@@ -170,7 +170,8 @@
                                 <label for="nome-condominio">Condomínio</label>
                                 <div class="input-action">
                                     <div class="select-wrap">
-                                        <select formControlName="condominio" id="nome-condominio">
+                                        <select (change)="onCondominiumChange()" formControlName="condominio"
+                                            id="nome-condominio">
                                             <option value="">Selecionar…</option>
                                             @for (condominium of condominiums(); track condominium.id) {
                                             <option [value]="condominium.id">{{condominium.nome}}</option>
@@ -273,7 +274,8 @@
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
                             <input type="text" id="valor" [formControl]="propertyForm.controls.valor" class="mono"
-                                placeholder="0,00" inputmode="numeric">
+                                placeholder="0,00" mask="separator.2" thousandSeparator="." [typeFromDecimals]="true"
+                                inputmode="decimal">
                         </div>
                     </div>
                     @if (propertyForm.get('em_condominio')?.value === true) {
@@ -282,8 +284,9 @@
                                 mês</span></label>
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
-                            <input type="text" [formControl]="propertyForm.controls.valor_condominio"
-                                id="valor-condominio" class="mono" placeholder="0,00" inputmode="numeric">
+                            <input type="text" id="valor" class="mono"
+                                [formControl]="propertyForm.controls.valor_condominio" placeholder="0,00"
+                                mask="separator.2" thousandSeparator="." [typeFromDecimals]="true" inputmode="decimal">
                         </div>
                     </div>
                     }
@@ -292,8 +295,9 @@
                                 ano</span></label>
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
-                            <input type="text" id="iptu" [formControl]="propertyForm.controls.valor_iptu" class="mono"
-                                placeholder="0,00" inputmode="numeric">
+                            <input type="text" id="valor" class="mono" [formControl]="propertyForm.controls.valor_iptu"
+                                placeholder="0,00" mask="separator.2" thousandSeparator="." [typeFromDecimals]="true"
+                                inputmode="decimal">
                         </div>
                     </div>
                 </div>
@@ -311,557 +315,636 @@
                 </div>
 
                 @if (propertyForm.get('tipo')?.value === 'Casa') {
-                <div class="form-grid cols-3">
-                    <div class="field">
-                        <label for="casa-metragem">Metragem</label>
-                        <div class="control has-suffix">
-                            <input type="number" id="casa-metragem" [formControl]="houseForm.controls.metragem"
-                                placeholder="0,00" min="0" step="0.01">
-                            <span class="suffix">m²</span>
+
+                <div [formGroup]="houseForm">
+
+                    <input type="hidden" formControlName="imovel_id">
+
+                    <div class="form-grid cols-3">
+
+                        <div class="field">
+                            <label for="casa-metragem">
+                                Metragem
+                            </label>
+
+                            <div class="control has-suffix" style="margin-bottom: 12px;">
+                                <input type="number" id="casa-metragem" formControlName="metragem" placeholder="0,00"
+                                    min="0" step="0.01">
+
+                                <span class="suffix">m²</span>
+                            </div>
                         </div>
+
                     </div>
 
+                    <div class="qty-grid">
+                        <div class="qty" data-qty="quartos">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+                                    <path d="M3 18h18" />
+                                    <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                                    <path d="M7 10h4" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Quartos</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir quartos"
+                                    (click)="removeValue(houseForm, 'quartos')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.quartos.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar quartos"
+                                    (click)="addValue(houseForm, 'quartos')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="qty" data-qty="suites">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 20h20" />
+                                    <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+                                    <path d="M9 9h6" />
+                                    <path d="M9 13h6" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Sendo suítes</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir suítes"
+                                    (click)="removeValue(houseForm, 'suites')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.suites.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar suítes"
+                                    (click)="addValue(houseForm, 'suites')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="qty" data-qty="banheiros">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
+                                    <path d="M6 12V5a2 2 0 0 1 4 0" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Banheiros</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir banheiros"
+                                    (click)="removeValue(houseForm, 'banheiros')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.banheiros.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar banheiros"
+                                    (click)="addValue(houseForm, 'banheiros')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="qty" data-qty="garagens">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 17h14" />
+                                    <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                                    <circle cx="7.5" cy="17" r="1.5" />
+                                    <circle cx="16.5" cy="17" r="1.5" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Vagas de garagem</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir vagas"
+                                    (click)="removeValue(houseForm, 'garagens')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.garagens.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar vagas"
+                                    (click)="addValue(houseForm, 'garagens')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="qty" data-qty="andares">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 20h16" />
+                                    <path d="M6 20V8l6-4 6 4v12" />
+                                    <path d="M10 20v-4h4v4" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Andares</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir andares"
+                                    (click)="removeValue(houseForm, 'andares')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.andares.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar andares"
+                                    (click)="addValue(houseForm, 'andares')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="qty" data-qty="salas">
+
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
+                                    <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
+                                    <path d="M5 18v2" />
+                                    <path d="M19 18v2" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Salas</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+
+                                <button type="button" aria-label="Diminuir salas"
+                                    (click)="removeValue(houseForm, 'salas')">
+                                    −
+                                </button>
+
+                                <span class="qty-value">
+                                    {{ houseForm.controls.salas.value ?? 0 }}
+                                </span>
+
+                                <button type="button" aria-label="Aumentar salas"
+                                    (click)="addValue(houseForm, 'salas')">
+                                    +
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-grid" style="margin-top:16px">
+
+                        <div class="field">
+
+                            <label>Está mobiliado?</label>
+
+                            <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
+
+                                <input type="radio" formControlName="esta_mobiliado" id="casa-mob-nao" value="Não">
+                                <label for="casa-mob-nao">
+                                    Não
+                                </label>
+
+
+                                <input type="radio" formControlName="esta_mobiliado" id="casa-mob-semi"
+                                    value="Semimobiliado">
+                                <label for="casa-mob-semi">
+                                    Semimobiliado
+                                </label>
+
+
+                                <input type="radio" formControlName="esta_mobiliado" id="casa-mob-sim" value="Sim">
+                                <label for="casa-mob-sim">
+                                    Sim
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="field" id="field-mobilia-casa">
+
+                            <label>
+                                O que fica no imóvel
+
+                                <span id="mobilia-count-casa">
+                                    {{ houseForm.controls.mobilia.value?.length ?? 0 }}
+                                </span>
+                            </label>
+
+                            <div class="check-grid">
+                                @for (item of furnitureTypes; track item) {
+                                <label class="check">
+                                    <input type="checkbox" [value]="item"
+                                        [checked]="houseForm.controls.mobilia.value?.includes(item) ?? false"
+                                        (change)="toggleFurniture(houseForm,item,$any($event.target).checked)">
+                                    <span>
+                                        {{ item }}
+                                    </span>
+                                </label>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="qty-grid">
-
-                    <div class="qty" data-qty="quartos">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
-                                <path d="M3 18h18" />
-                                <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
-                                <path d="M7 10h4" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Quartos</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir quartos">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar quartos">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="suites">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 20h20" />
-                                <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
-                                <path d="M9 9h6" />
-                                <path d="M9 13h6" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Sendo suítes</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir suítes">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar suítes">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="banheiros">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
-                                <path d="M6 12V5a2 2 0 0 1 4 0" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Banheiros</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir banheiros">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar banheiros">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="garagens">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 17h14" />
-                                <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
-                                <circle cx="7.5" cy="17" r="1.5" />
-                                <circle cx="16.5" cy="17" r="1.5" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Vagas de garagem</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir vagas">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar vagas">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="andares">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 20h16" />
-                                <path d="M6 20V8l6-4 6 4v12" />
-                                <path d="M10 20v-4h4v4" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Andares</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir andares">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar andares">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="salas">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
-                                <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
-                                <path d="M5 18v2" />
-                                <path d="M19 18v2" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Salas</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir salas">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar salas">+</button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-grid" style="margin-top:16px">
-
-                    <div class="field">
-                        <label>Está mobiliado?</label>
-
-                        <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
-
-                            <input type="radio" name="mobiliado-casa" id="casa-mob-nao" value="Não">
-                            <label for="casa-mob-nao">Não</label>
-
-                            <input type="radio" name="mobiliado-casa" id="casa-mob-semi" value="Semimobiliado">
-                            <label for="casa-mob-semi">Semimobiliado</label>
-
-                            <input type="radio" name="mobiliado-casa" id="casa-mob-sim" value="Sim">
-                            <label for="casa-mob-sim">Sim</label>
-
-                        </div>
-                    </div>
-
-                    <div class="field" id="field-mobilia-casa">
-                        <label>
-                            O que fica no imóvel
-                            <span id="mobilia-count-casa"></span>
-                        </label>
-
-                        <div class="check-grid">
-
-                            <label class="check">
-                                <input type="checkbox" value="Cozinha planejada">
-                                <span>Cozinha planejada</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Armários nos quartos">
-                                <span>Armários nos quartos</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Armários nos banheiros">
-                                <span>Armários nos banheiros</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Ar-condicionado">
-                                <span>Ar-condicionado</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Eletrodomésticos">
-                                <span>Eletrodomésticos</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Sofá">
-                                <span>Sofá</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Mesa de jantar">
-                                <span>Mesa de jantar</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Camas">
-                                <span>Camas</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Cortinas e persianas">
-                                <span>Cortinas e persianas</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Iluminação planejada">
-                                <span>Iluminação planejada</span>
-                            </label>
-
-                        </div>
-                    </div>
-
-                </div>
                 }
-
                 @if (propertyForm.get('tipo')?.value === 'Apartamento') {
-                <div class="form-grid cols-3">
+                <div [formGroup]="apartmentForm">
+                    <input type="hidden" formControlName="imovel_id">
 
-                    <div class="field">
-                        <label for="apartamento-metragem">Metragem</label>
-
-                        <div class="control has-suffix">
-                            <input type="number" id="apartamento-metragem"
-                                [formControl]="apartmentForm.controls.metragem" placeholder="0,00" min="0" step="0.01">
-
-                            <span class="suffix">m²</span>
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="apartamento-metragem">
+                                Metragem
+                            </label>
+                            <div class="control has-suffix" style="margin-bottom: 12px;">
+                                <input type="number" id="apartamento-metragem" formControlName="metragem"
+                                    placeholder="0,00" min="0" step="0.01">
+                                <span class="suffix">
+                                    m²
+                                </span>
+                            </div>
                         </div>
                     </div>
 
-                </div>
+                    <div class="qty-grid">
+                        <div class="qty" data-qty="quartos">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+                                    <path d="M3 18h18" />
+                                    <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                                    <path d="M7 10h4" />
+                                </svg>
+                            </span>
 
-                <div class="qty-grid">
-                    <div class="qty" data-qty="quartos">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
-                                <path d="M3 18h18" />
-                                <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
-                                <path d="M7 10h4" />
-                            </svg>
-                        </span>
+                            <div class="qty-meta">
+                                <div class="qty-label">Quartos</div>
+                            </div>
 
-                        <div class="qty-meta">
-                            <div class="qty-label">Quartos</div>
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir quartos"
+                                    (click)="removeValue(apartmentForm, 'quartos')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.quartos.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar quartos"
+                                    (click)="addValue(apartmentForm, 'quartos')">
+                                    +
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir quartos">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar quartos">+</button>
-                        </div>
-                    </div>
+                        <div class="qty" data-qty="suites">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 20h20" />
+                                    <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+                                    <path d="M9 9h6" />
+                                    <path d="M9 13h6" />
+                                </svg>
+                            </span>
 
-                    <div class="qty" data-qty="suites">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 20h20" />
-                                <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
-                                <path d="M9 9h6" />
-                                <path d="M9 13h6" />
-                            </svg>
-                        </span>
+                            <div class="qty-meta">
+                                <div class="qty-label">Sendo suítes</div>
+                            </div>
 
-                        <div class="qty-meta">
-                            <div class="qty-label">Sendo suítes</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir suítes">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar suítes">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="banheiros">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
-                                <path d="M6 12V5a2 2 0 0 1 4 0" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Banheiros</div>
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir suítes"
+                                    (click)="removeValue(apartmentForm, 'suites')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.suites.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar suítes"
+                                    (click)="addValue(apartmentForm, 'suites')">
+                                    +
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir banheiros">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar banheiros">+</button>
-                        </div>
-                    </div>
+                        <div class="qty" data-qty="banheiros">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 12h16a1 1 0 0 1 1 1 6 6 0 0 1-6 6H9a6 6 0 0 1-6-6 1 1 0 0 1 1-1z" />
+                                    <path d="M6 12V5a2 2 0 0 1 4 0" />
+                                </svg>
+                            </span>
 
-                    <div class="qty" data-qty="garagens">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 17h14" />
-                                <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
-                                <circle cx="7.5" cy="17" r="1.5" />
-                                <circle cx="16.5" cy="17" r="1.5" />
-                            </svg>
-                        </span>
+                            <div class="qty-meta">
+                                <div class="qty-label">Banheiros</div>
+                            </div>
 
-                        <div class="qty-meta">
-                            <div class="qty-label">Vagas de garagem</div>
-                        </div>
-
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir vagas">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar vagas">+</button>
-                        </div>
-                    </div>
-
-                    <div class="qty" data-qty="andares">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 20h16" />
-                                <path d="M6 20V8l6-4 6 4v12" />
-                                <path d="M10 20v-4h4v4" />
-                            </svg>
-                        </span>
-
-                        <div class="qty-meta">
-                            <div class="qty-label">Andares</div>
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir banheiros"
+                                    (click)="removeValue(apartmentForm, 'banheiros')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.banheiros.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar banheiros"
+                                    (click)="addValue(apartmentForm, 'banheiros')">
+                                    +
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir andares">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar andares">+</button>
+                        <div class="qty" data-qty="garagens">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 17h14" />
+                                    <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                                    <circle cx="7.5" cy="17" r="1.5" />
+                                    <circle cx="16.5" cy="17" r="1.5" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Vagas de garagem</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir vagas"
+                                    (click)="removeValue(apartmentForm, 'garagens')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.garagens.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar vagas"
+                                    (click)="addValue(apartmentForm, 'garagens')">
+                                    +
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="qty" data-qty="salas">
-                        <span class="qty-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
-                                <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
-                                <path d="M5 18v2" />
-                                <path d="M19 18v2" />
-                            </svg>
-                        </span>
 
-                        <div class="qty-meta">
-                            <div class="qty-label">Salas</div>
+                        <div class="qty" data-qty="andares">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 20h16" />
+                                    <path d="M6 20V8l6-4 6 4v12" />
+                                    <path d="M10 20v-4h4v4" />
+                                </svg>
+                            </span>
+
+                            <div class="qty-meta">
+                                <div class="qty-label">Andares</div>
+                            </div>
+
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir andares"
+                                    (click)="removeValue(apartmentForm, 'andares')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.andares.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar andares"
+                                    (click)="addValue(apartmentForm, 'andares')">
+                                    +
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="qty-ctrl">
-                            <button type="button" data-dir="-1" aria-label="Diminuir salas">−</button>
-                            <span class="qty-value">0</span>
-                            <button type="button" data-dir="1" aria-label="Aumentar salas">+</button>
-                        </div>
-                    </div>
+                        <div class="qty" data-qty="salas">
+                            <span class="qty-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M5 11a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2" />
+                                    <path d="M3 15a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3H3z" />
+                                    <path d="M5 18v2" />
+                                    <path d="M19 18v2" />
+                                </svg>
+                            </span>
 
-                </div>
+                            <div class="qty-meta">
+                                <div class="qty-label">Salas</div>
+                            </div>
 
-                <div class="form-grid" style="margin-top:16px">
-
-                    <div class="field">
-                        <label>Está mobiliado?</label>
-
-                        <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
-
-                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-nao" value="Não">
-                            <label for="apt-mob-nao">Não</label>
-
-                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-semi" value="Semimobiliado">
-                            <label for="apt-mob-semi">Semimobiliado</label>
-
-                            <input type="radio" name="mobiliado-apartamento" id="apt-mob-sim" value="Sim">
-                            <label for="apt-mob-sim">Sim</label>
-
-                        </div>
-                    </div>
-
-                    <div class="field" id="field-mobilia-apartamento">
-
-                        <label>
-                            O que fica no imóvel
-                            <span id="mobilia-count-apartamento"></span>
-                        </label>
-
-                        <div class="check-grid">
-
-                            <label class="check">
-                                <input type="checkbox" value="Cozinha planejada">
-                                <span>Cozinha planejada</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Armários nos quartos">
-                                <span>Armários nos quartos</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Armários nos banheiros">
-                                <span>Armários nos banheiros</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Ar-condicionado">
-                                <span>Ar-condicionado</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Eletrodomésticos">
-                                <span>Eletrodomésticos</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Sofá">
-                                <span>Sofá</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Mesa de jantar">
-                                <span>Mesa de jantar</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Camas">
-                                <span>Camas</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Cortinas e persianas">
-                                <span>Cortinas e persianas</span>
-                            </label>
-
-                            <label class="check">
-                                <input type="checkbox" value="Iluminação planejada">
-                                <span>Iluminação planejada</span>
-                            </label>
-
+                            <div class="qty-ctrl">
+                                <button type="button" aria-label="Diminuir salas"
+                                    (click)="removeValue(apartmentForm, 'salas')">
+                                    −
+                                </button>
+                                <span class="qty-value">
+                                    {{ apartmentForm.controls.salas.value ?? 0 }}
+                                </span>
+                                <button type="button" aria-label="Aumentar salas"
+                                    (click)="addValue(apartmentForm, 'salas')">
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="form-grid" style="margin-top:16px">
+                        <div class="field">
+
+                            <label>Está mobiliado?</label>
+                            <div class="segmented" role="radiogroup" aria-label="Está mobiliado">
+                                <input type="radio" formControlName="esta_mobiliado" id="apt-mob-nao" value="Não">
+                                <label for="apt-mob-nao">
+                                    Não
+                                </label>
+
+                                <input type="radio" formControlName="esta_mobiliado" id="apt-mob-semi"
+                                    value="Semimobiliado">
+                                <label for="apt-mob-semi">
+                                    Semimobiliado
+                                </label>
+
+                                <input type="radio" formControlName="esta_mobiliado" id="apt-mob-sim" value="Sim">
+                                <label for="apt-mob-sim">
+                                    Sim
+                                </label>
+                            </div>
+                        </div>
+
+                        @if (apartmentForm.get('esta_mobiliado')?.value !== 'Não') {
+                        <div class="field" id="field-mobilia-apartamento">
+                            <label>
+                                O que fica no imóvel
+                                <span id="mobilia-count-apartamento">
+                                    {{ apartmentForm.controls.mobilia.value?.length ?? 0 }}
+                                </span>
+                            </label>
+
+                            <div class="check-grid">
+                                @for (item of furnitureTypes; track item) {
+                                <label class="check">
+                                    <input type="checkbox" [value]="item"
+                                        [checked]="houseForm.controls.mobilia.value?.includes(item) ?? false"
+                                        (change)="toggleFurniture(houseForm,item,$any($event.target).checked)">
+                                    <span>
+                                        {{ item }}
+                                    </span>
+                                </label>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
                 </div>
                 }
 
                 @if (propertyForm.get('tipo')?.value == 'Terreno') {
-                <div class="form-grid cols-3">
+                <form [formGroup]="landForm">
+                    <div class="form-grid cols-3">
+                        <div class="field">
+                            <label for="area-total">Área total</label>
 
-                    <div class="field">
-                        <label for="area-total">Área total</label>
+                            <div class="control has-suffix">
+                                <input type="number" id="area-total" formControlName="area_total" placeholder="0,00"
+                                    min="0" step="0.01">
+                                <span class="suffix">m²</span>
+                            </div>
+                        </div>
 
-                        <div class="control has-suffix">
-                            <input type="number" id="area-total" [formControl]="landForm.controls.area_total"
-                                placeholder="0,00" min="0" step="0.01">
+                        <div class="field">
+                            <label for="medida-esquerda">Medida esquerda</label>
+                            <div class="control has-suffix">
+                                <input type="number" id="medida-esquerda" formControlName="medida_esquerda"
+                                    placeholder="0,00" min="0" step="0.01">
+                                <span class="suffix">m</span>
+                            </div>
+                        </div>
 
-                            <span class="suffix">m²</span>
+                        <div class="field">
+                            <label for="medida-direita">Medida direita</label>
+                            <div class="control has-suffix">
+                                <input type="number" id="medida-direita" formControlName="medida_direita"
+                                    placeholder="0,00" min="0" step="0.01">
+                                <span class="suffix">m</span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="medida-frente">Medida frente</label>
+                            <div class="control has-suffix">
+                                <input type="number" id="medida-frente" formControlName="medida_frente"
+                                    placeholder="0,00" min="0" step="0.01">
+                                <span class="suffix">m</span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="medida-fundo">Medida fundo</label>
+                            <div class="control has-suffix">
+                                <input type="number" id="medida-fundo" formControlName="medida_fundo" placeholder="0,00"
+                                    min="0" step="0.01">
+                                <span class="suffix">m</span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="zoneamento">Zoneamento</label>
+                            <select id="zoneamento" formControlName="zoneamento">
+                                <option [ngValue]="null">
+                                    Selecione
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <label for="coeficiente">Coeficiente</label>
+                            <div class="control">
+                                <input type="number" id="coeficiente" formControlName="coeficiente" placeholder="0,00"
+                                    min="0" step="0.01">
+                            </div>
                         </div>
                     </div>
-
-                    <div class="field">
-                        <label for="medida-esquerda">Medida esquerda</label>
-
-                        <div class="control has-suffix">
-                            <input type="number" id="medida-esquerda" [formControl]="landForm.controls.medida_esquerda"
-                                placeholder="0,00" min="0" step="0.01">
-
-                            <span class="suffix">m</span>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="medida-direita">Medida direita</label>
-
-                        <div class="control has-suffix">
-                            <input type="number" id="medida-direita" [formControl]="landForm.controls.medida_direita"
-                                placeholder="0,00" min="0" step="0.01">
-
-                            <span class="suffix">m</span>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="medida-frente">Medida frente</label>
-
-                        <div class="control has-suffix">
-                            <input type="number" id="medida-frente" [formControl]="landForm.controls.medida_frente"
-                                placeholder="0,00" min="0" step="0.01">
-
-                            <span class="suffix">m</span>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="medida-fundo">Medida fundo</label>
-
-                        <div class="control has-suffix">
-                            <input type="number" id="medida-fundo" [formControl]="landForm.controls.medida_fundo"
-                                placeholder="0,00" min="0" step="0.01">
-
-                            <span class="suffix">m</span>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="zoneamento">Zoneamento</label>
-
-                        <select id="zoneamento" [formControl]="landForm.controls.zoneamento">
-                            <option [ngValue]="null">
-                                Selecione
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="coeficiente">Coeficiente</label>
-
-                        <div class="control">
-                            <input type="number" id="coeficiente" [formControl]="landForm.controls.coeficiente"
-                                placeholder="0,00" min="0" step="0.01">
-                        </div>
-                    </div>
-                </div>
+                </form>
                 }
             </div>
 
             <div class="form-footer">
                 <button class="btn btn-ghost" (click)="previousStep()" data-goto="2">
-                   << Voltar
-                </button>
-                <button class="btn btn-primary" (click)="nextStep()" data-goto="2">
-                    Avançar >>
-                </button>
+                    << Voltar </button>
+                        <button class="btn btn-primary" (click)="createProperty()">
+                            Salvar
+                        </button>
+
+                        <button class="btn btn-primary" (click)="nextStep()" data-goto="2">
+                            Avançar >>
+                        </button>
             </div>
         </section>
         }
     </div>
+
 
     <aside class="ficha" aria-label="Resumo do imóvel">
         <div class="ficha-head">

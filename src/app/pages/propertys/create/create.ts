@@ -2,11 +2,11 @@ import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
-import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
+import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
@@ -17,6 +17,9 @@ import { CepResponse } from '../../../models/cep.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
+import { CharacteristicField } from '../../../types/field.types';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyResponse } from '../../../models/property.model';
+import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-create',
@@ -35,6 +38,7 @@ export class CreateProperty {
   private readonly clientsService = inject(ClientsService);
   private readonly cepService = inject(SearchCepService);
   private readonly condominiumService = inject(CondominiumService);
+  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
 
@@ -43,6 +47,7 @@ export class CreateProperty {
   condominiums = model<CondominiumResponse[]>([]);
 
   contactTypes = [...CONTACT_TYPES];
+  furnitureTypes = [...FURNITURE_TYPES];
 
   openCondominiumModal: boolean = false;
 
@@ -67,9 +72,9 @@ export class CreateProperty {
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     complemento: [null as string | null, Validators.maxLength(60)],
-    valor: [null as number | null],
-    valor_iptu: [null as number | null],
-    valor_condominio: [null as number | null]
+    valor: [''],
+    valor_iptu: [''],
+    valor_condominio: ['']
   });
 
   houseForm = this.formBuilder.group({
@@ -82,7 +87,7 @@ export class CreateProperty {
     andares: [null as number | null],
     salas: [null as number | null],
     esta_mobiliado: [null as FurnishedTypes | null],
-    mobilia: [null as FurnitureTypes[] | null]
+    mobilia: [[] as FurnitureTypes[]]
   });
 
   apartmentForm = this.formBuilder.group({
@@ -95,7 +100,7 @@ export class CreateProperty {
     andares: [null as number | null],
     salas: [null as number | null],
     esta_mobiliado: [null as FurnishedTypes | null],
-    mobilia: [null as FurnitureTypes[] | null]
+    mobilia: [[] as FurnitureTypes[]]
   });
 
   landForm = this.formBuilder.group({
@@ -139,7 +144,9 @@ export class CreateProperty {
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllBrokers();
 
     this.getAllOwners();
@@ -222,6 +229,32 @@ export class CreateProperty {
         }
       })
     }
+  };
+
+  onCondominiumChange(): void {
+    const condominiumId = this.propertyForm.controls.condominio.value;
+
+    if (!condominiumId) {
+      return;
+    }
+
+    const condominium = this.condominiums().find(
+      item => item.id === condominiumId
+    );
+
+    if (!condominium) {
+      return;
+    }
+
+    this.propertyForm.patchValue({
+      condominio: condominium.id,
+      cep: condominium.cep,
+      logradouro: condominium.logradouro,
+      numero: condominium.numero,
+      bairro: condominium.bairro,
+      uf: condominium.uf,
+      cidade: condominium.cidade
+    });
   };
 
   openCreateCondominiumModal() {
@@ -402,5 +435,238 @@ export class CreateProperty {
     if (step >= 1 && step <= 3) {
       this.currentStep = step;
     }
+  };
+
+  addValue(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    campo: CharacteristicField
+  ): void {
+    const value = form.controls[campo].value ?? 0;
+
+    form.controls[campo].setValue(value + 1);
+  };
+
+  removeValue(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    campo: CharacteristicField
+  ): void {
+    const value = form.controls[campo].value ?? 0;
+
+    if (value > 0) {
+      form.controls[campo].setValue(value - 1);
+    }
+  };
+
+  stringToNumber(value: string | number | null): number | null {
+    if (value === null || value === '') {
+      return null;
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return Number(
+      value
+        .replace(/\./g, '')
+        .replace(',', '.')
+    );
+  }
+
+  toggleFurniture(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    item: FurnitureTypes,
+    checked: boolean
+  ): void {
+
+    const value = form.controls.mobilia.value ?? [];
+
+    if (checked) {
+
+      if (!value.includes(item)) {
+        form.controls.mobilia.setValue([
+          ...value,
+          item
+        ]);
+      }
+
+      return;
+    }
+
+    form.controls.mobilia.setValue(
+      value.filter(furniture => furniture !== item)
+    );
+  };
+
+  createHouse(id: string): void {
+    const houseValues = this.houseForm.getRawValue();
+
+    const newHouseData: CreateHouseRequest = {
+      imovel_id: id,
+      metragem: houseValues.metragem,
+      quartos: houseValues.quartos,
+      suites: houseValues.suites,
+      banheiros: houseValues.banheiros,
+      garagens: houseValues.garagens,
+      andares: houseValues.andares,
+      salas: houseValues.salas,
+      esta_mobiliado: houseValues.esta_mobiliado,
+      mobilia: houseValues.mobilia,
+    };
+
+    this.propertyService.createHouse(
+      id,
+      newHouseData
+    ).subscribe({
+      next: (house: HouseResponse) => {
+        this.toastService.show('create', 'Casa');
+
+        this.houseForm.reset();
+
+        console.log('Casa cadastrada com sucesso:', house);
+
+        this.router.navigate(['/propertys/list']);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados da casa:',
+          error
+        );
+      }
+    });
+  };
+
+  createApartment(id: string): void {
+    const apartmentValues = this.apartmentForm.getRawValue();
+
+    const newApartmentData: CreateApartmentRequest = {
+      imovel_id: id,
+      metragem: apartmentValues.metragem,
+      quartos: apartmentValues.quartos,
+      suites: apartmentValues.suites,
+      banheiros: apartmentValues.banheiros,
+      garagens: apartmentValues.garagens,
+      andares: apartmentValues.andares,
+      salas: apartmentValues.salas,
+      esta_mobiliado: apartmentValues.esta_mobiliado,
+      mobilia: apartmentValues.mobilia,
+    };
+
+    this.propertyService.createApartment(
+      id,
+      newApartmentData
+    ).subscribe({
+      next: (apartment: ApartmentResponse) => {
+        this.toastService.show('create', 'Apartamento');
+
+        this.apartmentForm.reset();
+
+        console.log('Apartamento cadastrado com sucesso:', apartment);
+
+        this.router.navigate(['/propertys/list']);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
+          error
+        );
+      }
+    });
+  };
+
+  createLand(id: string): void {
+    const landValues = this.landForm.getRawValue();
+
+    const newLandData: CreateLandRequest = {
+      imovel_id: id,
+      area_total: landValues.area_total,
+      zoneamento: landValues.zoneamento,
+      medida_esquerda: landValues.medida_esquerda,
+      medida_direita: landValues.medida_direita,
+      medida_frente: landValues.medida_frente,
+      medida_fundo: landValues.medida_fundo,
+      coeficiente: landValues.coeficiente,
+    };
+
+    this.propertyService.createLand(
+      id,
+      newLandData
+    ).subscribe({
+      next: (land: LandResponse) => {
+        this.toastService.show('create', 'Terreno');
+
+        this.landForm.reset();
+
+        console.log('Terreno cadastrado com sucesso:', land);
+
+        this.router.navigate(['/propertys/list']);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
+          error
+        );
+      }
+    });
+  };
+
+  createProperty(): void {
+    const formValue = this.propertyForm.getRawValue();
+
+    const newPropertyData: CreatePropertyRequest = {
+      proprietario: formValue.proprietario || null,
+      corretor: formValue.corretor || null,
+      codigo: formValue.codigo!,
+      finalidade: formValue.finalidade!,
+      tipo: formValue.tipo!,
+      em_condominio: formValue.em_condominio!,
+      condominio: formValue.condominio || null,
+      cep: formValue.cep!,
+      logradouro: formValue.logradouro!,
+      numero: formValue.numero!,
+      bairro: formValue.bairro!,
+      uf: formValue.uf!,
+      cidade: formValue.cidade!,
+      complemento: formValue.complemento || null,
+      valor: this.stringToNumber(formValue.valor),
+      valor_iptu: this.stringToNumber(formValue.valor_iptu),
+      valor_condominio: this.stringToNumber(formValue.valor_condominio)
+    };
+
+    this.propertyService.create(
+      newPropertyData
+    ).subscribe({
+      next: (property: PropertyResponse) => {
+        this.toastService.show('create', 'Imóvel');
+
+        switch (property.tipo) {
+          case 'Casa':
+            this.createHouse(property.id);
+            break;
+
+          case 'Apartamento':
+            this.createApartment(property.id);
+            break;
+
+          case 'Terreno':
+            this.createLand(property.id);
+            break;
+        }
+
+        console.log(
+          'Imóvel criado com sucesso:',
+          property
+        );
+      },
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar o imóvel:',
+          error
+        );
+      }
+    });
   };
 }
