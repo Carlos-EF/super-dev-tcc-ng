@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, HouseResponse, LandResponse } from '../../../models/property.model';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
@@ -565,6 +565,63 @@ export class CreateProperty {
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
+          error
+        );
+      }
+    });
+  };
+
+  createProperty(): void {
+    const formValue = this.propertyForm.getRawValue();
+
+    const newPropertyData: CreatePropertyRequest = {
+      proprietario: formValue.proprietario || null,
+      corretor: formValue.corretor || null,
+      codigo: formValue.codigo!,
+      finalidade: formValue.finalidade!,
+      tipo: formValue.tipo!,
+      em_condominio: formValue.em_condominio!,
+      condominio: formValue.condominio || null,
+      cep: formValue.cep!,
+      logradouro: formValue.logradouro!,
+      numero: formValue.numero!,
+      bairro: formValue.bairro!,
+      uf: formValue.uf!,
+      cidade: formValue.cidade!,
+      complemento: formValue.complemento || null,
+      valor: formValue.valor,
+      valor_iptu: formValue.valor_iptu,
+      valor_condominio: formValue.valor_condominio
+    };
+
+    this.propertyService.create(
+      newPropertyData
+    ).subscribe({
+      next: (property: PropertyResponse) => {
+        this.toastService.show('create', 'Imóvel');
+
+        switch (property.tipo) {
+          case 'Casa':
+            this.createHouse(property.id);
+            break;
+
+          case 'Apartamento':
+            this.createApartment(property.id);
+            break;
+
+          case 'Terreno':
+            this.createLand(property.id);
+            break;
+        }
+
+        console.log(
+          'Imóvel criado com sucesso:',
+          property
+        );
+      },
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar o imóvel:',
           error
         );
       }
