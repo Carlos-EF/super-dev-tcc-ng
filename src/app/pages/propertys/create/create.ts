@@ -17,6 +17,7 @@ import { CepResponse } from '../../../models/cep.model';
 import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
+import { CharacteristicField } from '../../../types/field.types';
 
 @Component({
   selector: 'app-create',
@@ -401,6 +402,26 @@ export class CreateProperty {
   goToStep(step: number): void {
     if (step >= 1 && step <= 3) {
       this.currentStep = step;
+    }
+  };
+
+  addValue(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    campo: CharacteristicField
+  ): void {
+    const value = form.controls[campo].value ?? 0;
+
+    form.controls[campo].setValue(value + 1);
+  };
+
+  removeValue(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    campo: CharacteristicField
+  ): void {
+    const value = form.controls[campo].value ?? 0;
+
+    if (value > 0) {
+      form.controls[campo].setValue(value - 1);
     }
   };
 }
