@@ -18,6 +18,8 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
+import { CreateHouseRequest, HouseResponse } from '../../../models/property.model';
+import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-create',
@@ -36,6 +38,7 @@ export class CreateProperty {
   private readonly clientsService = inject(ClientsService);
   private readonly cepService = inject(SearchCepService);
   private readonly condominiumService = inject(CondominiumService);
+  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
 
@@ -449,5 +452,43 @@ export class CreateProperty {
     form.controls.mobilia.setValue(
       value.filter(furniture => furniture !== item)
     );
-  }
+  };
+
+  createHouse(id: string): void {
+    const houseValues = this.houseForm.getRawValue();
+
+    const newHouseData: CreateHouseRequest = {
+      imovel_id: id,
+      metragem: houseValues.metragem,
+      quartos: houseValues.quartos,
+      suites: houseValues.suites,
+      banheiros: houseValues.banheiros,
+      garagens: houseValues.garagens,
+      andares: houseValues.andares,
+      salas: houseValues.salas,
+      esta_mobiliado: houseValues.esta_mobiliado,
+      mobilia: houseValues.mobilia,
+    };
+
+    this.propertyService.createHouse(
+      id,
+      newHouseData
+    ).subscribe({
+      next: (house: HouseResponse) => {
+
+        this.toastService.show('create', 'Casa');
+
+        this.houseForm.reset();
+
+        console.log('Casa cadastrada com sucesso:', house);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados da casa:',
+          error
+        );
+      }
+    });
+  };
 }
