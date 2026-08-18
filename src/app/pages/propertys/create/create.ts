@@ -72,9 +72,9 @@ export class CreateProperty {
     uf: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(2)]],
     cidade: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     complemento: [null as string | null, Validators.maxLength(60)],
-    valor: [null as number | null],
-    valor_iptu: [null as number | null],
-    valor_condominio: [null as number | null]
+    valor: [''],
+    valor_iptu: [''],
+    valor_condominio: ['']
   });
 
   houseForm = this.formBuilder.group({
@@ -229,6 +229,32 @@ export class CreateProperty {
         }
       })
     }
+  };
+
+  onCondominiumChange(): void {
+    const condominiumId = this.propertyForm.controls.condominio.value;
+
+    if (!condominiumId) {
+      return;
+    }
+
+    const condominium = this.condominiums().find(
+      item => item.id === condominiumId
+    );
+
+    if (!condominium) {
+      return;
+    }
+
+    this.propertyForm.patchValue({
+      condominio: condominium.id,
+      cep: condominium.cep,
+      logradouro: condominium.logradouro,
+      numero: condominium.numero,
+      bairro: condominium.bairro,
+      uf: condominium.uf,
+      cidade: condominium.cidade
+    });
   };
 
   openCreateCondominiumModal() {
@@ -431,6 +457,22 @@ export class CreateProperty {
     }
   };
 
+  stringToNumber(value: string | number | null): number | null {
+    if (value === null || value === '') {
+      return null;
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return Number(
+      value
+        .replace(/\./g, '')
+        .replace(',', '.')
+    );
+  }
+
   toggleFurniture(
     form: typeof this.houseForm | typeof this.apartmentForm,
     item: FurnitureTypes,
@@ -589,9 +631,9 @@ export class CreateProperty {
       uf: formValue.uf!,
       cidade: formValue.cidade!,
       complemento: formValue.complemento || null,
-      valor: formValue.valor,
-      valor_iptu: formValue.valor_iptu,
-      valor_condominio: formValue.valor_condominio
+      valor: this.stringToNumber(formValue.valor),
+      valor_iptu: this.stringToNumber(formValue.valor_iptu),
+      valor_condominio: this.stringToNumber(formValue.valor_condominio)
     };
 
     this.propertyService.create(

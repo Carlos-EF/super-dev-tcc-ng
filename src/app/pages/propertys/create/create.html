@@ -170,7 +170,8 @@
                                 <label for="nome-condominio">Condomínio</label>
                                 <div class="input-action">
                                     <div class="select-wrap">
-                                        <select formControlName="condominio" id="nome-condominio">
+                                        <select (change)="onCondominiumChange()" formControlName="condominio"
+                                            id="nome-condominio">
                                             <option value="">Selecionar…</option>
                                             @for (condominium of condominiums(); track condominium.id) {
                                             <option [value]="condominium.id">{{condominium.nome}}</option>
@@ -273,7 +274,8 @@
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
                             <input type="text" id="valor" [formControl]="propertyForm.controls.valor" class="mono"
-                                placeholder="0,00" inputmode="numeric">
+                                placeholder="0,00" mask="separator.2" thousandSeparator="." [typeFromDecimals]="true"
+                                inputmode="decimal">
                         </div>
                     </div>
                     @if (propertyForm.get('em_condominio')?.value === true) {
@@ -282,8 +284,9 @@
                                 mês</span></label>
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
-                            <input type="text" [formControl]="propertyForm.controls.valor_condominio"
-                                id="valor-condominio" class="mono" placeholder="0,00" inputmode="numeric">
+                            <input type="text" id="valor" class="mono"
+                                [formControl]="propertyForm.controls.valor_condominio" placeholder="0,00"
+                                mask="separator.2" thousandSeparator="." [typeFromDecimals]="true" inputmode="decimal">
                         </div>
                     </div>
                     }
@@ -292,8 +295,9 @@
                                 ano</span></label>
                         <div class="control has-prefix">
                             <span class="prefix">R$</span>
-                            <input type="text" id="iptu" [formControl]="propertyForm.controls.valor_iptu" class="mono"
-                                placeholder="0,00" inputmode="numeric">
+                            <input type="text" id="valor" class="mono" [formControl]="propertyForm.controls.valor_iptu"
+                                placeholder="0,00" mask="separator.2" thousandSeparator="." [typeFromDecimals]="true"
+                                inputmode="decimal">
                         </div>
                     </div>
                 </div>
@@ -829,6 +833,7 @@
                             </div>
                         </div>
 
+                        @if (apartmentForm.get('esta_mobiliado')?.value !== 'Não') {
                         <div class="field" id="field-mobilia-apartamento">
                             <label>
                                 O que fica no imóvel
@@ -850,6 +855,7 @@
                                 }
                             </div>
                         </div>
+                        }
                     </div>
                 </div>
                 }
@@ -927,6 +933,10 @@
             <div class="form-footer">
                 <button class="btn btn-ghost" (click)="previousStep()" data-goto="2">
                     << Voltar </button>
+                        <button class="btn btn-primary" (click)="createProperty()">
+                            Salvar
+                        </button>
+
                         <button class="btn btn-primary" (click)="nextStep()" data-goto="2">
                             Avançar >>
                         </button>
@@ -934,6 +944,7 @@
         </section>
         }
     </div>
+
 
     <aside class="ficha" aria-label="Resumo do imóvel">
         <div class="ficha-head">
