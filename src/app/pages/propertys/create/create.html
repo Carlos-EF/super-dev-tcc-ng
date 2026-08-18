@@ -584,8 +584,8 @@
                         </div>
 
 
+                        @if (houseForm.get('esta_mobiliado')?.value !== 'Não') {
                         <div class="field" id="field-mobilia-casa">
-
                             <label>
                                 O que fica no imóvel
 
@@ -599,7 +599,7 @@
                                 <label class="check">
                                     <input type="checkbox" [value]="item"
                                         [checked]="houseForm.controls.mobilia.value?.includes(item) ?? false"
-                                        (change)="toggleFurniture(houseForm,item,$any($event.target).checked)">
+                                        (change)="toggleFurniture(houseForm,item)">
                                     <span>
                                         {{ item }}
                                     </span>
@@ -607,6 +607,7 @@
                                 }
                             </div>
                         </div>
+                        }
                     </div>
                 </div>
 
@@ -846,8 +847,8 @@
                                 @for (item of furnitureTypes; track item) {
                                 <label class="check">
                                     <input type="checkbox" [value]="item"
-                                        [checked]="houseForm.controls.mobilia.value?.includes(item) ?? false"
-                                        (change)="toggleFurniture(houseForm,item,$any($event.target).checked)">
+                                        [checked]="apartmentForm.controls.mobilia.value?.includes(item) ?? false"
+                                        (change)="toggleFurniture(apartmentForm, item)">
                                     <span>
                                         {{ item }}
                                     </span>
@@ -915,6 +916,11 @@
                                 <option [ngValue]="null">
                                     Selecione
                                 </option>
+                                @for (zone of zoningTypes; track zone) {
+                                    <option [ngValue]="zone">
+                                    {{zone}}
+                                </option>
+                                }
                             </select>
                         </div>
 
