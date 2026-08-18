@@ -2,7 +2,7 @@ import { Component, inject, model } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
-import { FurnishedTypes, FurnitureTypes } from '../../../types/furnished.types';
+import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/furnished.types';
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
@@ -44,6 +44,7 @@ export class CreateProperty {
   condominiums = model<CondominiumResponse[]>([]);
 
   contactTypes = [...CONTACT_TYPES];
+  furnitureTypes = [...FURNITURE_TYPES];
 
   openCondominiumModal: boolean = false;
 
@@ -83,7 +84,7 @@ export class CreateProperty {
     andares: [null as number | null],
     salas: [null as number | null],
     esta_mobiliado: [null as FurnishedTypes | null],
-    mobilia: [null as FurnitureTypes[] | null]
+    mobilia: [[] as FurnitureTypes[]]
   });
 
   apartmentForm = this.formBuilder.group({
@@ -96,7 +97,7 @@ export class CreateProperty {
     andares: [null as number | null],
     salas: [null as number | null],
     esta_mobiliado: [null as FurnishedTypes | null],
-    mobilia: [null as FurnitureTypes[] | null]
+    mobilia: [[] as FurnitureTypes[]]
   });
 
   landForm = this.formBuilder.group({
@@ -424,4 +425,29 @@ export class CreateProperty {
       form.controls[campo].setValue(value - 1);
     }
   };
+
+  toggleFurniture(
+    form: typeof this.houseForm | typeof this.apartmentForm,
+    item: FurnitureTypes,
+    checked: boolean
+  ): void {
+
+    const value = form.controls.mobilia.value ?? [];
+
+    if (checked) {
+
+      if (!value.includes(item)) {
+        form.controls.mobilia.setValue([
+          ...value,
+          item
+        ]);
+      }
+
+      return;
+    }
+
+    form.controls.mobilia.setValue(
+      value.filter(furniture => furniture !== item)
+    );
+  }
 }

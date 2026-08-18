@@ -17,7 +17,8 @@ export const FURNITURE_TYPES = [
     'Sofá',
     'Mesa de jantar',
     'Camas',
-    'Cortinas e persianas'
+    'Cortinas e persianas',
+    "Iluminação planejada"
 ] as const
 
 export type FurnitureTypes =
