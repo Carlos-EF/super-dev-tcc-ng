@@ -6,7 +6,7 @@ import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/
 import { ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, HouseResponse } from '../../../models/property.model';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, HouseResponse, LandResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
@@ -144,7 +144,9 @@ export class CreateProperty {
     cidade: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]]
   });
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllBrokers();
 
     this.getAllOwners();
@@ -480,6 +482,8 @@ export class CreateProperty {
         this.houseForm.reset();
 
         console.log('Casa cadastrada com sucesso:', house);
+
+        this.router.navigate(['/propertys/list']);
       },
 
       error: (error: Error) => {
@@ -517,11 +521,50 @@ export class CreateProperty {
         this.apartmentForm.reset();
 
         console.log('Apartamento cadastrado com sucesso:', apartment);
+
+        this.router.navigate(['/propertys/list']);
       },
 
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados da apartamento:',
+          'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
+          error
+        );
+      }
+    });
+  };
+
+  createLand(id: string): void {
+    const landValues = this.landForm.getRawValue();
+
+    const newLandData: CreateLandRequest = {
+      imovel_id: id,
+      area_total: landValues.area_total,
+      zoneamento: landValues.zoneamento,
+      medida_esquerda: landValues.medida_esquerda,
+      medida_direita: landValues.medida_direita,
+      medida_frente: landValues.medida_frente,
+      medida_fundo: landValues.medida_fundo,
+      coeficiente: landValues.coeficiente,
+    };
+
+    this.propertyService.createLand(
+      id,
+      newLandData
+    ).subscribe({
+      next: (land: LandResponse) => {
+        this.toastService.show('create', 'Terreno');
+
+        this.landForm.reset();
+
+        console.log('Terreno cadastrado com sucesso:', land);
+
+        this.router.navigate(['/propertys/list']);
+      },
+
+      error: (error: Error) => {
+        console.log(
+          'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
           error
         );
       }
