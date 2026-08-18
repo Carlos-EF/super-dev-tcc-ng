@@ -52,4 +52,14 @@ export class ListProperty {
       this.showMoreFilters = false;
     }
   };
+
+  formatToBRL(currency: number): string {
+    const builder = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+
+    var result = builder.format(currency);
+    return result;
+  }
 }

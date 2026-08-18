@@ -519,62 +519,106 @@ select {
 }
 
 .pc-actions .icon-btn {
-    width: 29px;
-    height: 29px;
-    color: var(--text-3)
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    padding: 0;
+
+    color: var(--text-2);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    transition:
+        color .15s ease,
+        background .15s ease,
+        border-color .15s ease;
 }
 
 .pc-actions .icon-btn:hover {
-    color: var(--text)
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-color: var(--accent-line);
+}
+
+.pc-actions .icon-btn.danger {
+    color: var(--danger);
 }
 
 .pc-actions .icon-btn.danger:hover {
+    color: var(--danger);
     background: var(--danger-soft);
-    color: var(--danger)
+    border-color: var(--danger-line);
 }
 
-@media (max-width:1240px) {
-    .filters-more {
-        grid-template-columns: repeat(2, 1fr)
-    }
-}
-
-@media (max-width:1180px) {
-    .filters-main {
-        grid-template-columns: 1fr auto;
-        grid-auto-rows: auto
-    }
-
-    .filters-main .field:first-child {
-        grid-column: 1/-1
-    }
-}
-
-@media (max-width:1080px) {
-    .sidebar {
-        display: none
-    }
-}
-
-@media (max-width:720px) {
-    .main {
-        padding: 20px 16px 60px
-    }
-
-    .filters-main {
-        grid-template-columns: 1fr
-    }
+@media (max-width: 1240px) {
 
     .filters-more {
-        grid-template-columns: 1fr
-    }
-
-    .table-foot {
-        justify-content: center
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .cards-grid {
-        grid-template-columns: 1fr
+        grid-template-columns: repeat(auto-fill,
+                minmax(290px, 1fr));
+    }
+}
+
+@media (max-width: 1180px) {
+
+    .filters-main {
+        grid-template-columns: 1fr auto;
+        grid-auto-rows: auto;
+    }
+
+    .filters-main .field:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 900px) {
+
+    .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pc-head {
+        gap: 8px;
+    }
+
+    .pc-price {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 720px) {
+
+    .filters-main {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-more {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pc-photo {
+        height: 180px;
+    }
+
+    .pc-body {
+        padding: 14px;
+    }
+
+    .pc-price {
+        font-size: 15px;
     }
 }
 
