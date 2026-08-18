@@ -9,8 +9,7 @@
     <div>
         <h1 class="page-title">Imóveis</h1>
     </div>
-    <button routerLink="/propertys/create"
-     class="btn btn-primary" id="btn-novo">
+    <button routerLink="/propertys/create" class="btn btn-primary" id="btn-novo">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round">
             <path d="M12 5v14M5 12h14" />
@@ -56,15 +55,20 @@
                 </select>
             </div>
         </div>
-        <button class="btn btn-ghost btn-more" id="btn-more" aria-expanded="false" aria-controls="filters-more">
+        <button type="button" class="btn btn-ghost btn-more" id="btn-more" [attr.aria-expanded]="showMoreFilters"
+            aria-controls="filters-more" (click)="toggleMoreFilters()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round">
                 <path d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-            Mais filtros
-            <span class="fcount" id="f-count" hidden>0</span>
+
+            {{ showMoreFilters ? 'Menos filtros' : 'Mais filtros' }}
+
+            <span class="fcount" hidden>0</span>
+
             <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                [style.transform]="showMoreFilters ? 'rotate(180deg)' : 'rotate(0deg)'">
                 <path d="m6 9 6 6 6-6" />
             </svg>
         </button>
@@ -77,7 +81,7 @@
         </button>
     </div>
 
-    <div class="filters-more" id="filters-more" hidden>
+    <div class="filters-more" id="filters-more" [hidden]="!showMoreFilters">
         <div class="field">
             <label for="f-tipo">Tipo do imóvel</label>
             <div class="select-wrap">
@@ -148,17 +152,6 @@
                     <option value="3">3+</option>
                     <option value="4">4+</option>
                 </select>
-            </div>
-        </div>
-        <div class="field">
-            <label>Status</label>
-            <div class="segmented" role="radiogroup" aria-label="Status">
-                <input type="radio" name="f-status" id="fs-todos" value="" checked>
-                <label for="fs-todos">Todos</label>
-                <input type="radio" name="f-status" id="fs-pub" value="Publicado">
-                <label for="fs-pub">Publicado</label>
-                <input type="radio" name="f-status" id="fs-rasc" value="Rascunho">
-                <label for="fs-rasc">Rascunho</label>
             </div>
         </div>
     </div>

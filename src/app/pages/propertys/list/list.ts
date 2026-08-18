@@ -28,6 +28,8 @@ export class ListProperty {
 
   page = model(1);
 
+  showMoreFilters = false;
+
   constructor() {
     this.getAllPropertys();
   };
@@ -41,5 +43,13 @@ export class ListProperty {
         this.propertys.set(propertys);
       }
     })
-  }
+  };
+
+  toggleMoreFilters(): void {
+    if (this.showMoreFilters == false) {
+      this.showMoreFilters = true;
+    } else {
+      this.showMoreFilters = false;
+    }
+  };
 }
