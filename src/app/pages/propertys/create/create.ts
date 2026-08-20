@@ -162,6 +162,58 @@ export class CreateProperty implements OnDestroy {
     this.getAllCondominiums();
   };
 
+  private processImageFiles(
+    files: File[]
+  ): void {
+
+    this.imageError = '';
+
+    const maxSize =
+      5 * 1024 * 1024;
+
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    for (const file of files) {
+      if (!allowedTypes.includes(file.type)) {
+
+        this.imageError =
+          `O arquivo "${file.name}" não possui um formato permitido. ` +
+          'Use JPG, PNG ou WebP.';
+
+        continue;
+      }
+
+      if (file.size > maxSize) {
+        this.imageError =
+          `O arquivo "${file.name}" ultrapassa o limite de 5 MB.`;
+
+        continue;
+      }
+
+      const alreadyExists =
+        this.selectedImages.some(
+          existingFile =>
+            existingFile.name === file.name &&
+            existingFile.size === file.size &&
+            existingFile.lastModified === file.lastModified
+        );
+
+      if (alreadyExists) {
+        continue;
+      }
+
+      this.selectedImages.push(file);
+
+      this.imagePreviews.push(
+        URL.createObjectURL(file)
+      );
+    }
+  };
+
   getAllBrokers() {
     this.brokerService.getAllForList().subscribe({
       next: (brokers: BrokerResponse[]) => {
@@ -502,6 +554,24 @@ export class CreateProperty implements OnDestroy {
     ]);
 
     console.log(form.controls.mobilia.value);
+  };
+
+  onImagesSelected(
+    event: Event
+  ): void {
+
+    const input =
+      event.target as HTMLInputElement;
+
+    if (!input.files) {
+      return;
+    }
+
+    this.processImageFiles(
+      Array.from(input.files)
+    );
+
+    input.value = '';
   };
 
   createHouse(id: string): void {
