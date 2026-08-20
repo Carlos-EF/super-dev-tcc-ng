@@ -1288,3 +1288,35 @@ input[type="number"]::-webkit-outer-spin-button {
         padding: 10px;
     }
 }
+
+.field input.ng-invalid.ng-touched,
+.field select.ng-invalid.ng-touched,
+.field textarea.ng-invalid.ng-touched {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+}
+
+.field-error {
+    display: block;
+    margin-top: 6px;
+    color: #dc2626;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.field-error::before {
+    content: "⚠ ";
+}
+
+.segmented.ng-invalid.ng-touched,
+.tile-group.ng-invalid.ng-touched {
+    outline: 1px solid #dc2626;
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+.validation-ok {
+    color: #16a34a;
+    font-size: 12px;
+    margin-top: 6px;
+}
