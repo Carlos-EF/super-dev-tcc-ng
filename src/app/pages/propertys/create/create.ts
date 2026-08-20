@@ -162,10 +162,15 @@ export class CreateProperty implements OnDestroy {
     this.getAllCondominiums();
   };
 
+  ngOnDestroy(): void {
+    this.imagePreviews.forEach(
+      preview => URL.revokeObjectURL(preview)
+    );
+  }
+
   private processImageFiles(
     files: File[]
   ): void {
-
     this.imageError = '';
 
     const maxSize =
@@ -559,7 +564,6 @@ export class CreateProperty implements OnDestroy {
   onImagesSelected(
     event: Event
   ): void {
-
     const input =
       event.target as HTMLInputElement;
 
@@ -577,7 +581,6 @@ export class CreateProperty implements OnDestroy {
   onImageDragOver(
     event: DragEvent
   ): void {
-
     event.preventDefault();
 
     event.stopPropagation();
@@ -588,7 +591,6 @@ export class CreateProperty implements OnDestroy {
   onImageDragLeave(
     event: DragEvent
   ): void {
-
     event.preventDefault();
 
     event.stopPropagation();
@@ -599,7 +601,6 @@ export class CreateProperty implements OnDestroy {
   onImageDrop(
     event: DragEvent
   ): void {
-
     event.preventDefault();
 
     event.stopPropagation();
@@ -612,6 +613,27 @@ export class CreateProperty implements OnDestroy {
 
     this.processImageFiles(
       Array.from(event.dataTransfer.files)
+    );
+  };
+
+  removeSelectedImage(
+    index: number
+  ): void {
+    const preview =
+      this.imagePreviews[index];
+
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
+
+    this.selectedImages.splice(
+      index,
+      1
+    );
+
+    this.imagePreviews.splice(
+      index,
+      1
     );
   };
 
