@@ -161,4 +161,15 @@ export class PropertysService {
 
         return this.httpClient.get<LandResponse>(urlWithId);
     };
+
+    getImageById(
+        imagemId: string
+    ): Observable<PropertyImageResponse> {
+
+        const urlWithId = `${this.url}/images/${imagemId}`;
+
+        return this.httpClient.get<PropertyImageResponse>(
+            urlWithId
+        );
+    };
 }
