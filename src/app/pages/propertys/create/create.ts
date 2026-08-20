@@ -664,9 +664,10 @@ export class CreateProperty implements OnDestroy {
 
         console.log('Casa cadastrada com sucesso:', house);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados da casa:',
@@ -703,9 +704,10 @@ export class CreateProperty implements OnDestroy {
 
         console.log('Apartamento cadastrado com sucesso:', apartment);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
@@ -740,9 +742,10 @@ export class CreateProperty implements OnDestroy {
 
         console.log('Terreno cadastrado com sucesso:', land);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
