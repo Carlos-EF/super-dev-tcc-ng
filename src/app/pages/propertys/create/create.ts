@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, OnDestroy } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
@@ -18,8 +18,9 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -32,7 +33,7 @@ import { PropertysService } from '../../../services/propertys.service';
   templateUrl: './create.html',
   styleUrl: './create.scss',
 })
-export class CreateProperty {
+export class CreateProperty implements OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
   private readonly clientsService = inject(ClientsService);
@@ -55,6 +56,12 @@ export class CreateProperty {
   openClientModal: boolean = false;
 
   openBrokerModal: boolean = false;
+
+  selectedImages: File[] = [];
+  imagePreviews: string[] = [];
+  imageError: string = '';
+  isUploadingImages: boolean = false;
+  isDraggingImages: boolean = false;
 
   currentStep = 1;
 
@@ -153,6 +160,63 @@ export class CreateProperty {
     this.getAllOwners();
 
     this.getAllCondominiums();
+  };
+
+  ngOnDestroy(): void {
+    this.imagePreviews.forEach(
+      preview => URL.revokeObjectURL(preview)
+    );
+  }
+
+  private processImageFiles(
+    files: File[]
+  ): void {
+    this.imageError = '';
+
+    const maxSize =
+      5 * 1024 * 1024;
+
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    for (const file of files) {
+      if (!allowedTypes.includes(file.type)) {
+
+        this.imageError =
+          `O arquivo "${file.name}" não possui um formato permitido. ` +
+          'Use JPG, PNG ou WebP.';
+
+        continue;
+      }
+
+      if (file.size > maxSize) {
+        this.imageError =
+          `O arquivo "${file.name}" ultrapassa o limite de 5 MB.`;
+
+        continue;
+      }
+
+      const alreadyExists =
+        this.selectedImages.some(
+          existingFile =>
+            existingFile.name === file.name &&
+            existingFile.size === file.size &&
+            existingFile.lastModified === file.lastModified
+        );
+
+      if (alreadyExists) {
+        continue;
+      }
+
+      this.selectedImages.push(file);
+
+      this.imagePreviews.push(
+        URL.createObjectURL(file)
+      );
+    }
   };
 
   getAllBrokers() {
@@ -497,6 +561,112 @@ export class CreateProperty {
     console.log(form.controls.mobilia.value);
   };
 
+  onImagesSelected(
+    event: Event
+  ): void {
+    const input =
+      event.target as HTMLInputElement;
+
+    if (!input.files) {
+      return;
+    }
+
+    this.processImageFiles(
+      Array.from(input.files)
+    );
+
+    input.value = '';
+  };
+
+  onImageDragOver(
+    event: DragEvent
+  ): void {
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = true;
+  };
+
+  onImageDragLeave(
+    event: DragEvent
+  ): void {
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = false;
+  };
+
+  onImageDrop(
+    event: DragEvent
+  ): void {
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = false;
+
+    if (!event.dataTransfer?.files) {
+      return;
+    }
+
+    this.processImageFiles(
+      Array.from(event.dataTransfer.files)
+    );
+  };
+
+  removeSelectedImage(
+    index: number
+  ): void {
+    const preview =
+      this.imagePreviews[index];
+
+    if (preview) {
+      URL.revokeObjectURL(preview);
+    }
+
+    this.selectedImages.splice(
+      index,
+      1
+    );
+
+    this.imagePreviews.splice(
+      index,
+      1
+    );
+  };
+
+  setSelectedImageAsCover(
+    index: number
+  ): void {
+
+    if (
+      index < 0 ||
+      index >= this.selectedImages.length ||
+      index === 0
+    ) {
+      return;
+    }
+
+    const selectedFile =
+      this.selectedImages[index];
+
+    const selectedPreview =
+      this.imagePreviews[index];
+
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
+
+    this.selectedImages.unshift(
+      selectedFile
+    );
+
+    this.imagePreviews.unshift(
+      selectedPreview
+    );
+  };
+
   createHouse(id: string): void {
     const houseValues = this.houseForm.getRawValue();
 
@@ -524,9 +694,10 @@ export class CreateProperty {
 
         console.log('Casa cadastrada com sucesso:', house);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados da casa:',
@@ -563,9 +734,10 @@ export class CreateProperty {
 
         console.log('Apartamento cadastrado com sucesso:', apartment);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
@@ -600,9 +772,10 @@ export class CreateProperty {
 
         console.log('Terreno cadastrado com sucesso:', land);
 
-        this.router.navigate(['/propertys/list']);
+        this.uploadImages(
+          id
+        );
       },
-
       error: (error: Error) => {
         console.log(
           'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
@@ -667,5 +840,70 @@ export class CreateProperty {
         );
       }
     });
+  };
+
+  private uploadImages(
+    imovelId: string
+  ): void {
+    if (this.selectedImages.length === 0) {
+      this.finishCreation();
+      return;
+    }
+
+    this.isUploadingImages = true;
+
+    const uploads =
+      this.selectedImages.map(
+        (file, index) =>
+
+          this.propertyService.createImages(
+            imovelId,
+            file,
+            index === 0
+          )
+      );
+
+    forkJoin(uploads).subscribe({
+      next: (images: PropertyImageResponse[]) => {
+        console.log(
+          'Imagens cadastradas:',
+          images
+        );
+
+        this.isUploadingImages = false;
+
+        this.toastService.show(
+          'create',
+          'Imagens'
+        );
+
+        this.finishCreation();
+      },
+      error: (error: Error) => {
+        this.isUploadingImages = false;
+
+        console.error(
+          'Ocorreu um erro ao enviar as imagens:',
+          error
+        );
+
+        this.imageError =
+          'O imóvel foi cadastrado, mas ocorreu um erro ao enviar as imagens.';
+      }
+    });
+  };
+
+  private finishCreation(): void {
+    this.selectedImages = [];
+
+    this.imagePreviews.forEach(
+      preview => URL.revokeObjectURL(preview)
+    );
+
+    this.imagePreviews = [];
+
+    this.router.navigate(
+      ['/propertys/list']
+    );
   };
 }
