@@ -249,3 +249,29 @@ export interface CompletePropertyResponse {
     criado_em: Date;
     alterado_em: Date;
 }
+
+export interface PropertyImageResponse {
+    id: string;
+
+    imovel_id: string;
+
+    caminho: string;
+
+    url: string;
+
+    principal: boolean;
+
+    criado_em: Date;
+
+    alterado_em: Date | null;
+}
+
+export interface CreatePropertyImageRequest {
+    imovel_id: string;
+
+    principal: boolean;
+}
+
+export interface EditPropertyImageRequest {
+    principal: boolean;
+}
