@@ -585,6 +585,36 @@ export class CreateProperty implements OnDestroy {
     this.isDraggingImages = true;
   };
 
+  onImageDragLeave(
+    event: DragEvent
+  ): void {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = false;
+  };
+
+  onImageDrop(
+    event: DragEvent
+  ): void {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = false;
+
+    if (!event.dataTransfer?.files) {
+      return;
+    }
+
+    this.processImageFiles(
+      Array.from(event.dataTransfer.files)
+    );
+  };
+
   createHouse(id: string): void {
     const houseValues = this.houseForm.getRawValue();
 
