@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse, PropertyImageResponse } from '../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyImageRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse, PropertyImageResponse } from '../models/property.model';
 
 @Service()
 export class PropertysService {
@@ -138,6 +138,19 @@ export class PropertysService {
         return this.httpClient.put<LandResponse>(urlWithId, form);
     };
 
+    editImage(
+        imagemId: string,
+        form: EditPropertyImageRequest
+    ): Observable<PropertyImageResponse> {
+
+        const urlWithId = `${this.url}/images/${imagemId}`;
+
+        return this.httpClient.put<PropertyImageResponse>(
+            urlWithId,
+            form
+        );
+    };
+
     getById(id: string): Observable<CompletePropertyResponse> {
         const urlWithId = `${this.url}/${id}`;
 
@@ -172,4 +185,6 @@ export class PropertysService {
             urlWithId
         );
     };
+
+
 }
