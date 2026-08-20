@@ -26,6 +26,17 @@ export class PropertysService {
         });
     };
 
+    getAllImages(
+        imovelId: string
+    ): Observable<PropertyImageResponse[]> {
+
+        const urlWithId = `${this.url}/${imovelId}/images`;
+
+        return this.httpClient.get<PropertyImageResponse[]>(
+            urlWithId
+        );
+    };
+
     delete(id: string): Observable<void> {
         const urlWithId = `${this.url}/${id}`;
 
@@ -65,7 +76,7 @@ export class PropertysService {
         return this.httpClient.post<LandResponse>(urlWithId, form);
     };
 
-     createImages(
+    createImages(
         imovelId: string,
         file: File,
         principal: boolean = false
