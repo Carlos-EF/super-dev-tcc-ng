@@ -574,6 +574,17 @@ export class CreateProperty implements OnDestroy {
     input.value = '';
   };
 
+  onImageDragOver(
+    event: DragEvent
+  ): void {
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+    this.isDraggingImages = true;
+  };
+
   createHouse(id: string): void {
     const houseValues = this.houseForm.getRawValue();
 
