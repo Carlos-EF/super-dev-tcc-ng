@@ -1320,3 +1320,142 @@ input[type="number"]::-webkit-outer-spin-button {
     font-size: 12px;
     margin-top: 6px;
 }
+
+.dropzone {
+    border: 1.5px dashed var(--line-strong);
+    border-radius: var(--radius);
+    padding: 36px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    background: var(--bg2);
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft)
+}
+
+.dropzone .dz-icon {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 12px;
+    border-radius: 12px;
+    background: var(--bg3);
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+}
+
+.dropzone h4 {
+    font-family: var(--font-display);
+    font-size: 14.5px;
+    font-weight: 600
+}
+
+.dropzone p {
+    font-size: 12.5px;
+    color: var(--text-3);
+    margin-top: 4px
+}
+
+.dropzone .fake-link {
+    color: var(--accent);
+    font-weight: 500
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.photo {
+    position: relative;
+    aspect-ratio: 4/3;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    background-size: cover;
+    background-position: center;
+    animation: photoIn .3s ease;
+}
+
+@keyframes photoIn {
+    from {
+        opacity: 0;
+        transform: scale(.94)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+.photo .cover-tag {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    background: var(--accent);
+    color: #14100A;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.photo .ph-actions {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .15s;
+}
+
+.photo:hover .ph-actions,
+.photo:focus-within .ph-actions {
+    opacity: 1
+}
+
+.photo .ph-btn {
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(12, 15, 19, .8);
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-ui);
+}
+
+.photo .ph-btn.icon-only {
+    width: 24px;
+    padding: 0;
+    justify-content: center
+}
+
+.photo .ph-btn:hover {
+    background: var(--accent);
+    color: #14100A
+}
+
+.photo .ph-btn.rm:hover {
+    background: var(--danger);
+    color: #fff
+}
+
+.photo.is-cover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent)
+}

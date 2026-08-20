@@ -637,6 +637,36 @@ export class CreateProperty implements OnDestroy {
     );
   };
 
+  setSelectedImageAsCover(
+    index: number
+  ): void {
+
+    if (
+      index < 0 ||
+      index >= this.selectedImages.length ||
+      index === 0
+    ) {
+      return;
+    }
+
+    const selectedFile =
+      this.selectedImages[index];
+
+    const selectedPreview =
+      this.imagePreviews[index];
+
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
+
+    this.selectedImages.unshift(
+      selectedFile
+    );
+
+    this.imagePreviews.unshift(
+      selectedPreview
+    );
+  };
+
   createHouse(id: string): void {
     const houseValues = this.houseForm.getRawValue();
 
