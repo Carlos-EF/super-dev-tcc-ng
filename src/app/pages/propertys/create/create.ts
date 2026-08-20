@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
 
@@ -807,5 +807,70 @@ export class CreateProperty implements OnDestroy {
         );
       }
     });
+  };
+
+  private uploadImages(
+    imovelId: string
+  ): void {
+    if (this.selectedImages.length === 0) {
+      this.finishCreation();
+      return;
+    }
+
+    this.isUploadingImages = true;
+
+    const uploads =
+      this.selectedImages.map(
+        (file, index) =>
+
+          this.propertyService.createImages(
+            imovelId,
+            file,
+            index === 0
+          )
+      );
+
+    forkJoin(uploads).subscribe({
+      next: (images: PropertyImageResponse[]) => {
+        console.log(
+          'Imagens cadastradas:',
+          images
+        );
+
+        this.isUploadingImages = false;
+
+        this.toastService.show(
+          'create',
+          'Imagens'
+        );
+
+        this.finishCreation();
+      },
+      error: (error: Error) => {
+        this.isUploadingImages = false;
+
+        console.error(
+          'Ocorreu um erro ao enviar as imagens:',
+          error
+        );
+
+        this.imageError =
+          'O imóvel foi cadastrado, mas ocorreu um erro ao enviar as imagens.';
+      }
+    });
+  };
+
+  private finishCreation(): void {
+    this.selectedImages = [];
+
+    this.imagePreviews.forEach(
+      preview => URL.revokeObjectURL(preview)
+    );
+
+    this.imagePreviews = [];
+
+    this.router.navigate(
+      ['/propertys/list']
+    );
   };
 }
