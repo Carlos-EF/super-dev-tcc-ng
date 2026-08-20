@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, inject, model, OnDestroy } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FinalityTypes } from '../../../types/finality.types';
 import { PropertyTypes } from '../../../types/property.types';
@@ -20,6 +20,7 @@ import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
 import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -32,7 +33,7 @@ import { PropertysService } from '../../../services/propertys.service';
   templateUrl: './create.html',
   styleUrl: './create.scss',
 })
-export class CreateProperty {
+export class CreateProperty implements OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
   private readonly clientsService = inject(ClientsService);
@@ -55,6 +56,12 @@ export class CreateProperty {
   openClientModal: boolean = false;
 
   openBrokerModal: boolean = false;
+
+  selectedImages: File[] = [];
+  imagePreviews: string[] = [];
+  imageError: string = '';
+  isUploadingImages: boolean = false;
+  isDraggingImages: boolean = false;
 
   currentStep = 1;
 

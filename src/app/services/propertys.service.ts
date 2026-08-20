@@ -196,18 +196,4 @@ export class PropertysService {
             urlWithId
         );
     };
-
-    uploadMultiple(
-        imovelId: string,
-        files: File[],
-        principalIndex: number = 0
-    ): Observable<PropertyImageResponse>[] {
-        return files.map((file, index) =>
-            this.createImages(
-                imovelId,
-                file,
-                index === principalIndex
-            )
-        );
-    };
 }
