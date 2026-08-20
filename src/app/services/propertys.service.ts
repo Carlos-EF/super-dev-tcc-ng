@@ -43,6 +43,17 @@ export class PropertysService {
         return this.httpClient.delete<void>(urlWithId);
     };
 
+    deleteImage(
+        imagemId: string
+    ): Observable<void> {
+
+        const urlWithId = `${this.url}/images/${imagemId}`;
+
+        return this.httpClient.delete<void>(
+            urlWithId
+        );
+    };
+
     create(
         form: CreatePropertyRequest
     ): Observable<CompletePropertyResponse> {
