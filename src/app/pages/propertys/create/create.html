@@ -607,7 +607,6 @@
                         Características do imóvel.
                     </div>
                 </div>
-                CASA
                 @if (
                 propertyForm.get('tipo')?.value === 'Casa'
                 ) {
@@ -1191,6 +1190,13 @@
                 </div>
                 }
             </div>
+            <div class="form-footer">
+                <button type="button" class="btn btn-ghost" (click)="previousStep()" data-goto="1">
+                    << Voltar </button>
+                        <button type="button" class="btn btn-primary" (click)="nextStep()" data-goto="3">
+                            Avançar >>
+                        </button>
+            </div>
         </section>
         }
         @if (currentStep == 3) {
@@ -1297,16 +1303,16 @@
             </div>
 
             <div class="form-footer">
-                <button type="button" class="btn" (click)="previousStep()" [disabled]="isUploadingImages">
+                <button type="button" class="btn btn-ghost" (click)="previousStep()" data-goto="2">
                     << Voltar </button>
-                        <button type="button" class="btn btn-primary" (click)="createProperty()"
-                            [disabled]="isUploadingImages">
-                            @if (isUploadingImages) {
-                            Enviando imagens...
-                            } @else {
-                            Salvar imóvel
-                            }
-                        </button>
+                <button type="button" class="btn btn-primary" (click)="createProperty()"
+                    [disabled]="isUploadingImages">
+                    @if (isUploadingImages) {
+                    Enviando imagens...
+                    } @else {
+                    Salvar imóvel
+                    }
+                </button>
             </div>
         </section>
         }
@@ -1469,7 +1475,7 @@
                 <span class="feat">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.7">
-                       <path
+                        <path
                             d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
                     </svg>
                     <b>
@@ -1491,7 +1497,7 @@
                 </span>
 
                 <span class="feat">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.7">
                         <path d="M5 17h14M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
                         <circle cx="7.5" cy="17" r="1.5" />
