@@ -373,8 +373,8 @@
                         </svg>
                     </button>
 
-                    <button type="button" class="icon-btn danger" title="Excluir imóvel"
-                        [attr.aria-label]="'Excluir imóvel ' + property.codigo">
+                    <button type="button" (click)="openConfirmModal(property)" class="icon-btn danger"
+                        title="Excluir imóvel" [attr.aria-label]="'Excluir imóvel ' + property.codigo">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 6h18" />
@@ -436,3 +436,94 @@
         </div>
     </div>
 </div>
+
+@if (selectedProperty && confirmModal) {
+<div class="modal-backdrop open" id="modal-excluir" role="dialog" aria-modal="true" aria-labelledby="mx-title"
+    aria-describedby="mx-description">
+    <div class="modal modal-sm">
+        <div class="modal-head">
+            <div>
+                <h3 id="mx-title">
+                    Excluir imóvel
+                </h3>
+                <span class="modal-warning-subtitle">
+                    Esta ação não poderá ser desfeita.
+                </span>
+            </div>
+
+            <button type="button" class="icon-btn" (click)="closeConfirmModal()" aria-label="Fechar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="confirm-box">
+                <div class="confirm-icon">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                    </svg>
+                </div>
+
+                <div class="confirm-content">
+                    <p id="mx-description" class="confirm-description">
+                        Tem certeza que deseja excluir este imóvel?
+                    </p>
+
+                    <div class="property-delete-info">
+                        <div class="property-delete-label">
+                            Imóvel selecionado
+                        </div>
+                        <strong class="property-delete-code">
+                            Código {{ selectedProperty.codigo }}
+                        </strong>
+                        <span class="property-delete-location">
+                            {{ selectedProperty.tipo }}
+                            ·
+                            {{ selectedProperty.cidade }} -
+                            {{ selectedProperty.uf }}
+                        </span>
+                    </div>
+
+                    <div class="property-delete-warning">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.3 3.2 2.2 17a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0Z" />
+                            <path d="M12 8v5" />
+                            <path d="M12 17h.01" />
+                        </svg>
+                        <span>
+                            Todas as informações relacionadas a este imóvel,
+                            incluindo suas imagens e características,
+                            também serão removidas.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" (click)="closeConfirmModal()">
+                Cancelar
+            </button>
+
+            <button type="button" class="btn btn-danger" id="mx-confirmar"
+                (click)="deleteProperty(selectedProperty.id)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+
+                    <path d="M10 11v6M14 11v6" />
+                </svg>
+                Excluir imóvel
+            </button>
+        </div>
+    </div>
+</div>
+}

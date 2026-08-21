@@ -30,6 +30,10 @@ export class ListProperty {
 
   showMoreFilters = false;
 
+  selectedProperty: CompletePropertyResponse | null = null;
+
+  confirmModal: boolean = false;
+
   constructor() {
     this.getAllPropertys();
   };
@@ -41,6 +45,21 @@ export class ListProperty {
     ).subscribe({
       next: (propertys: PaginatedPropertyResponse) => {
         this.propertys.set(propertys);
+      }
+    })
+  };
+
+  deleteProperty(id: string) {
+    this.propertyService.delete(id).subscribe({
+      next: () => {
+        this.toastService.show("delete", 'Imóvel');
+
+        this.getAllPropertys();
+
+        this.closeConfirmModal();
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar apagar o imóvel:', error);
       }
     })
   };
@@ -87,5 +106,28 @@ export class ListProperty {
     this.perPage.set(value); this.page.set(1);
 
     this.getAllPropertys();
+  };
+
+  openConfirmModal(property: CompletePropertyResponse) {
+    this.selectedProperty = property;
+    this.confirmModal = true;
+  }
+
+  closeConfirmModal() {
+    this.confirmModal = false;
+
+    this.selectedProperty = null;
+  }
+
+  cancelModal() {
+    this.selectedProperty = null;
+
+    this.confirmModal = false;
+  };
+
+  closeModal() {
+    this.selectedProperty = null;
+
+    this.confirmModal = false;
   };
 }

@@ -556,6 +556,24 @@ select {
     border-color: var(--danger-line);
 }
 
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background .15s, color .15s;
+}
+
+.icon-btn:hover {
+    background: var(--bg3);
+    color: var(--text)
+}
+
 @media (max-width: 1240px) {
 
     .filters-more {
@@ -799,4 +817,160 @@ select {
     font-size: 12px;
     padding: 0 3px;
     user-select: none
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(5, 7, 10, .65);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+.modal-backdrop.open {
+    opacity: 1;
+    pointer-events: auto
+}
+
+.modal {
+    width: min(640px, calc(100vw - 40px));
+    background: var(--bg1);
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    transform: translateY(14px) scale(.98);
+    transition: transform .22s;
+    overflow: hidden;
+}
+
+.modal.modal-sm {
+    width: min(440px, calc(100vw - 40px))
+}
+
+.modal-backdrop.open .modal {
+    transform: translateY(0) scale(1)
+}
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+}
+
+.modal-head h3 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600
+}
+
+.modal-body {
+    padding: 22px
+}
+
+.modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--line);
+    background: var(--bg2);
+}
+
+.confirm-box {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start
+}
+
+.confirm-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    flex-shrink: 0;
+    background: var(--danger-soft);
+    color: var(--danger);
+    display: grid;
+    place-items: center;
+}
+
+.confirm-box p {
+    font-size: 13.5px;
+    color: var(--text-2)
+}
+
+.confirm-box b {
+    color: var(--text)
+}
+
+.confirm-box .warn {
+    display: block;
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--text-3)
+}
+
+.modal-warning-subtitle {
+    display: block;
+    margin-top: 3px;
+    color: var(--text-3);
+    font-size: 12px;
+}
+
+.confirm-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.confirm-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.property-delete-info {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg2);
+}
+
+.property-delete-label {
+    margin-bottom: 3px;
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.property-delete-code {
+    display: block;
+    font-size: 14px;
+}
+
+.property-delete-location {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--text-3);
+}
+
+.property-delete-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--danger);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.property-delete-warning svg {
+    flex: none;
+    margin-top: 1px;
 }
