@@ -61,5 +61,31 @@ export class ListProperty {
 
     var result = builder.format(currency);
     return result;
-  }
+  };
+
+  previousPage(): void {
+    if (this.page() > 1) {
+      this.page.update(p => p - 1);
+
+      this.getAllPropertys();
+    }
+  };
+
+  nextPage(): void {
+    const totalPages = this.propertys()?.total_paginas ?? 1;
+
+    if (this.page() < totalPages) {
+      this.page.update(p => p + 1);
+
+      this.getAllPropertys();
+    }
+  };
+
+  changePerPage(event: Event): void {
+    const value = Number((event.target as HTMLSelectElement).value);
+
+    this.perPage.set(value); this.page.set(1);
+
+    this.getAllPropertys();
+  };
 }
