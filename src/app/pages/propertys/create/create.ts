@@ -63,6 +63,13 @@ export class CreateProperty implements OnDestroy {
   isUploadingImages: boolean = false;
   isDraggingImages: boolean = false;
 
+  get selectedPropertyType(): PropertyTypes | null {
+    return this.propertyForm.controls.tipo.value;
+  };
+  get selectedFinality(): FinalityTypes | null {
+    return this.propertyForm.controls.finalidade.value;
+  };
+
   currentStep = 1;
 
   propertyForm = this.formBuilder.group({
@@ -905,5 +912,296 @@ export class CreateProperty implements OnDestroy {
     this.router.navigate(
       ['/propertys/list']
     );
+  };
+
+  getAsideCode(): string {
+    return this.propertyForm.controls.codigo.value || '—';
+  };
+
+  getAsideType(): string {
+    const type = this.propertyForm.controls.tipo.value;
+
+    if (!type) {
+      return 'Tipo não definido';
+    }
+
+    return type;
+  };
+
+  getAsideSubType(): string {
+    switch (this.propertyForm.controls.tipo.value) {
+      case 'Casa':
+        return 'Casa selecionada';
+
+      case 'Apartamento':
+        return 'Apartamento selecionado';
+
+      case 'Terreno':
+        return 'Terreno selecionado';
+
+      default:
+        return 'Escolha o tipo na etapa 1';
+    }
+  };
+
+  getAsideLabelValue(): string {
+    switch (this.propertyForm.controls.finalidade.value) {
+      case 'Venda':
+        return 'Valor de venda';
+
+      case 'Locação':
+        return 'Aluguel mensal';
+
+      default:
+        return 'Valor solicitado';
+    }
+  };
+
+  formatCurrency(
+    value: string | number | null
+  ): string {
+
+    const numericValue =
+      this.stringToNumber(value);
+
+    if (
+      numericValue === null ||
+      Number.isNaN(numericValue)
+    ) {
+      return 'R$ —';
+    }
+
+    return new Intl.NumberFormat(
+      'pt-BR',
+      {
+        style: 'currency',
+        currency: 'BRL'
+      }
+    ).format(numericValue);
+  };
+
+  getAsideExtras(): string {
+    const finality =
+      this.propertyForm.controls.finalidade.value;
+
+    const valueCond =
+      this.stringToNumber(
+        this.propertyForm.controls.valor_condominio.value
+      );
+
+    const valueIptu =
+      this.stringToNumber(
+        this.propertyForm.controls.valor_iptu.value
+      );
+
+    const extras: string[] = [];
+
+    if (
+      finality === 'Locação' &&
+      valueCond !== null
+    ) {
+      extras.push(
+        `Condomínio ${this.formatCurrency(valueCond)}`
+      );
+    }
+
+    if (valueIptu !== null) {
+      extras.push(
+        `IPTU ${this.formatCurrency(valueIptu)}`
+      );
+    }
+
+    return extras.join(' • ');
+  };
+
+  getAsideTotalVisible(): boolean {
+    return this.propertyForm.controls.finalidade.value === 'Locação';
+  };
+
+  getAsideRent(): string {
+    return this.formatCurrency(
+      this.propertyForm.controls.valor.value
+    );
+  };
+
+  getAsideCond(): string {
+    return this.formatCurrency(
+      this.propertyForm.controls.valor_condominio.value
+    );
+  };
+
+  getAsideIptu(): string {
+    return this.formatCurrency(
+      this.propertyForm.controls.valor_iptu.value
+    );
+  };
+
+  getAsideMonthTotal(): string {
+    const rent =
+      this.stringToNumber(
+        this.propertyForm.controls.valor.value
+      ) ?? 0;
+
+    const condominium =
+      this.stringToNumber(
+        this.propertyForm.controls.valor_condominio.value
+      ) ?? 0;
+
+    const iptu =
+      this.stringToNumber(
+        this.propertyForm.controls.valor_iptu.value
+      ) ?? 0;
+
+    return this.formatCurrency(
+      rent + condominium + iptu
+    );
+  };
+
+  getAsideAdress(): string {
+    const values =
+      this.propertyForm.getRawValue();
+
+    const parts: string[] = [];
+
+    if (values.logradouro) {
+      parts.push(values.logradouro);
+    }
+
+    if (values.numero !== null) {
+      parts.push(String(values.numero));
+    }
+
+    if (values.bairro) {
+      parts.push(values.bairro);
+    }
+
+    if (values.cidade) {
+      parts.push(values.cidade);
+    }
+
+    if (values.uf) {
+      parts.push(values.uf);
+    }
+
+    if (parts.length === 0) {
+      return 'Informe o CEP na etapa 1';
+    }
+
+    return parts.join(', ');
+  };
+
+  getAsideOwner(): string {
+    const ownerId =
+      this.propertyForm.controls.proprietario.value;
+
+    if (!ownerId) {
+      return 'Proprietário não selecionado';
+    }
+
+    const owner =
+      this.owners().find(
+        item => item.id === ownerId
+      );
+
+    return owner?.nome ??
+      'Proprietário não encontrado';
+  };
+
+  getAsideBroker(): string {
+    const brokerId =
+      this.propertyForm.controls.corretor.value;
+
+    if (!brokerId) {
+      return 'Corretor não selecionado';
+    }
+
+    const broker =
+      this.brokers().find(
+        item => item.id === brokerId
+      );
+
+    return broker?.nome ??
+      'Corretor não encontrado';
+  };
+
+  GetAsideBedrooms(): number {
+    switch (this.selectedPropertyType) {
+
+      case 'Casa':
+        return this.houseForm.controls.quartos.value ?? 0;
+
+      case 'Apartamento':
+        return this.apartmentForm.controls.quartos.value ?? 0;
+
+      default:
+        return 0;
+    }
+  };
+
+  getAsideBathrooms(): number {
+    switch (this.selectedPropertyType) {
+
+      case 'Casa':
+        return this.houseForm.controls.banheiros.value ?? 0;
+
+      case 'Apartamento':
+        return this.apartmentForm.controls.banheiros.value ?? 0;
+
+      default:
+        return 0;
+    }
+  };
+
+  getAsideGarages(): number {
+    switch (this.selectedPropertyType) {
+
+      case 'Casa':
+        return this.houseForm.controls.garagens.value ?? 0;
+
+      case 'Apartamento':
+        return this.apartmentForm.controls.garagens.value ?? 0;
+
+      default:
+        return 0;
+    }
+  };
+
+  getAsideFeaturesVisible(): boolean {
+    return (
+      this.selectedPropertyType === 'Casa' ||
+      this.selectedPropertyType === 'Apartamento'
+    );
+  };
+
+  getAsideSquareFootage(): string {
+    let squareFootage: number | null = null;
+
+    switch (this.selectedPropertyType) {
+
+      case 'Casa':
+        squareFootage =
+          this.houseForm.controls.metragem.value;
+        break;
+
+      case 'Apartamento':
+        squareFootage =
+          this.apartmentForm.controls.metragem.value;
+        break;
+
+      case 'Terreno':
+        squareFootage =
+          this.landForm.controls.area_total.value;
+        break;
+    }
+
+    if (squareFootage === null) {
+      return '—';
+    }
+
+    return `${squareFootage.toLocaleString('pt-BR')} m²`;
+  };
+
+  getAsidePhotos(): string[] {
+    return this.imagePreviews.slice(0, 4);
   };
 }

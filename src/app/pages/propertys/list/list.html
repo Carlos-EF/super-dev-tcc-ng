@@ -161,235 +161,642 @@
 <div class="cards-grid" id="cards-grid" aria-label="Lista de imóveis">
     @for (property of propertys().imoveis ?? []; track property.id) {
     <article class="prop-card">
-        <div class="pc-photo" role="img" [attr.aria-label]="'Foto de ' + property.tipo + ' ' + property.codigo">
+        <div class="pc-photo" role="img" [attr.aria-label]="
+                'Foto de ' +
+                property.tipo +
+                ' ' +
+                property.codigo
+            " [style.background-image]="
+                property.imagens?.length
+                    ? 'url(' +
+                      (
+                        property.imagens.find(
+                            image => image.principal
+                        )?.url ??
+                        property.imagens[0]?.url
+                      ) +
+                      ')'
+                    : 'none'
+            ">
+            @if (!property.imagens?.length) {
+            <div class="pc-photo-empty">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <circle cx="8.5" cy="9" r="1.5" />
+                    <path d="m21 15-4.5-4.5L7 20" />
+                </svg>
+                <span>
+                    Sem fotos
+                </span>
+            </div>
+            }
             <div class="pc-tags">
                 <span class="ptag" [class.venda]="property.finalidade === 'Venda'"
                     [class.locacao]="property.finalidade === 'Locação'">
                     {{ property.finalidade }}
                 </span>
+                @if (property.em_condominio) {
+                <span class="ptag ptag-condominio">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 21h16" />
+                        <path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
+                        <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
+                    </svg>
+                    Condomínio
+                </span>
+                }
             </div>
+            @if (property.imagens?.length) {
+            <span class="pc-photo-count">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="6" width="18" height="14" rx="2" />
+
+                    <circle cx="12" cy="13" r="3.5" />
+
+                    <path d="M8 6l1.2-2h5.6L16 6" />
+                </svg>
+
+                {{ property.imagens.length }}
+
+            </span>
+
+            }
+
         </div>
 
+
+        <!-- =====================================================
+             CORPO
+             ===================================================== -->
+
         <div class="pc-body">
+
+
+            <!-- CABEÇALHO -->
+
             <div class="pc-head">
+
                 <span class="pc-type-icon">
+
                     @switch (property.tipo) {
+
                     @case ('Casa') {
+
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 11l9-8 9 8" />
                         <path d="M5 10v10h14V10" />
                         <path d="M9 20v-6h6v6" />
                     </svg>
+
                     }
 
+
                     @case ('Apartamento') {
+
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 20h16" />
                         <path d="M6 20V5a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v15" />
                         <path d="M9 8h1M14 8h1M9 12h1M14 12h1" />
                     </svg>
+
                     }
 
+
                     @case ('Terreno') {
+
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 20h18" />
                         <path d="M5 20l4-8 4 4 3-6 3 10" />
                     </svg>
+
                     }
 
+
                     @default {
+
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 21h18" />
                         <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" />
                     </svg>
+
                     }
+
                     }
+
                 </span>
 
+
                 <div class="pc-id">
+
                     <b>
                         {{ property.tipo }}
                     </b>
+
                     <span class="cod">
-                        {{ property.codigo }}
+                        Código {{ property.codigo }}
                     </span>
+
                 </div>
+
 
                 <div class="pc-price">
+
                     @if (property.valor !== null) {
+
                     {{ formatToBRL(property.valor) }}
+
                     } @else {
-                    <span>Não informado</span>
+
+                    <span>
+                        Não informado
+                    </span>
+
                     }
+
                 </div>
+
             </div>
 
+
+            <!-- =====================================================
+                 ENDEREÇO
+                 ===================================================== -->
+
             <div class="pc-addr">
+
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z" />
                     <circle cx="12" cy="10" r="2.5" />
                 </svg>
+
+
                 <span [title]="
-                            property.logradouro +
-                            ', ' +
-                            property.numero +
-                            ' - ' +
-                            property.bairro
-                        ">
-                    {{ property.logradouro }}, {{ property.numero }} - {{ property.bairro }}
+                        property.logradouro +
+                        ', ' +
+                        property.numero +
+                        ' - ' +
+                        property.bairro +
+                        ', ' +
+                        property.cidade +
+                        ' - ' +
+                        property.uf
+                    ">
+                    {{ property.logradouro }},
+                    {{ property.numero }}
+                    -
+                    {{ property.bairro }},
+                    {{ property.cidade }}
+                    -
+                    {{ property.uf }}
                 </span>
+
             </div>
 
+
+            <!-- =====================================================
+                 CARACTERÍSTICAS
+                 ===================================================== -->
+
             <div class="pc-feats">
+
+                <!-- CASA -->
+
                 @if (property.casa) {
-                @if (property.casa.metragem !== null && property.casa.metragem !== undefined) {
+
+                @if (
+                property.casa.metragem !== null &&
+                property.casa.metragem !== undefined
+                ) {
+
                 <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 20h16" />
+                        <path d="M4 20V4h16v16" />
+                        <path d="M8 16h8M8 12h5M8 8h3" />
+                    </svg>
+
                     {{ property.casa.metragem }} m²
+
                 </span>
+
                 }
 
-                @if (property.casa.quartos !== null && property.casa.quartos !== undefined) {
+
+                @if (
+                property.casa.quartos !== null &&
+                property.casa.quartos !== undefined
+                ) {
+
                 <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" />
+                        <path d="M3 18h18" />
+                        <path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+                    </svg>
+
                     {{ property.casa.quartos }} quartos
+
                 </span>
+
                 }
 
-                @if (property.casa.suites !== null && property.casa.suites !== undefined && property.casa.suites >
-                0) {
+
+                @if (
+                property.casa.suites !== null &&
+                property.casa.suites !== undefined &&
+                property.casa.suites > 0
+                ) {
+
                 <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round">
+                        <path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14" />
+                        <path d="M8 9h8M8 13h8" />
+                    </svg>
+
                     {{ property.casa.suites }} suítes
+
                 </span>
+
                 }
 
-                @if (property.casa.banheiros !== null && property.casa.banheiros !== undefined) {
+
+                @if (
+                property.casa.banheiros !== null &&
+                property.casa.banheiros !== undefined
+                ) {
+
                 <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 12h16" />
+                        <path d="M5 12v4a5 5 0 0 0 10 0v-4" />
+                        <path d="M8 12V6a2 2 0 0 1 4 0" />
+                    </svg>
+
                     {{ property.casa.banheiros }} banheiros
+
                 </span>
+
                 }
 
-                @if (property.casa.garagens !== null && property.casa.garagens !== undefined) {
+
+                @if (
+                property.casa.garagens !== null &&
+                property.casa.garagens !== undefined
+                ) {
+
                 <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 17h14" />
+                        <path d="M6 17l1.2-5.3A2 2 0 0 1 9.2 10h5.6a2 2 0 0 1 2 1.7L18 17" />
+                        <circle cx="7.5" cy="17" r="1.5" />
+                        <circle cx="16.5" cy="17" r="1.5" />
+                    </svg>
+
                     {{ property.casa.garagens }} vagas
+
                 </span>
+
                 }
+
                 }
+
+
+                <!-- APARTAMENTO -->
 
                 @if (property.apartamento) {
-                @if (property.apartamento.metragem !== null && property.apartamento.metragem !== undefined) {
+
+                @if (
+                property.apartamento.metragem !== null &&
+                property.apartamento.metragem !== undefined
+                ) {
+
                 <span>
                     {{ property.apartamento.metragem }} m²
                 </span>
+
                 }
 
-                @if (property.apartamento.quartos !== null && property.apartamento.quartos !== undefined) {
+
+                @if (
+                property.apartamento.quartos !== null &&
+                property.apartamento.quartos !== undefined
+                ) {
+
                 <span>
                     {{ property.apartamento.quartos }} quartos
                 </span>
+
                 }
 
-                @if (property.apartamento.suites !== null && property.apartamento.suites !== undefined &&
-                property.apartamento.suites > 0)
-                {
+
+                @if (
+                property.apartamento.suites !== null &&
+                property.apartamento.suites !== undefined &&
+                property.apartamento.suites > 0
+                ) {
+
                 <span>
                     {{ property.apartamento.suites }} suítes
                 </span>
+
                 }
 
-                @if (property.apartamento.banheiros !== null && property.apartamento.banheiros !== undefined) {
+
+                @if (
+                property.apartamento.banheiros !== null &&
+                property.apartamento.banheiros !== undefined
+                ) {
+
                 <span>
                     {{ property.apartamento.banheiros }} banheiros
                 </span>
+
                 }
 
-                @if (property.apartamento.garagens !== null && property.apartamento.garagens !== undefined) {
+
+                @if (
+                property.apartamento.garagens !== null &&
+                property.apartamento.garagens !== undefined
+                ) {
+
                 <span>
                     {{ property.apartamento.garagens }} vagas
                 </span>
-                }
+
                 }
 
-                @if (property.terreno) {
-                @if (property.terreno.area_total !== null && property.terreno.area_total !== undefined) {
-                <span>
-                    {{ property.terreno.area_total }} m²
-                </span>
                 }
-                    
+
+
+                <!-- TERRENO -->
+
+                @if (property.terreno) {
+
+                @if (
+                property.terreno.area_total !== null &&
+                property.terreno.area_total !== undefined
+                ) {
+
+                <span>
+
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 20h18" />
+                        <path d="M5 20l4-8 4 4 3-6 3 10" />
+                    </svg>
+
+                    {{ property.terreno.area_total }} m²
+
+                </span>
+
+                }
+
+
                 @if (property.terreno.zoneamento) {
+
                 <span>
                     {{ property.terreno.zoneamento }}
                 </span>
+
                 }
 
-                @if (property.terreno.coeficiente !== null && property.terreno.coeficiente !== undefined) {
+
+                @if (
+                property.terreno.coeficiente !== null &&
+                property.terreno.coeficiente !== undefined
+                ) {
+
                 <span>
                     Coef. {{ property.terreno.coeficiente }}
                 </span>
+
                 }
+
                 }
+
             </div>
+
+
+            <!-- =====================================================
+                 CONDOMÍNIO / COMPLEMENTO
+                 ===================================================== -->
 
             <div class="pc-links">
-                @if (property.condominio) {
+
+                @if (
+                property.em_condominio &&
+                property.condominio
+                ) {
+
                 <span>
-                    Condominio
+
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 21h16" />
+                        <path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
+                        <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
+                    </svg>
+
+                    {{ property.condominio.nome }}
+
                 </span>
+
+                }
+                @else if (property.em_condominio) {
+
+                <span>
+
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 21h16" />
+                        <path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
+                    </svg>
+
+                    Em condomínio
+
+                </span>
+
                 }
 
-                @if (property.em_condominio) {
-                <span>
-                    Em condomínio
-                </span>
-                }
 
                 @if (property.complemento) {
+
                 <span>
+
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+
                     {{ property.complemento }}
+
                 </span>
+
                 }
+
             </div>
 
+
+            <!-- =====================================================
+                 RESPONSÁVEIS
+                 ===================================================== -->
+
+            <div class="pc-responsibles">
+
+                @if (property.proprietario) {
+
+                <div class="pc-person">
+
+                    <span class="pc-person-icon">
+
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="3" />
+
+                            <path d="M5 20a7 7 0 0 1 14 0" />
+                        </svg>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Proprietário
+                        </small>
+
+                        <span>
+                            {{ property.proprietario.nome }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                }
+
+
+                @if (property.corretor) {
+
+                <div class="pc-person">
+
+                    <span class="pc-person-icon">
+
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="3" />
+
+                            <path d="M5 20a7 7 0 0 1 14 0" />
+
+                        </svg>
+
+                    </span>
+
+                    <div>
+
+                        <small>
+                            Corretor
+                        </small>
+
+                        <span>
+                            {{ property.corretor.nome }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+                }
+
+            </div>
+
+
+            <!-- =====================================================
+                 RODAPÉ
+                 ===================================================== -->
+
             <div class="pc-foot">
+
                 <button type="button" class="btn-details">
+
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
+
                         <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
+
                         <circle cx="12" cy="12" r="2.8" />
+
                     </svg>
+
                     Ver detalhes
+
                 </button>
 
 
                 <div class="pc-actions">
+
+                    <!-- EDITAR -->
+
                     <button type="button" class="icon-btn" title="Editar imóvel" aria-label="Editar imóvel">
+
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
                         </svg>
+
                     </button>
 
-                    <button type="button" class="icon-btn danger" title="Excluir imóvel"
-                        [attr.aria-label]="'Excluir imóvel ' + property.codigo">
+
+                    <!-- EXCLUIR -->
+
+                    <button type="button" (click)="openConfirmModal(property)" class="icon-btn danger"
+                        title="Excluir imóvel" [attr.aria-label]="
+                            'Excluir imóvel ' +
+                            property.codigo
+                        ">
+
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+
                             <path d="M3 6h18" />
+
                             <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+
                             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+
                             <path d="M10 11v6" />
                             <path d="M14 11v6" />
+
                         </svg>
+
                     </button>
+
                 </div>
+
             </div>
+
         </div>
+
     </article>
     }
-</div>
+    </div>
 } @else {
 <div class="card empty-state" id="empty-state">
     <div class="es-icon">
@@ -410,5 +817,120 @@
         </svg>
         Limpar filtros
     </button>
+</div>
+}
+
+<div class="card foot-card">
+    <div class="table-foot">
+        <div class="foot-ctrl">
+            <div class="per-page">
+                <label for="per-page">Cards por página</label>
+                <div class="select-wrap"> <select id="per-page" [value]="perPage()" (change)="changePerPage($event)">
+                        <option [value]="10" selected>10</option>
+                        <option [value]="24">24</option>
+                        <option [value]="48">48</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="pager" aria-label="Paginação">
+                <button class="page-btn" (click)="previousPage()" [disabled]="page() === 1"
+                    aria-label="Página anterior"> ‹
+                </button>
+                <button class="page-btn current" aria-current="page"> {{page()}} </button>
+                <button (click)="nextPage()" [disabled]="page() === (propertys().total_paginas ?? 1)" class="page-btn"
+                    aria-label="Próxima página"> › </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@if (selectedProperty && confirmModal) {
+<div class="modal-backdrop open" id="modal-excluir" role="dialog" aria-modal="true" aria-labelledby="mx-title"
+    aria-describedby="mx-description">
+    <div class="modal modal-sm">
+        <div class="modal-head">
+            <div>
+                <h3 id="mx-title">
+                    Excluir imóvel
+                </h3>
+                <span class="modal-warning-subtitle">
+                    Esta ação não poderá ser desfeita.
+                </span>
+            </div>
+
+            <button type="button" class="btn btn-ghost" (click)="closeConfirmModal()" aria-label="Fechar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="confirm-box">
+                <div class="confirm-icon">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                    </svg>
+                </div>
+
+                <div class="confirm-content">
+                    <p id="mx-description" class="confirm-description">
+                        Tem certeza que deseja excluir este imóvel?
+                    </p>
+
+                    <div class="property-delete-info">
+                        <div class="property-delete-label">
+                            Imóvel selecionado
+                        </div>
+                        <strong class="property-delete-code">
+                            Código {{ selectedProperty.codigo }}
+                        </strong>
+                        <span class="property-delete-location">
+                            {{ selectedProperty.tipo }}
+                            ·
+                            {{ selectedProperty.cidade }} -
+                            {{ selectedProperty.uf }}
+                        </span>
+                    </div>
+
+                    <div class="property-delete-warning">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.3 3.2 2.2 17a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.2a2 2 0 0 0-3.4 0Z" />
+                            <path d="M12 8v5" />
+                            <path d="M12 17h.01" />
+                        </svg>
+                        <span>
+                            Todas as informações relacionadas a este imóvel,
+                            incluindo suas imagens e características,
+                            também serão removidas.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" (click)="closeConfirmModal()">
+                Cancelar
+            </button>
+
+            <button type="button" class="btn btn-danger" id="mx-confirmar"
+                (click)="deleteProperty(selectedProperty.id)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+
+                    <path d="M10 11v6M14 11v6" />
+                </svg>
+                Excluir imóvel
+            </button>
+        </div>
+    </div>
 </div>
 }

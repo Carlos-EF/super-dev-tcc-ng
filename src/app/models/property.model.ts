@@ -1,3 +1,4 @@
+import { ContactTypes } from "../types/contact.types";
 import { FinalityTypes } from "../types/finality.types";
 import { FurnishedTypes, FurnitureTypes } from "../types/furnished.types";
 import { PropertyTypes } from "../types/property.types";
@@ -5,13 +6,13 @@ import { ZoningTypes } from "../types/zoning.types";
 
 export interface PropertyResponse {
     id: string;
-    proprietario: string | null;
-    corretor: string | null;
+    proprietario: OwnerData | null;
+    corretor: BrokerData | null;
     codigo: string;
     finalidade: FinalityTypes;
     tipo: PropertyTypes;
     em_condominio: boolean;
-    condominio: string | null;
+    condominio: CondData | null;
     cep: string;
     logradouro: string;
     numero: number;
@@ -226,13 +227,13 @@ export interface LandData {
 
 export interface CompletePropertyResponse {
     id: string;
-    proprietario: string | null;
-    corretor: string | null;
+    proprietario: OwnerData | null;
+    corretor: BrokerData | null;
     codigo: string;
     finalidade: FinalityTypes;
     tipo: PropertyTypes;
     em_condominio: boolean;
-    condominio: string | null;
+    condominio: CondData | null;
     cep: string;
     logradouro: string;
     numero: number;
@@ -268,4 +269,31 @@ export interface CreatePropertyImageRequest {
 
 export interface EditPropertyImageRequest {
     principal: boolean;
+}
+
+export interface CondData {
+    id: string;
+    nome: string;
+}
+
+export interface OwnerData {
+    id: string;
+    nome: string;
+    codigo: string;
+    numero: string;
+    email: string;
+    tipo: ClientTypes;
+    como_encontrou: ContactTypes | null;
+}
+
+export interface BrokerData {
+    id: string;
+    nome: string;
+    codigo: string;
+    creci: string;
+    numero: string;
+    email: string;
+    data_nascimento: string | null;
+    rg: string | null;
+    cpf: string | null;
 }

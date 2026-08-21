@@ -415,5 +415,5 @@ export class ListClients {
     this.perPage.set(value); this.page.set(1);
 
     this.getAllClients();
-  }
+  };
 }
