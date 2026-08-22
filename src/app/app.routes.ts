@@ -5,6 +5,7 @@ import { ListBrokers } from './pages/brokers/list/list';
 import { ListClients } from './pages/clients/list/list';
 import { ListProperty } from './pages/propertys/list/list';
 import { CreateProperty } from './pages/propertys/create/create';
+import { EditProperty } from './pages/propertys/edit/edit';
 
 export const routes: Routes = [
     {
@@ -35,5 +36,9 @@ export const routes: Routes = [
     {
         path: 'propertys/create',
         component: CreateProperty
+    },
+    {
+        path: 'propertys/edit/:id',
+        component: EditProperty
     },
 ];
