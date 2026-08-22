@@ -1,4 +1,4 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { CompletePropertyResponse, PaginatedPropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
@@ -11,6 +11,7 @@ import { ClientResponse } from '../../../models/clients.model';
 import { CondominiumResponse, DistrictsResponse } from '../../../models/condominium.model';
 import { PROPERTY_TYPES } from '../../../types/property.types';
 import { NgxMaskDirective } from 'ngx-mask';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-list',
@@ -54,8 +55,19 @@ export class ListProperty {
 
   confirmModal: boolean = false;
 
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  busca = new Subject<string>();
+
   constructor() {
     this.getAllPropertys();
+
+    this.busca.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+    ).subscribe(
+      resultado => {
+      }
+    )
   };
 
   getAllPropertys() {
@@ -194,5 +206,13 @@ export class ListProperty {
     this.selectedProperty = null;
 
     this.confirmModal = false;
+  };
+
+  getSearchValue(event: Event) {
+    const search = event.target as HTMLInputElement;
+
+    this.page.set(1);
+
+    this.busca.next(search.value);
   };
 }
