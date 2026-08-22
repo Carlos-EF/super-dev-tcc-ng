@@ -12,11 +12,13 @@ import { CondominiumResponse, DistrictsResponse } from '../../../models/condomin
 import { PROPERTY_TYPES } from '../../../types/property.types';
 import { NgxMaskDirective } from 'ngx-mask';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
   imports: [
     RouterLink,
+    FormsModule,
     NgxMaskDirective
   ],
   templateUrl: './list.html',
@@ -233,41 +235,131 @@ export class ListProperty {
 
   onFinalityChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onOrderChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onTypeChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onCondChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onPropChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onCorrChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onDistrictChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onMinValueChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onMaxValueChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
 
   onQntChange() {
     this.page.set(1);
+
+    this.getAllPropertys();
   };
+
+  clearFilters(): void {
+
+    this.filters = {
+      busca: '',
+      finalidade: undefined,
+      ordem: 'recente-asc',
+      tipo: undefined,
+      cond: '',
+      prop: '',
+      corr: '',
+      bairro: '',
+      min_preco: undefined,
+      max_preco: undefined,
+      qtn_quartos: undefined,
+    };
+
+    this.page.set(1);
+
+    this.getAllPropertys();
+  };
+
+  get activeFiltersCount(): number {
+    let count = 0;
+
+    if (this.filters.busca) count++;
+
+    if (this.filters.finalidade) count++;
+
+    if (this.filters.tipo) count++;
+
+    if (this.filters.cond) count++;
+
+    if (this.filters.prop) count++;
+
+    if (this.filters.corr) count++;
+
+    if (this.filters.bairro) count++;
+
+    if (this.filters.min_preco !== undefined) count++;
+
+    if (this.filters.max_preco !== undefined) count++;
+
+    if (this.filters.qtn_quartos !== undefined) count++;
+
+    return count;
+  };
+
+  stringToNumber(
+    value: string | number | null | undefined
+  ): number | undefined {
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === ''
+    ) {
+      return undefined;
+    }
+
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return Number(
+      value
+        .replace(/\./g, '')
+        .replace(',', '.')
+    );
+  }
 }

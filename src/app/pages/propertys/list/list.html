@@ -22,6 +22,7 @@
     <div class="filters-main">
         <div class="field">
             <label for="f-busca">Buscar</label>
+
             <div class="control has-prefix">
                 <span class="prefix">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -30,50 +31,79 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input type="search" #searchInput
-                id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…">
+                <input type="search" id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…"
+                    [(ngModel)]="filters.busca">
             </div>
         </div>
+
         <div class="field">
-            <label>Finalidade</label>
+            <label>
+                Finalidade
+            </label>
             <div class="segmented" role="radiogroup" aria-label="Finalidade">
-                <input type="radio" name="f-fin" id="ff-todos" value="" checked>
-                <label for="ff-todos">Todos</label>
-                <input type="radio" name="f-fin" id="ff-venda" value="Venda">
-                <label for="ff-venda">Venda</label>
-                <input type="radio" name="f-fin" id="ff-locacao" value="Locação">
-                <label for="ff-locacao">Locação</label>
+                <input type="radio" name="f-fin" id="ff-todos" [(ngModel)]="filters.finalidade">
+
+                <label for="ff-todos">
+                    Todos
+                </label>
+                <input type="radio" name="f-fin" id="ff-venda" value="Venda" [(ngModel)]="filters.finalidade">
+                <label for="ff-venda">
+                    Venda
+                </label>
+                <input type="radio" name="f-fin" id="ff-locacao" value="Locação" [(ngModel)]="filters.finalidade">
+                <label for="ff-locacao">
+                    Locação
+                </label>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-ordem">Ordenar por</label>
+            <label for="f-ordem">
+                Ordenar por
+            </label>
             <div class="select-wrap">
-                <select id="f-ordem">
-                    <option value="recentes">Mais recentes</option>
-                    <option value="preco-asc">Menor preço</option>
-                    <option value="preco-desc">Maior preço</option>
-                    <option value="codigo">Código</option>
+                <select id="f-ordem" [(ngModel)]="filters.ordem">
+                    <option value="recente-asc">
+                        Mais recentes
+                    </option>
+
+                    <option value="preco-asc">
+                        Menor preço
+                    </option>
+
+                    <option value="preco-desc">
+                        Maior preço
+                    </option>
+
+                    <option value="codigo">
+                        Código
+                    </option>
                 </select>
             </div>
         </div>
+
         <button type="button" class="btn btn-ghost btn-more" id="btn-more" [attr.aria-expanded]="showMoreFilters"
             aria-controls="filters-more" (click)="toggleMoreFilters()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round">
                 <path d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-
             {{ showMoreFilters ? 'Menos filtros' : 'Mais filtros' }}
-
-            <span class="fcount" hidden>0</span>
-
+            <span class="fcount" hidden>
+                0
+            </span>
             <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
-                [style.transform]="showMoreFilters ? 'rotate(180deg)' : 'rotate(0deg)'">
+                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" [style.transform]="
+                    showMoreFilters
+                        ? 'rotate(180deg)'
+                        : 'rotate(0deg)'
+                ">
                 <path d="m6 9 6 6 6-6" />
             </svg>
         </button>
-        <button class="btn btn-ghost btn-clear" id="btn-limpar" hidden>
+
+        <button type="button" class="btn btn-ghost btn-clear" id="btn-limpar" hidden>
+
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round">
                 <path d="M18 6 6 18M6 6l12 12" />
@@ -81,88 +111,170 @@
             Limpar
         </button>
     </div>
+
     <div class="filters-more" id="filters-more" [hidden]="!showMoreFilters">
         <div class="field">
-            <label for="f-tipo">Tipo do imóvel</label>
+            <label for="f-tipo">
+                Tipo do imóvel
+            </label>
+
             <div class="select-wrap">
-                <select id="f-tipo">
-                    <option value="">Todos os tipos</option>
-                    @for (type of PropertyTypes; track type) {
-                    <option [value]="type">{{type}}</option>
+                <select id="f-tipo" [(ngModel)]="filters.tipo">
+                    <option [ngValue]="undefined">
+                        Todos os tipos
+                    </option>
+                    @for (
+                    type of PropertyTypes;
+                    track type
+                    ) {
+                    <option [ngValue]="type">
+                        {{type}}
+                    </option>
                     }
                 </select>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-cond">Condomínio</label>
+            <label for="f-cond">
+                Condomínio
+            </label>
             <div class="select-wrap">
-                <select id="f-cond">
-                    <option value="">Todos</option>
-                    <option [value]="null">(Sem condomínio)</option>
-                    @for (cond of condominiums(); track cond.id) {
-                    <option [value]="cond.id">{{cond.nome}}</option>
+                <select id="f-cond" [(ngModel)]="filters.cond">
+                    <option value="">
+                        Todos
+                    </option>
+                    <option value="null">
+                        (Sem condomínio)
+                    </option>
+                    @for (
+                    cond of condominiums();
+                    track cond.id
+                    ) {
+                    <option [value]="cond.id">
+                        {{cond.nome}}
+                    </option>
                     }
                 </select>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-corretor">Corretor</label>
+            <label for="f-corretor">
+                Corretor
+            </label>
+
             <div class="select-wrap">
-                <select id="f-corretor">
-                    <option value="">Todos</option>
-                    @for (broker of brokers(); track broker.id) {
-                    <option [value]="broker.id">{{broker.nome}}</option>
+                <select id="f-corretor" [(ngModel)]="filters.corr">
+                    <option value="">
+                        Todos
+                    </option>
+                    @for (
+                    broker of brokers();
+                    track broker.id
+                    ) {
+                    <option [value]="broker.id">
+                        {{broker.nome}}
+                    </option>
                     }
                 </select>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-prop">Proprietário</label>
+            <label for="f-prop">
+                Proprietário
+            </label>
             <div class="select-wrap">
-                <select id="f-prop">
-                    <option value="">Todos</option>
-                    @for (owner of owners(); track owner.id) {
-                    <option [value]="owner.id">{{owner.nome}}</option>
+                <select id="f-prop" [(ngModel)]="filters.prop">
+                    <option value="">
+                        Todos
+                    </option>
+                    @for (
+                    owner of owners();
+                    track owner.id
+                    ) {
+                    <option [value]="owner.id">
+                        {{owner.nome}}
+                    </option>
                     }
                 </select>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-bairro">Bairro</label>
+            <label for="f-bairro">
+                Bairro
+            </label>
             <div class="select-wrap">
-                <select id="f-bairro">
-                    <option value="">Todos os bairros</option>
-                    @for (district of districts().bairros; track district) {
-                    <option [value]="district">{{district}}</option>
+                <select id="f-bairro" [(ngModel)]="filters.bairro">
+                    <option value="">
+                        Todos os bairros
+                    </option>
+                    @for (
+                    district of districts().bairros;
+                    track district
+                    ) {
+                    <option [value]="district">
+                        {{district}}
+                    </option>
                     }
                 </select>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-preco-min">Faixa de preço</label>
+            <label for="f-preco-min">
+                Faixa de preço
+            </label>
             <div class="range-pair">
                 <div class="control has-prefix">
-                    <span class="prefix">R$</span>
+                    <span class="prefix">
+                        R$
+                    </span>
                     <input type="text" id="f-preco-min" class="mono" placeholder="mín" mask="separator.2"
-                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric">
+                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
+                        [(ngModel)]="filters.min_preco">
                 </div>
-                <span class="sep">—</span>
+                <span class="sep">
+                    —
+                </span>
                 <div class="control has-prefix">
-                    <span class="prefix">R$</span>
+                    <span class="prefix">
+                        R$
+                    </span>
                     <input type="text" id="f-preco-max" class="mono" placeholder="máx" mask="separator.2"
-                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric">
+                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
+                        [(ngModel)]="filters.max_preco">
                 </div>
             </div>
         </div>
+
         <div class="field">
-            <label for="f-quartos">Quartos</label>
+            <label for="f-quartos">
+                Quartos
+            </label>
             <div class="select-wrap">
-                <select id="f-quartos">
-                    <option value="0">Qualquer</option>
-                    <option value="1">1+</option>
-                    <option value="2">2+</option>
-                    <option value="3">3+</option>
-                    <option value="4">4+</option>
+                <select id="f-quartos" [(ngModel)]="filters.qtn_quartos">
+                    <option [ngValue]="undefined">
+                        Qualquer
+                    </option>
+
+                    <option [ngValue]="1">
+                        1+
+                    </option>
+
+                    <option [ngValue]="2">
+                        2+
+                    </option>
+
+                    <option [ngValue]="3">
+                        3+
+                    </option>
+
+                    <option [ngValue]="4">
+                        4+
+                    </option>
                 </select>
             </div>
         </div>
@@ -502,7 +614,7 @@
                 }
                 @else if (property.em_condominio) {
                 <span>
-                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 21h16" />
                         <path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
@@ -578,8 +690,8 @@
                 </button>
 
                 <div class="pc-actions">
-                    <button type="button" routerLink="/propertys/edit/{{property.id}}"
-                     class="icon-btn" title="Editar imóvel" aria-label="Editar imóvel">
+                    <button type="button" routerLink="/propertys/edit/{{property.id}}" class="icon-btn"
+                        title="Editar imóvel" aria-label="Editar imóvel">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z" />
