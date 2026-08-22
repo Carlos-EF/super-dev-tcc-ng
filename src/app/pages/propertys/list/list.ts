@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { RouterLink } from "@angular/router";
-import { CompletePropertyResponse, PaginatedPropertyResponse } from '../../../models/property.model';
+import { CompletePropertyResponse, PaginatedPropertyResponse, PropertyFilters } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { ToastService } from '../../../services/toast.service';
 import { CondominiumService } from '../../../services/condominium.service';
@@ -50,6 +50,20 @@ export class ListProperty {
   page = model(1);
 
   showMoreFilters = false;
+
+  filters: PropertyFilters = {
+    busca: '',
+    finalidade: undefined,
+    ordem: 'recente-asc',
+    tipo: undefined,
+    cond: '',
+    prop: '',
+    corr: '',
+    bairro: '',
+    min_preco: undefined,
+    max_preco: undefined,
+    qtn_quartos: undefined,
+  };
 
   selectedProperty: CompletePropertyResponse | null = null;
 
@@ -214,5 +228,45 @@ export class ListProperty {
     this.page.set(1);
 
     this.busca.next(search.value);
+  };
+
+  onFinalityChange() {
+    this.page.set(1);
+  };
+
+  onOrderChange() {
+    this.page.set(1);
+  };
+
+  onTypeChange() {
+    this.page.set(1);
+  };
+
+  onCondChange() {
+    this.page.set(1);
+  };
+
+  onPropChange() {
+    this.page.set(1);
+  };
+
+  onCorrChange() {
+    this.page.set(1);
+  };
+
+  onDistrictChange() {
+    this.page.set(1);
+  };
+
+  onMinValueChange() {
+    this.page.set(1);
+  };
+
+  onMaxValueChange() {
+    this.page.set(1);
+  };
+
+  onQntChange() {
+    this.page.set(1);
   };
 }
