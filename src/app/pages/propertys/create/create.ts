@@ -101,7 +101,7 @@ export class CreateProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: [null as FurnishedTypes | null],
+    esta_mobiliado: ['Não' as FurnishedTypes],
     mobilia: [[] as FurnitureTypes[]]
   });
 
@@ -114,7 +114,7 @@ export class CreateProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: [null as FurnishedTypes | null],
+    esta_mobiliado: ['Não' as FurnishedTypes],
     mobilia: [[] as FurnitureTypes[]]
   });
 
