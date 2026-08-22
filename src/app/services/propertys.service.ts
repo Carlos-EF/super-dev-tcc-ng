@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { Observable } from 'rxjs';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyImageRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse, PropertyImageResponse } from '../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyImageRequest, EditPropertyRequest, HouseResponse, LandResponse, PaginatedPropertyResponse, PropertyFilters, PropertyImageResponse } from '../models/property.model';
 
 @Service()
 export class PropertysService {
@@ -11,10 +11,45 @@ export class PropertysService {
     private url = `${environment.apiUrl}/propertys`;
 
     getAll(
+        filters?: PropertyFilters,
         pagina: number = 1,
         porPagina: number = 10
     ): Observable<PaginatedPropertyResponse> {
         let params = new HttpParams();
+
+        if (filters?.busca) {
+            params = params.set('busca', filters.busca)
+        }
+        if (filters?.finalidade) {
+            params = params.set('finalidade', filters.finalidade)
+        }
+        if (filters?.ordem) {
+            params = params.set('ordem', filters.ordem)
+        }
+        if (filters?.tipo) {
+            params = params.set('tipo', filters.tipo)
+        }
+        if (filters?.cond) {
+            params = params.set('cond', filters.cond)
+        }
+        if (filters?.corr) {
+            params = params.set('corr', filters.corr)
+        }
+        if (filters?.prop) {
+            params = params.set('prop', filters.prop)
+        }
+        if (filters?.bairro) {
+            params = params.set('bairro', filters.bairro)
+        }
+        if (filters?.min_preco) {
+            params = params.set('min_preco', filters.min_preco)
+        }
+        if (filters?.max_preco) {
+            params = params.set('max_preco', filters.max_preco)
+        }
+        if (filters?.qtn_quartos) {
+            params = params.set('qtn_quartos', filters.qtn_quartos)
+        }
 
         params = params.set('pagina', pagina);
 

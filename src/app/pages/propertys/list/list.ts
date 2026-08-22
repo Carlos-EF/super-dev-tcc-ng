@@ -86,6 +86,7 @@ export class ListProperty {
 
   getAllPropertys() {
     this.propertyService.getAll(
+      this.filters,
       this.page(),
       this.perPage()
     ).subscribe({
