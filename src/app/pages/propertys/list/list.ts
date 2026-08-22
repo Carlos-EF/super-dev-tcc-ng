@@ -8,7 +8,7 @@ import { BrokerService } from '../../../services/broker.service';
 import { ClientsService } from '../../../services/clients.service';
 import { BrokerResponse } from '../../../models/broker.model';
 import { ClientResponse } from '../../../models/clients.model';
-import { CondominiumResponse } from '../../../models/condominium.model';
+import { CondominiumResponse, DistrictsResponse } from '../../../models/condominium.model';
 
 @Component({
   selector: 'app-list',
@@ -26,7 +26,7 @@ export class ListProperty {
   brokers = model<BrokerResponse[]>([]);
   owners = model<ClientResponse[]>([]);
   condominiums = model<CondominiumResponse[]>([]);
-
+  districts = model<DistrictsResponse>({ bairros: [] });
   propertys = model<PaginatedPropertyResponse>(
     {
       imoveis: [],
@@ -95,6 +95,17 @@ export class ListProperty {
       }
     })
   };
+
+  getAllDisticts() {
+    this.condominiumService.getAllDistricts().subscribe({
+      next: (districts: DistrictsResponse) => {
+        this.districts.set(districts);
+      },
+      error: (error: Error) => {
+        return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
+      }
+    })
+  }
 
   deleteProperty(id: string) {
     this.propertyService.delete(id).subscribe({

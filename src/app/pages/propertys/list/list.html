@@ -99,7 +99,10 @@
             <div class="select-wrap">
                 <select id="f-cond">
                     <option value="">Todos</option>
-                    <option value="__none">(Sem condomínio)</option>
+                    <option [value]="null">(Sem condomínio)</option>
+                    @for (cond of condominiums(); track cond.id) {
+                        <option [value]="cond.id">{{cond.nome}}</option>
+                    }
                 </select>
             </div>
         </div>
