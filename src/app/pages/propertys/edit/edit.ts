@@ -6,7 +6,7 @@ import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/
 import { ZONING_TYPES, ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
@@ -18,22 +18,21 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
-
 @Component({
-  selector: 'app-create',
+  selector: 'app-edit',
   imports: [
     FormsModule,
     ReactiveFormsModule,
     RouterLink,
     NgxMaskDirective
   ],
-  templateUrl: './create.html',
-  styleUrl: './create.scss',
+  templateUrl: './edit.html',
+  styleUrl: './edit.scss',
 })
-export class CreateProperty implements OnDestroy {
+export class EditProperty implements OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
   private readonly clientsService = inject(ClientsService);
@@ -41,6 +40,8 @@ export class CreateProperty implements OnDestroy {
   private readonly condominiumService = inject(CondominiumService);
   private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
 
 
   brokers = model<BrokerResponse[]>([]);
@@ -56,6 +57,10 @@ export class CreateProperty implements OnDestroy {
   openClientModal: boolean = false;
 
   openBrokerModal: boolean = false;
+
+  idToEdit: string = '';
+
+  isEditMode: boolean = false;
 
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
@@ -93,7 +98,6 @@ export class CreateProperty implements OnDestroy {
   });
 
   houseForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     metragem: [null as number | null],
     quartos: [null as number | null],
     suites: [null as number | null],
@@ -101,12 +105,11 @@ export class CreateProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: ['Não' as FurnishedTypes],
+    esta_mobiliado: [null as FurnishedTypes | null],
     mobilia: [[] as FurnitureTypes[]]
   });
 
   apartmentForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     metragem: [null as number | null],
     quartos: [null as number | null],
     suites: [null as number | null],
@@ -114,12 +117,11 @@ export class CreateProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: ['Não' as FurnishedTypes],
+    esta_mobiliado: [null as FurnishedTypes | null],
     mobilia: [[] as FurnitureTypes[]]
   });
 
   landForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     area_total: [null as number | null],
     medida_esquerda: [null as number | null],
     medida_direita: [null as number | null],
@@ -162,6 +164,10 @@ export class CreateProperty implements OnDestroy {
   constructor(
     private router: Router
   ) {
+    this.idToEdit = this.activatedRoute.snapshot.paramMap.get('id')!;
+
+    this.getProperty();
+
     this.getAllBrokers();
 
     this.getAllOwners();
@@ -224,6 +230,70 @@ export class CreateProperty implements OnDestroy {
         URL.createObjectURL(file)
       );
     }
+  };
+
+  getProperty() {
+    this.propertyService.getById(this.idToEdit).subscribe({
+      next: (property: CompletePropertyResponse) => {
+        this.propertyForm.patchValue({
+          proprietario: property.proprietario?.id || null,
+          corretor: property.corretor?.id || null,
+          codigo: property.codigo!,
+          finalidade: property.finalidade!,
+          tipo: property.tipo!,
+          em_condominio: property.em_condominio!,
+          condominio: property.condominio?.id || null,
+          cep: property.cep!,
+          logradouro: property.logradouro!,
+          numero: property.numero!,
+          bairro: property.bairro!,
+          uf: property.uf!,
+          cidade: property.cidade!,
+          complemento: property.complemento || null,
+          valor: this.numberToString(property.valor),
+          valor_iptu: this.numberToString(property.valor_iptu),
+          valor_condominio: this.numberToString(property.valor_condominio)
+        })
+
+        if (property.tipo === 'Apartamento') {
+          this.apartmentForm.patchValue({
+            metragem: property.apartamento!.metragem,
+            quartos: property.apartamento!.quartos,
+            suites: property.apartamento!.suites,
+            banheiros: property.apartamento!.banheiros,
+            garagens: property.apartamento!.garagens,
+            andares: property.apartamento!.andares,
+            salas: property.apartamento!.salas,
+            esta_mobiliado: property.apartamento!.esta_mobiliado,
+            mobilia: property.apartamento!.mobilia,
+          });
+        } else if (property.tipo === 'Casa') {
+          this.houseForm.patchValue({
+            metragem: property.casa!.metragem,
+            quartos: property.casa!.quartos,
+            suites: property.casa!.suites,
+            banheiros: property.casa!.banheiros,
+            garagens: property.casa!.garagens,
+            andares: property.casa!.andares,
+            salas: property.casa!.salas,
+            esta_mobiliado: property.casa!.esta_mobiliado,
+            mobilia: property.casa!.mobilia,
+          });
+        } else if (property.tipo === 'Terreno') {
+          this.landForm.patchValue({
+            area_total: property.terreno?.area_total,
+            medida_esquerda: property.terreno?.medida_esquerda,
+            medida_direita: property.terreno?.medida_direita,
+            medida_frente: property.terreno?.medida_frente,
+            medida_fundo: property.terreno?.medida_fundo,
+            zoneamento: property.terreno?.zoneamento,
+            coeficiente: property.terreno?.coeficiente
+          });
+        }
+
+        this.isEditMode = true;
+      }
+    })
   };
 
   getAllBrokers() {
@@ -543,6 +613,14 @@ export class CreateProperty implements OnDestroy {
         .replace(/\./g, '')
         .replace(',', '.')
     );
+  };
+
+  numberToString(value: number | null): string | null {
+    if (value === null) {
+      return null;
+    }
+
+    return value.toString();
   }
 
   toggleFurniture(
@@ -674,11 +752,10 @@ export class CreateProperty implements OnDestroy {
     );
   };
 
-  createHouse(id: string): void {
+  editHouse(): void {
     const houseValues = this.houseForm.getRawValue();
 
-    const newHouseData: CreateHouseRequest = {
-      imovel_id: id,
+    const editHouseData: EditHouseRequest = {
       metragem: houseValues.metragem,
       quartos: houseValues.quartos,
       suites: houseValues.suites,
@@ -690,35 +767,34 @@ export class CreateProperty implements OnDestroy {
       mobilia: houseValues.mobilia,
     };
 
-    this.propertyService.createHouse(
-      id,
-      newHouseData
+    this.propertyService.editHouse(
+      this.idToEdit,
+      editHouseData
     ).subscribe({
       next: (house: HouseResponse) => {
-        this.toastService.show('create', 'Casa');
+        this.toastService.show('edit', 'Casa');
 
         this.houseForm.reset();
 
-        console.log('Casa cadastrada com sucesso:', house);
+        console.log('Casa editada com sucesso:', house);
 
         this.uploadImages(
-          id
+          this.idToEdit
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados da casa:',
+          'Ocorreu um erro ao tentar editar os dados da casa:',
           error
         );
       }
     });
   };
 
-  createApartment(id: string): void {
+  editApartment(): void {
     const apartmentValues = this.apartmentForm.getRawValue();
 
-    const newApartmentData: CreateApartmentRequest = {
-      imovel_id: id,
+    const editApartmentData: EditApartmentRequest = {
       metragem: apartmentValues.metragem,
       quartos: apartmentValues.quartos,
       suites: apartmentValues.suites,
@@ -730,35 +806,34 @@ export class CreateProperty implements OnDestroy {
       mobilia: apartmentValues.mobilia,
     };
 
-    this.propertyService.createApartment(
-      id,
-      newApartmentData
+    this.propertyService.editApartment(
+      this.idToEdit,
+      editApartmentData
     ).subscribe({
       next: (apartment: ApartmentResponse) => {
-        this.toastService.show('create', 'Apartamento');
+        this.toastService.show('edit', 'Apartamento');
 
         this.apartmentForm.reset();
 
-        console.log('Apartamento cadastrado com sucesso:', apartment);
+        console.log('Apartamento editado com sucesso:', apartment);
 
         this.uploadImages(
-          id
+          this.idToEdit,
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
+          'Ocorreu um erro ao tentar editar os dados do apartamento:',
           error
         );
       }
     });
   };
 
-  createLand(id: string): void {
+  editLand(): void {
     const landValues = this.landForm.getRawValue();
 
-    const newLandData: CreateLandRequest = {
-      imovel_id: id,
+    const editLandData: EditLandRequest = {
       area_total: landValues.area_total,
       zoneamento: landValues.zoneamento,
       medida_esquerda: landValues.medida_esquerda,
@@ -768,39 +843,37 @@ export class CreateProperty implements OnDestroy {
       coeficiente: landValues.coeficiente,
     };
 
-    this.propertyService.createLand(
-      id,
-      newLandData
+    this.propertyService.editLand(
+      this.idToEdit,
+      editLandData
     ).subscribe({
       next: (land: LandResponse) => {
-        this.toastService.show('create', 'Terreno');
+        this.toastService.show('edit', 'Terreno');
 
         this.landForm.reset();
 
-        console.log('Terreno cadastrado com sucesso:', land);
+        console.log('Terreno editado com sucesso:', land);
 
         this.uploadImages(
-          id
+          this.idToEdit,
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
+          'Ocorreu um erro ao tentar editar os dados do terreno:',
           error
         );
       }
     });
   };
 
-  createProperty(): void {
+  editProperty(): void {
     const formValue = this.propertyForm.getRawValue();
 
-    const newPropertyData: CreatePropertyRequest = {
+    const editPropertyData: EditPropertyRequest = {
       proprietario: formValue.proprietario || null,
       corretor: formValue.corretor || null,
-      codigo: formValue.codigo!,
       finalidade: formValue.finalidade!,
-      tipo: formValue.tipo!,
       em_condominio: formValue.em_condominio!,
       condominio: formValue.condominio || null,
       cep: formValue.cep!,
@@ -815,34 +888,35 @@ export class CreateProperty implements OnDestroy {
       valor_condominio: this.stringToNumber(formValue.valor_condominio)
     };
 
-    this.propertyService.create(
-      newPropertyData
+    this.propertyService.edit(
+      this.idToEdit,
+      editPropertyData
     ).subscribe({
       next: (property: PropertyResponse) => {
-        this.toastService.show('create', 'Imóvel');
+        this.toastService.show('edit', 'Imóvel');
 
         switch (property.tipo) {
           case 'Casa':
-            this.createHouse(property.id);
+            this.editHouse();
             break;
 
           case 'Apartamento':
-            this.createApartment(property.id);
+            this.editApartment();
             break;
 
           case 'Terreno':
-            this.createLand(property.id);
+            this.editLand();
             break;
         }
 
         console.log(
-          'Imóvel criado com sucesso:',
+          'Imóvel editado com sucesso:',
           property
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar o imóvel:',
+          'Ocorreu um erro ao tentar editar o imóvel:',
           error
         );
       }
@@ -873,7 +947,7 @@ export class CreateProperty implements OnDestroy {
     forkJoin(uploads).subscribe({
       next: (images: PropertyImageResponse[]) => {
         console.log(
-          'Imagens cadastradas:',
+          'Imagens editadas:',
           images
         );
 

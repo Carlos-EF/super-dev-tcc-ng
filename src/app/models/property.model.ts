@@ -1,6 +1,7 @@
 import { ContactTypes } from "../types/contact.types";
 import { FinalityTypes } from "../types/finality.types";
 import { FurnishedTypes, FurnitureTypes } from "../types/furnished.types";
+import { OrderPropertyTypes } from "../types/order.property.types";
 import { PropertyTypes } from "../types/property.types";
 import { ZoningTypes } from "../types/zoning.types";
 
@@ -51,7 +52,6 @@ export interface EditPropertyRequest {
     proprietario: string | null;
     corretor: string | null;
     finalidade: FinalityTypes;
-    tipo: PropertyTypes;
     em_condominio: boolean;
     condominio: string | null;
     cep: string;
@@ -296,4 +296,18 @@ export interface BrokerData {
     data_nascimento: string | null;
     rg: string | null;
     cpf: string | null;
+}
+
+export interface PropertyFilters {
+    busca?: string;
+    finalidade?: FinalityTypes;
+    ordem?: OrderPropertyTypes;
+    tipo?: PropertyTypes;
+    cond?: string;
+    prop?: string;
+    corr?: string;
+    bairro?: string;
+    min_preco?: number;
+    max_preco?: number;
+    qtn_quartos?: number;
 }
