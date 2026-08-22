@@ -294,7 +294,7 @@ export class EditProperty implements OnDestroy {
         this.isEditMode = true;
       }
     })
-  }
+  };
 
   getAllBrokers() {
     this.brokerService.getAllForList().subscribe({
