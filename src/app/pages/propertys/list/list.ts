@@ -3,6 +3,12 @@ import { RouterLink } from "@angular/router";
 import { CompletePropertyResponse, PaginatedPropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { ToastService } from '../../../services/toast.service';
+import { CondominiumService } from '../../../services/condominium.service';
+import { BrokerService } from '../../../services/broker.service';
+import { ClientsService } from '../../../services/clients.service';
+import { BrokerResponse } from '../../../models/broker.model';
+import { ClientResponse } from '../../../models/clients.model';
+import { CondominiumResponse } from '../../../models/condominium.model';
 
 @Component({
   selector: 'app-list',
@@ -13,6 +19,13 @@ import { ToastService } from '../../../services/toast.service';
 export class ListProperty {
   private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
+  private readonly brokerService = inject(BrokerService);
+  private readonly clientsService = inject(ClientsService);
+  private readonly condominiumService = inject(CondominiumService);
+
+  brokers = model<BrokerResponse[]>([]);
+  owners = model<ClientResponse[]>([]);
+  condominiums = model<CondominiumResponse[]>([]);
 
   propertys = model<PaginatedPropertyResponse>(
     {
@@ -45,6 +58,40 @@ export class ListProperty {
     ).subscribe({
       next: (propertys: PaginatedPropertyResponse) => {
         this.propertys.set(propertys);
+      }
+    })
+  };
+
+
+  getAllBrokers() {
+    this.brokerService.getAllForList().subscribe({
+      next: (brokers: BrokerResponse[]) => {
+        this.brokers.set(brokers);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar corretores:', error);
+      }
+    })
+  };
+
+  getAllOwners() {
+    this.clientsService.getAllOwners().subscribe({
+      next: (clients: ClientResponse[]) => {
+        this.owners.set(clients);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar clientes:', error);
+      }
+    })
+  };
+
+  getAllCondominiums() {
+    this.condominiumService.getAllForList().subscribe({
+      next: (condominiums: CondominiumResponse[]) => {
+        this.condominiums.set(condominiums);
+      },
+      error: (error: Error) => {
+        console.log('Ocorreu um erro ao tentar buscar condomínios:', error);
       }
     })
   };
