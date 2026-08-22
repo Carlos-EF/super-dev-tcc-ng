@@ -60,6 +60,8 @@ export class EditProperty implements OnDestroy {
 
   idToEdit: string = '';
 
+  isEditMode: boolean = false;
+
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
   imageError: string = '';
@@ -288,6 +290,8 @@ export class EditProperty implements OnDestroy {
             coeficiente: property.terreno?.coeficiente
           });
         }
+
+        this.isEditMode = true;
       }
     })
   }

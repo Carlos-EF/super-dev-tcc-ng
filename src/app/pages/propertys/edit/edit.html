@@ -132,8 +132,8 @@
                                 Código de referência
                                 <span class="req">*</span>
                             </label>
-                            <input type="text" id="codigo" formControlName="codigo" class="mono" placeholder="0001"
-                                maxlength="4" inputmode="numeric">
+                            <input [class.is-disabled]="isEditMode" type="text" id="codigo" formControlName="codigo"
+                                class="mono" placeholder="0001" maxlength="4" inputmode="numeric">
                             @if (
                             propertyForm.controls.codigo.invalid &&
                             propertyForm.controls.codigo.touched
@@ -150,6 +150,11 @@
                                 ) {
                                 O código deve possuir exatamente 4 caracteres.
                                 }
+                            </span>
+                            }
+
+                            @if (isEditMode) {
+                            <span class="hint"> O codígo do imóvel não pode ser alterado após o cadastro.
                             </span>
                             }
                         </div>
@@ -185,8 +190,10 @@
                             Tipo do imóvel
                             <span class="req">*</span>
                         </label>
-                        <div class="tile-group" role="radiogroup" aria-labelledby="tipo-label">
-                            <input type="radio" formControlName="tipo" id="tipo-ap" value="Apartamento" />
+                        <div class="tile-group" [class.is-disabled]="isEditMode" role="radiogroup"
+                            aria-labelledby="tipo-label">
+                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-ap"
+                                value="Apartamento" />
                             <label class="tile" for="tipo-ap">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -198,7 +205,8 @@
                                     Apartamento
                                 </span>
                             </label>
-                            <input type="radio" formControlName="tipo" id="tipo-casa" value="Casa" />
+                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-casa"
+                                value="Casa" />
                             <label class="tile" for="tipo-casa">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -210,7 +218,8 @@
                                     Casa
                                 </span>
                             </label>
-                            <input type="radio" formControlName="tipo" id="tipo-terreno" value="Terreno" />
+                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-terreno"
+                                value="Terreno" />
                             <label class="tile" for="tipo-terreno">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -229,6 +238,11 @@
                         ) {
                         <span class="field-error">
                             Selecione o tipo do imóvel.
+                        </span>
+                        }
+
+                        @if (isEditMode) {
+                        <span class="hint"> O tipo do imóvel não pode ser alterado após o cadastro.
                         </span>
                         }
                     </div>
@@ -1305,7 +1319,7 @@
             <div class="form-footer">
                 <button type="button" class="btn btn-ghost" (click)="previousStep()" data-goto="2">
                     << Voltar </button>
-                        <button type="button" class="btn btn-primary" (click)="createProperty()"
+                        <button type="button" class="btn btn-primary" (click)="editProperty()"
                             [disabled]="isUploadingImages">
                             @if (isUploadingImages) {
                             Enviando imagens...
