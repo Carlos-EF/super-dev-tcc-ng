@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
 @Component({
@@ -285,7 +285,7 @@ export class EditProperty implements OnDestroy {
             medida_frente: property.terreno?.medida_frente,
             medida_fundo: property.terreno?.medida_fundo,
             zoneamento: property.terreno?.zoneamento,
-            coeficiente: property.terreno?.coeficiente 
+            coeficiente: property.terreno?.coeficiente
           });
         }
       }
@@ -748,11 +748,10 @@ export class EditProperty implements OnDestroy {
     );
   };
 
-  createHouse(id: string): void {
+  editHouse(): void {
     const houseValues = this.houseForm.getRawValue();
 
-    const newHouseData: CreateHouseRequest = {
-      imovel_id: id,
+    const editHouseData: EditHouseRequest = {
       metragem: houseValues.metragem,
       quartos: houseValues.quartos,
       suites: houseValues.suites,
@@ -764,35 +763,34 @@ export class EditProperty implements OnDestroy {
       mobilia: houseValues.mobilia,
     };
 
-    this.propertyService.createHouse(
-      id,
-      newHouseData
+    this.propertyService.editHouse(
+      this.idToEdit,
+      editHouseData
     ).subscribe({
       next: (house: HouseResponse) => {
-        this.toastService.show('create', 'Casa');
+        this.toastService.show('edit', 'Casa');
 
         this.houseForm.reset();
 
-        console.log('Casa cadastrada com sucesso:', house);
+        console.log('Casa editada com sucesso:', house);
 
         this.uploadImages(
-          id
+          this.idToEdit
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados da casa:',
+          'Ocorreu um erro ao tentar editar os dados da casa:',
           error
         );
       }
     });
   };
 
-  createApartment(id: string): void {
+  editApartment(): void {
     const apartmentValues = this.apartmentForm.getRawValue();
 
-    const newApartmentData: CreateApartmentRequest = {
-      imovel_id: id,
+    const editApartmentData: EditApartmentRequest = {
       metragem: apartmentValues.metragem,
       quartos: apartmentValues.quartos,
       suites: apartmentValues.suites,
@@ -804,35 +802,34 @@ export class EditProperty implements OnDestroy {
       mobilia: apartmentValues.mobilia,
     };
 
-    this.propertyService.createApartment(
-      id,
-      newApartmentData
+    this.propertyService.editApartment(
+      this.idToEdit,
+      editApartmentData
     ).subscribe({
       next: (apartment: ApartmentResponse) => {
-        this.toastService.show('create', 'Apartamento');
+        this.toastService.show('edit', 'Apartamento');
 
         this.apartmentForm.reset();
 
-        console.log('Apartamento cadastrado com sucesso:', apartment);
+        console.log('Apartamento editado com sucesso:', apartment);
 
         this.uploadImages(
-          id
+          this.idToEdit,
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados do apartamento:',
+          'Ocorreu um erro ao tentar editar os dados do apartamento:',
           error
         );
       }
     });
   };
 
-  createLand(id: string): void {
+  editLand(): void {
     const landValues = this.landForm.getRawValue();
 
-    const newLandData: CreateLandRequest = {
-      imovel_id: id,
+    const editLandData: EditLandRequest = {
       area_total: landValues.area_total,
       zoneamento: landValues.zoneamento,
       medida_esquerda: landValues.medida_esquerda,
@@ -842,39 +839,37 @@ export class EditProperty implements OnDestroy {
       coeficiente: landValues.coeficiente,
     };
 
-    this.propertyService.createLand(
-      id,
-      newLandData
+    this.propertyService.editLand(
+      this.idToEdit,
+      editLandData
     ).subscribe({
       next: (land: LandResponse) => {
-        this.toastService.show('create', 'Terreno');
+        this.toastService.show('edit', 'Terreno');
 
         this.landForm.reset();
 
-        console.log('Terreno cadastrado com sucesso:', land);
+        console.log('Terreno editado com sucesso:', land);
 
         this.uploadImages(
-          id
+          this.idToEdit,
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar os dados do terreno:',
+          'Ocorreu um erro ao tentar editar os dados do terreno:',
           error
         );
       }
     });
   };
 
-  createProperty(): void {
+  editProperty(): void {
     const formValue = this.propertyForm.getRawValue();
 
-    const newPropertyData: CreatePropertyRequest = {
+    const editPropertyData: EditPropertyRequest = {
       proprietario: formValue.proprietario || null,
       corretor: formValue.corretor || null,
-      codigo: formValue.codigo!,
       finalidade: formValue.finalidade!,
-      tipo: formValue.tipo!,
       em_condominio: formValue.em_condominio!,
       condominio: formValue.condominio || null,
       cep: formValue.cep!,
@@ -889,34 +884,35 @@ export class EditProperty implements OnDestroy {
       valor_condominio: this.stringToNumber(formValue.valor_condominio)
     };
 
-    this.propertyService.create(
-      newPropertyData
+    this.propertyService.edit(
+      this.idToEdit,
+      editPropertyData
     ).subscribe({
       next: (property: PropertyResponse) => {
-        this.toastService.show('create', 'Imóvel');
+        this.toastService.show('edit', 'Imóvel');
 
         switch (property.tipo) {
           case 'Casa':
-            this.createHouse(property.id);
+            this.editHouse();
             break;
 
           case 'Apartamento':
-            this.createApartment(property.id);
+            this.editApartment();
             break;
 
           case 'Terreno':
-            this.createLand(property.id);
+            this.editLand();
             break;
         }
 
         console.log(
-          'Imóvel criado com sucesso:',
+          'Imóvel editado com sucesso:',
           property
         );
       },
       error: (error: Error) => {
         console.log(
-          'Ocorreu um erro ao tentar cadastrar o imóvel:',
+          'Ocorreu um erro ao tentar editar o imóvel:',
           error
         );
       }
@@ -947,7 +943,7 @@ export class EditProperty implements OnDestroy {
     forkJoin(uploads).subscribe({
       next: (images: PropertyImageResponse[]) => {
         console.log(
-          'Imagens cadastradas:',
+          'Imagens editadas:',
           images
         );
 

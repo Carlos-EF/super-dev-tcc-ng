@@ -51,7 +51,6 @@ export interface EditPropertyRequest {
     proprietario: string | null;
     corretor: string | null;
     finalidade: FinalityTypes;
-    tipo: PropertyTypes;
     em_condominio: boolean;
     condominio: string | null;
     cep: string;
