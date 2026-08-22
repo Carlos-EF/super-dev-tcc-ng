@@ -9,10 +9,15 @@ import { ClientsService } from '../../../services/clients.service';
 import { BrokerResponse } from '../../../models/broker.model';
 import { ClientResponse } from '../../../models/clients.model';
 import { CondominiumResponse, DistrictsResponse } from '../../../models/condominium.model';
+import { PROPERTY_TYPES } from '../../../types/property.types';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-list',
-  imports: [RouterLink],
+  imports: [
+    RouterLink,
+    NgxMaskDirective
+  ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
 })
@@ -36,6 +41,8 @@ export class ListProperty {
       total_paginas: 0
     }
   );
+
+  PropertyTypes = [...PROPERTY_TYPES];
 
   perPage = model(10);
 
