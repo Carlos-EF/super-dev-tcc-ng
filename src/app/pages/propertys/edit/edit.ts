@@ -6,7 +6,7 @@ import { FurnishedTypes, FURNITURE_TYPES, FurnitureTypes } from '../../../types/
 import { ZONING_TYPES, ZoningTypes } from '../../../types/zoning.types';
 import { ClientsTypes } from '../../../types/clients.types';
 import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { BrokerService } from '../../../services/broker.service';
 import { BrokerResponse, CreateBrokerRequest } from '../../../models/broker.model';
@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
 @Component({
@@ -40,6 +40,8 @@ export class EditProperty implements OnDestroy {
   private readonly condominiumService = inject(CondominiumService);
   private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+
 
 
   brokers = model<BrokerResponse[]>([]);
@@ -55,6 +57,8 @@ export class EditProperty implements OnDestroy {
   openClientModal: boolean = false;
 
   openBrokerModal: boolean = false;
+
+  idToEdit: string = '';
 
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
@@ -92,7 +96,6 @@ export class EditProperty implements OnDestroy {
   });
 
   houseForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     metragem: [null as number | null],
     quartos: [null as number | null],
     suites: [null as number | null],
@@ -105,7 +108,6 @@ export class EditProperty implements OnDestroy {
   });
 
   apartmentForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     metragem: [null as number | null],
     quartos: [null as number | null],
     suites: [null as number | null],
@@ -118,7 +120,6 @@ export class EditProperty implements OnDestroy {
   });
 
   landForm = this.formBuilder.group({
-    imovel_id: ['', Validators.required],
     area_total: [null as number | null],
     medida_esquerda: [null as number | null],
     medida_direita: [null as number | null],
@@ -161,6 +162,10 @@ export class EditProperty implements OnDestroy {
   constructor(
     private router: Router
   ) {
+    this.idToEdit = this.activatedRoute.snapshot.paramMap.get('id')!;
+
+    this.getProperty();
+
     this.getAllBrokers();
 
     this.getAllOwners();
@@ -224,6 +229,68 @@ export class EditProperty implements OnDestroy {
       );
     }
   };
+
+  getProperty() {
+    this.propertyService.getById(this.idToEdit).subscribe({
+      next: (property: CompletePropertyResponse) => {
+        this.propertyForm.patchValue({
+          proprietario: property.proprietario?.id || null,
+          corretor: property.corretor?.id || null,
+          codigo: property.codigo!,
+          finalidade: property.finalidade!,
+          tipo: property.tipo!,
+          em_condominio: property.em_condominio!,
+          condominio: property.condominio?.id || null,
+          cep: property.cep!,
+          logradouro: property.logradouro!,
+          numero: property.numero!,
+          bairro: property.bairro!,
+          uf: property.uf!,
+          cidade: property.cidade!,
+          complemento: property.complemento || null,
+          valor: this.numberToString(property.valor),
+          valor_iptu: this.numberToString(property.valor_iptu),
+          valor_condominio: this.numberToString(property.valor_condominio)
+        })
+
+        if (property.tipo === 'Apartamento') {
+          this.apartmentForm.patchValue({
+            metragem: property.apartamento!.metragem,
+            quartos: property.apartamento!.quartos,
+            suites: property.apartamento!.suites,
+            banheiros: property.apartamento!.banheiros,
+            garagens: property.apartamento!.garagens,
+            andares: property.apartamento!.andares,
+            salas: property.apartamento!.salas,
+            esta_mobiliado: property.apartamento!.esta_mobiliado,
+            mobilia: property.apartamento!.mobilia,
+          });
+        } else if (property.tipo === 'Casa') {
+          this.houseForm.patchValue({
+            metragem: property.casa!.metragem,
+            quartos: property.casa!.quartos,
+            suites: property.casa!.suites,
+            banheiros: property.casa!.banheiros,
+            garagens: property.casa!.garagens,
+            andares: property.casa!.andares,
+            salas: property.casa!.salas,
+            esta_mobiliado: property.casa!.esta_mobiliado,
+            mobilia: property.casa!.mobilia,
+          });
+        } else if (property.tipo === 'Terreno') {
+          this.landForm.patchValue({
+            area_total: property.terreno?.area_total,
+            medida_esquerda: property.terreno?.medida_esquerda,
+            medida_direita: property.terreno?.medida_direita,
+            medida_frente: property.terreno?.medida_frente,
+            medida_fundo: property.terreno?.medida_fundo,
+            zoneamento: property.terreno?.zoneamento,
+            coeficiente: property.terreno?.coeficiente 
+          });
+        }
+      }
+    })
+  }
 
   getAllBrokers() {
     this.brokerService.getAllForList().subscribe({
@@ -542,6 +609,14 @@ export class EditProperty implements OnDestroy {
         .replace(/\./g, '')
         .replace(',', '.')
     );
+  };
+
+  numberToString(value: number | null): string | null {
+    if (value === null) {
+      return null;
+    }
+
+    return value.toString();
   }
 
   toggleFurniture(
