@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { CompletePropertyResponse, PaginatedPropertyResponse, PropertyFilters } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { ToastService } from '../../../services/toast.service';
@@ -74,7 +74,9 @@ export class ListProperty {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   busca = new Subject<string>();
 
-  constructor() {
+  constructor(
+    private route: ActivatedRoute
+  ) {
     this.getAllPropertys();
 
     this.getAllCondominiums();
@@ -95,6 +97,18 @@ export class ListProperty {
       }
     )
   };
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const corretor = params['corr'];
+
+      if (corretor) {
+        this.filters.corr = corretor;
+      }
+
+      this.getAllPropertys();
+    });
+  }
 
   getAllPropertys() {
     this.propertyService.getAll(
