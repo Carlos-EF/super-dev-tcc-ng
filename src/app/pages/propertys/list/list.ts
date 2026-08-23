@@ -102,6 +102,7 @@ export class ListProperty {
     this.route.queryParams.subscribe(params => {
       const corretor = params['corr'];
       const condominio = params['cond'];
+      const proprietario = params['prop'];
 
       if (corretor) {
         this.filters.corr = corretor;
@@ -109,6 +110,10 @@ export class ListProperty {
 
       if (condominio) {
         this.filters.cond = condominio
+      }
+
+      if (proprietario) {
+        this.filters.prop = proprietario
       }
 
       this.getAllPropertys();

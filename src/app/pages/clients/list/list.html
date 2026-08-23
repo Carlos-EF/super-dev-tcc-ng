@@ -158,7 +158,19 @@
             <span class="trunc">Interesse não registrado</span>
         </span>
         }
-        } @else {
+        } 
+        @else if (client.tipo === 'Proprietário') {
+        <button type="button" class="cc-bond cc-actions" title="Ver imóveis cadastrados"
+            [attr.aria-label]="'Ver imóveis cadastrados'" (click)="viewOwnerProperties(client.id)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5 9.5V21h14V9.5" />
+            </svg>
+            <span class="trunc">Ver imóveis cadastrados</span>
+        </button>
+        }
+        @else {
         <span class="cc-bond empty">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
                 stroke-linecap="round" stroke-linejoin="round">

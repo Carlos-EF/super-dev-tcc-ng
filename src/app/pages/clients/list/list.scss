@@ -588,23 +588,29 @@ select {
 }
 
 .cc-bond {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 7px;
-    font-size: 12px;
-    color: var(--text-2);
-    min-width: 0
+    gap: 6px;
+    width: 100%;
+    min-height: 28px;
+    box-sizing: border-box;
+    font-size: 12.5px;
+    line-height: 1.2;
+    color: var(--text-3);
 }
 
 .cc-bond svg {
-    flex-shrink: 0;
-    color: var(--text-3)
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    display: block;
 }
 
 .cc-bond .trunc {
-    white-space: nowrap;
+    min-width: 0;
     overflow: hidden;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cc-bond b {
@@ -631,11 +637,54 @@ a.cc-bond:hover b {
     color: var(--accent-strong)
 }
 
+.cc-bond.cc-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    color: var(--text-3);
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+.cc-bond.cc-actions:hover {
+    background: transparent;
+    color: var(--accent-strong);
+}
+
 .cc-actions {
     display: flex;
     gap: 2px;
     flex-shrink: 0
 }
+
+.cc-actions:hover {
+    background: transparent;
+    color: var(--accent-strong);
+}
+
+.cc-actions:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+.cc-bond.cc-actions svg {
+    flex-shrink: 0;
+    display: block;
+}
+
+
+.cc-bond.cc-actions .trunc {
+    line-height: 1.2;
+}
+
 
 .cc-actions .icon-btn {
     width: 29px;
