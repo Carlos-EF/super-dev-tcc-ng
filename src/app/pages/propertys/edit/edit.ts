@@ -62,6 +62,7 @@ export class EditProperty implements OnDestroy {
 
   isEditMode: boolean = false;
 
+  asidePhotos: string[] = [];
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
   propertyImages: PropertyImageResponse[] = [];
@@ -182,13 +183,10 @@ export class EditProperty implements OnDestroy {
     );
   }
 
-  private processImageFiles(
-    files: File[]
-  ): void {
+  private processImageFiles(files: File[]): void {
     this.imageError = '';
 
-    const maxSize =
-      5 * 1024 * 1024;
+    const maxSize = 5 * 1024 * 1024;
 
     const allowedTypes = [
       'image/jpeg',
@@ -196,41 +194,64 @@ export class EditProperty implements OnDestroy {
       'image/webp'
     ];
 
-    for (const file of files) {
-      if (!allowedTypes.includes(file.type)) {
+    const newImages: File[] = [];
+    const newPreviews: string[] = [];
 
+    for (const file of files) {
+
+      if (!allowedTypes.includes(file.type)) {
         this.imageError =
-          `O arquivo "${file.name}" não possui um formato permitido. ` +
-          'Use JPG, PNG ou WebP.';
+          `O arquivo "${file.name}" possui um formato inválido.`;
 
         continue;
       }
 
       if (file.size > maxSize) {
         this.imageError =
-          `O arquivo "${file.name}" ultrapassa o limite de 5 MB.`;
+          `O arquivo "${file.name}" ultrapassa 5 MB.`;
 
         continue;
       }
 
-      const alreadyExists =
-        this.selectedImages.some(
-          existingFile =>
-            existingFile.name === file.name &&
-            existingFile.size === file.size &&
-            existingFile.lastModified === file.lastModified
-        );
+      const exists = this.selectedImages.some(
+        existing =>
+          existing.name === file.name &&
+          existing.size === file.size &&
+          existing.lastModified === file.lastModified
+      );
 
-      if (alreadyExists) {
+      if (exists) {
         continue;
       }
 
-      this.selectedImages.push(file);
+      newImages.push(file);
 
-      this.imagePreviews.push(
+      newPreviews.push(
         URL.createObjectURL(file)
       );
     }
+
+    if (!newImages.length) {
+      return;
+    }
+
+    this.selectedImages = [
+      ...this.selectedImages,
+      ...newImages
+    ];
+
+    this.imagePreviews = [
+      ...this.imagePreviews,
+      ...newPreviews
+    ];
+
+    this.asidePhotos = [
+      ...this.propertyImages
+        .filter(image => !!image.url)
+        .map(image => image.url),
+
+      ...this.imagePreviews
+    ];
   };
 
   getProperty() {
@@ -295,6 +316,8 @@ export class EditProperty implements OnDestroy {
         this.propertyImages = [...(property.imagens ?? [])]
         .sort((a, b) => Number(b.principal) - Number(a.principal));
 
+        this.updateAsidePhotos();
+        
         this.isEditMode = true;
       }
     })
@@ -650,13 +673,10 @@ export class EditProperty implements OnDestroy {
     console.log(form.controls.mobilia.value);
   };
 
-  onImagesSelected(
-    event: Event
-  ): void {
-    const input =
-      event.target as HTMLInputElement;
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-    if (!input.files) {
+    if (!input.files?.length) {
       return;
     }
 
@@ -705,25 +725,14 @@ export class EditProperty implements OnDestroy {
     );
   };
 
-  removeSelectedImage(
-    index: number
-  ): void {
-    const preview =
-      this.imagePreviews[index];
+  removeSelectedImage(index: number): void {
+    this.selectedImages.splice(index, 1);
+    this.imagePreviews.splice(index, 1);
 
-    if (preview) {
-      URL.revokeObjectURL(preview);
-    }
+    this.selectedImages = [...this.selectedImages];
+    this.imagePreviews = [...this.imagePreviews];
 
-    this.selectedImages.splice(
-      index,
-      1
-    );
-
-    this.imagePreviews.splice(
-      index,
-      1
-    );
+    this.updateAsidePhotos();
   };
 
   setSelectedImageAsCover(
@@ -1280,9 +1289,25 @@ export class EditProperty implements OnDestroy {
   };
 
   getAsidePhotos(): string[] {
-    return this.imagePreviews.slice(0, 4);
+    const existingPhotos = this.propertyImages
+      .filter(image => !!image.url)
+      .map(image => image.url);
+
+    return [
+      ...existingPhotos,
+      ...this.imagePreviews
+    ];
   };
 
+  updateAsidePhotos(): void {
+    this.asidePhotos = [
+      ...this.propertyImages
+        .filter(image => !!image.url)
+        .map(image => image.url),
+
+      ...this.imagePreviews
+    ];
+  }
   setImageAsCover(image: PropertyImageResponse): void {
     if (image.principal) {
       return;
