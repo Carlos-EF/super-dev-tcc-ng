@@ -647,7 +647,6 @@ export class CreateProperty implements OnDestroy {
   setSelectedImageAsCover(
     index: number
   ): void {
-
     if (
       index < 0 ||
       index >= this.selectedImages.length ||

@@ -1227,7 +1227,8 @@
 
                 <div class="dropzone" tabindex="0" role="button" aria-label="Adicionar fotos do imóvel"
                     [class.dragover]="isDraggingImages" (click)="fileInput.click(); $event.stopPropagation()"
-                    (keydown.enter)="fileInput.click()" (keydown.space)="fileInput.click()"
+                    (keydown.enter)="fileInput.click(); $event.stopPropagation()"
+                    (keydown.space)="fileInput.click(); $event.preventDefault(); $event.stopPropagation()"
                     (dragover)="onImageDragOver($event)" (dragleave)="onImageDragLeave($event)"
                     (drop)="onImageDrop($event)">
                     <div class="dz-icon">
@@ -1249,7 +1250,7 @@
                         — JPG, PNG ou WebP, até 5 MB cada
                     </p>
                     <input #fileInput type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple
-                        hidden (change)="onImagesSelected($event)">
+                        hidden (change)="onImagesSelected($event); $event.stopPropagation()">
                 </div>
 
                 @if (imageError) {
@@ -1272,7 +1273,6 @@
                             CAPA
                         </span>
                         }
-
                         <div class="ph-actions">
                             @if (!image.principal) {
                             <button type="button" class="ph-btn" title="Definir como capa"
@@ -1284,7 +1284,6 @@
                                 </svg>
                                 Capa
                             </button>
-
                             }
                             <button type="button" class="ph-btn rm icon-only" title="Remover foto"
                                 [attr.aria-label]="'Remover foto ' + (i + 1)"
@@ -1308,20 +1307,15 @@
                     track preview;
                     let i = $index
                     ) {
-                    <div class="photo" tabindex="0" [class.is-cover]="
-                            propertyImages.length === 0 && i === 0
-                        " [style.background-image]="'url(' + preview + ')'">
-
-                        @if (propertyImages.length === 0 && i === 0) {
+                    <div class="photo" tabindex="0" [class.is-cover]="selectedCoverIndex === i"
+                        [style.background-image]="'url(' + preview + ')'">
+                        @if (selectedCoverIndex === i) {
                         <span class="cover-tag">
                             CAPA
                         </span>
                         }
                         <div class="ph-actions">
-                            @if (
-                            propertyImages.length > 0 ||
-                            i !== 0
-                            ) {
+                            @if (selectedCoverIndex !== i) {
                             <button type="button" class="ph-btn" title="Definir como capa"
                                 (click)="setSelectedImageAsCover(i); $event.stopPropagation()">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1351,7 +1345,6 @@
                 propertyImages.length > 0 ||
                 selectedImages.length > 0
                 ) {
-
                 <div class="photo-counter">
                     {{ propertyImages.length + selectedImages.length }}
                     @if (
@@ -1367,15 +1360,15 @@
 
             <div class="form-footer">
                 <button type="button" class="btn btn-ghost" (click)="previousStep()" data-goto="2">
-                    << Voltar </button>
-                        <button type="button" class="btn btn-primary" (click)="editProperty()"
-                            [disabled]="isUploadingImages">
-                            @if (isUploadingImages) {
-                            Enviando imagens...
-                            } @else {
-                            Salvar imóvel
-                            }
-                        </button>
+                    &lt;&lt; Voltar
+                </button>
+                <button type="button" class="btn btn-primary" (click)="editProperty()" [disabled]="isUploadingImages">
+                    @if (isUploadingImages) {
+                    Enviando imagens...
+                    } @else {
+                    Salvar imóvel
+                    }
+                </button>
             </div>
         </section>
         }

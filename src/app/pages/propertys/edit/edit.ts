@@ -77,6 +77,8 @@ export class EditProperty implements OnDestroy {
     return this.propertyForm.controls.finalidade.value;
   };
 
+  selectedCoverIndex: number | null = null;
+
   currentStep = 1;
 
   propertyForm = this.formBuilder.group({
@@ -181,7 +183,7 @@ export class EditProperty implements OnDestroy {
     this.imagePreviews.forEach(
       preview => URL.revokeObjectURL(preview)
     );
-  }
+  };
 
   private processImageFiles(files: File[]): void {
     this.imageError = '';
@@ -231,7 +233,7 @@ export class EditProperty implements OnDestroy {
       );
     }
 
-    if (!newImages.length) {
+    if (newImages.length === 0) {
       return;
     }
 
@@ -245,13 +247,18 @@ export class EditProperty implements OnDestroy {
       ...newPreviews
     ];
 
-    this.asidePhotos = [
-      ...this.propertyImages
-        .filter(image => !!image.url)
-        .map(image => image.url),
+    const hasExistingCover = this.propertyImages.some(
+      image => image.principal
+    );
 
-      ...this.imagePreviews
-    ];
+    if (
+      !hasExistingCover &&
+      this.selectedCoverIndex === null
+    ) {
+      this.selectedCoverIndex = 0;
+    }
+
+    this.updateAsidePhotos();
   };
 
   getProperty() {
@@ -314,10 +321,10 @@ export class EditProperty implements OnDestroy {
         }
 
         this.propertyImages = [...(property.imagens ?? [])]
-        .sort((a, b) => Number(b.principal) - Number(a.principal));
+          .sort((a, b) => Number(b.principal) - Number(a.principal));
 
         this.updateAsidePhotos();
-        
+
         this.isEditMode = true;
       }
     })
@@ -676,13 +683,13 @@ export class EditProperty implements OnDestroy {
   onImagesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    if (!input.files?.length) {
+    if (!input.files || input.files.length === 0) {
       return;
     }
 
-    this.processImageFiles(
-      Array.from(input.files)
-    );
+    const files = Array.from(input.files);
+
+    this.processImageFiles(files);
 
     input.value = '';
   };
@@ -726,11 +733,51 @@ export class EditProperty implements OnDestroy {
   };
 
   removeSelectedImage(index: number): void {
-    this.selectedImages.splice(index, 1);
-    this.imagePreviews.splice(index, 1);
+    if (
+      index < 0 ||
+      index >= this.selectedImages.length
+    ) {
+      return;
+    }
 
-    this.selectedImages = [...this.selectedImages];
-    this.imagePreviews = [...this.imagePreviews];
+    URL.revokeObjectURL(
+      this.imagePreviews[index]
+    );
+
+    this.selectedImages = this.selectedImages.filter(
+      (_, i) => i !== index
+    );
+
+    this.imagePreviews = this.imagePreviews.filter(
+      (_, i) => i !== index
+    );
+
+    if (this.selectedCoverIndex === index) {
+
+      if (this.selectedImages.length === 0) {
+        this.selectedCoverIndex = null;
+      } else {
+        this.selectedCoverIndex = 0;
+      }
+
+    } else if (
+      this.selectedCoverIndex !== null &&
+      index < this.selectedCoverIndex
+    ) {
+      this.selectedCoverIndex--;
+    }
+
+    const hasExistingCover = this.propertyImages.some(
+      image => image.principal
+    );
+
+    if (
+      !hasExistingCover &&
+      this.selectedImages.length > 0 &&
+      this.selectedCoverIndex === null
+    ) {
+      this.selectedCoverIndex = 0;
+    }
 
     this.updateAsidePhotos();
   };
@@ -738,31 +785,66 @@ export class EditProperty implements OnDestroy {
   setSelectedImageAsCover(
     index: number
   ): void {
-
     if (
       index < 0 ||
-      index >= this.selectedImages.length ||
-      index === 0
+      index >= this.selectedImages.length
     ) {
       return;
     }
 
-    const selectedFile =
-      this.selectedImages[index];
+    this.selectedCoverIndex = index;
 
-    const selectedPreview =
-      this.imagePreviews[index];
-
-    this.selectedImages.splice(index, 1);
-    this.imagePreviews.splice(index, 1);
-
-    this.selectedImages.unshift(
-      selectedFile
+    this.propertyImages = this.propertyImages.map(
+      image => ({
+        ...image,
+        principal: false
+      })
     );
 
-    this.imagePreviews.unshift(
-      selectedPreview
+    this.updateAsidePhotos();
+  };
+
+  setImageAsCover(
+    image: PropertyImageResponse
+  ): void {
+    this.propertyImages = this.propertyImages.map(
+      currentImage => ({
+        ...currentImage,
+        principal: currentImage.id === image.id
+      })
     );
+
+    this.selectedCoverIndex = null;
+
+    this.updateAsidePhotos();
+
+    this.propertyService.editImage(
+      image.id,
+      {
+        principal: true
+      }
+    ).subscribe({
+      next: (updatedImage: PropertyImageResponse) => {
+        this.propertyImages = this.propertyImages.map(
+          currentImage => ({
+            ...currentImage,
+            principal:
+              currentImage.id === updatedImage.id
+          })
+        );
+
+        this.updateAsidePhotos();
+      },
+
+      error: (error: Error) => {
+        console.error(
+          'Erro ao definir imagem como capa:',
+          error
+        );
+
+        this.getProperty();
+      }
+    });
   };
 
   editHouse(): void {
@@ -946,23 +1028,82 @@ export class EditProperty implements OnDestroy {
 
     this.isUploadingImages = true;
 
-    const uploads =
-      this.selectedImages.map(
-        (file, index) =>
+    const existingCover = this.propertyImages.find(
+      image => image.principal
+    );
 
-          this.propertyService.createImages(
-            imovelId,
-            file,
-            index === 0
-          )
-      );
+    const newCoverSelected =
+      this.selectedCoverIndex !== null;
+
+    if (
+      newCoverSelected &&
+      existingCover
+    ) {
+
+      this.propertyService.editImage(
+        existingCover.id,
+        {
+          principal: false
+        }
+      ).subscribe({
+        next: () => {
+          this.propertyImages =
+            this.propertyImages.map(
+              image => ({
+                ...image,
+                principal: false
+              })
+            );
+
+          this.sendSelectedImages(imovelId);
+        },
+        error: (error: Error) => {
+          this.isUploadingImages = false;
+          console.error(
+            'Erro ao remover a capa anterior:',
+            error
+          );
+
+          this.imageError =
+            'Não foi possível alterar a capa da imagem.';
+        }
+      });
+
+      return;
+    }
+
+    this.sendSelectedImages(imovelId);
+  };
+
+  private sendSelectedImages(
+    imovelId: string
+  ): void {
+    const uploads = this.selectedImages.map(
+      (file, index) => {
+        const isCover =
+          this.selectedCoverIndex === index;
+
+        return this.propertyService.createImages(
+          imovelId,
+          file,
+          isCover
+        );
+      }
+    );
 
     forkJoin(uploads).subscribe({
       next: (images: PropertyImageResponse[]) => {
         console.log(
-          'Imagens editadas:',
+          'Imagens enviadas:',
           images
         );
+
+        this.propertyImages = [
+          ...this.propertyImages,
+          ...images
+        ];
+
+        this.updateAsidePhotos();
 
         this.isUploadingImages = false;
 
@@ -977,12 +1118,12 @@ export class EditProperty implements OnDestroy {
         this.isUploadingImages = false;
 
         console.error(
-          'Ocorreu um erro ao enviar as imagens:',
+          'Erro ao enviar imagens:',
           error
         );
 
         this.imageError =
-          'O imóvel foi cadastrado, mas ocorreu um erro ao enviar as imagens.';
+          'O imóvel foi atualizado, mas ocorreu um erro ao enviar as imagens.';
       }
     });
   };
@@ -1289,73 +1430,106 @@ export class EditProperty implements OnDestroy {
   };
 
   getAsidePhotos(): string[] {
-    const existingPhotos = this.propertyImages
-      .filter(image => !!image.url)
-      .map(image => image.url);
-
     return [
+      ...this.propertyImages.map(image => image.url),
+      ...this.imagePreviews
+    ];
+  };
+
+  private updateAsidePhotos(): void {
+    const existingPhotos =
+      this.propertyImages
+        .filter(image => !!image.url)
+        .map(image => image.url);
+
+    this.asidePhotos = [
       ...existingPhotos,
       ...this.imagePreviews
     ];
   };
 
-  updateAsidePhotos(): void {
-    this.asidePhotos = [
-      ...this.propertyImages
-        .filter(image => !!image.url)
-        .map(image => image.url),
-
-      ...this.imagePreviews
-    ];
-  }
-  setImageAsCover(image: PropertyImageResponse): void {
-    if (image.principal) {
-      return;
-    }
-
-    this.propertyImages = this.propertyImages
-      .map(img => ({
-        ...img,
-        principal: img.id === image.id
-      }))
-      .sort(
-        (a, b) =>
-          Number(b.principal) - Number(a.principal)
-      );
-
-    this.propertyService.editImage(
-      image.id,
-      {
-        principal: true
-      }
-    ).subscribe({
-      error: (error) => {
-
-        console.error(
-          'Erro ao definir imagem como capa:',
-          error
-        );
-
-        this.propertyImages = this.propertyImages
-          .map(img => ({
-            ...img,
-            principal: img.id === image.id
-              ? false
-              : img.principal
-          }));
-      }
-    });
-  };
-
-  removeExistingImage(image: PropertyImageResponse): void {
+  removeExistingImage(
+    image: PropertyImageResponse
+  ): void {
     this.propertyService.deleteImage(image.id).subscribe({
       next: () => {
         this.propertyImages = this.propertyImages.filter(
-          img => img.id !== image.id
+          currentImage => currentImage.id !== image.id
+        );
+
+        this.imagePreviews = this.imagePreviews.filter(
+          preview => preview !== image.id
+        );
+
+        this.updateAsidePhotos();
+
+        if (image.principal) {
+          if (this.propertyImages.length > 0) {
+
+            const newCover = this.propertyImages[0];
+
+            this.propertyImages = this.propertyImages.map(
+              currentImage => ({
+                ...currentImage,
+                principal: currentImage.id === newCover.id
+              })
+            );
+
+            this.imagePreviews = [
+              ...this.imagePreviews
+            ];
+
+            this.updateAsidePhotos();
+
+            this.propertyService.editImage(
+              newCover.id,
+              {
+                principal: true
+              }
+            ).subscribe({
+              next: () => {
+                console.log(
+                  'Nova capa definida:',
+                  newCover.id
+                );
+              },
+              error: (error) => {
+                console.error(
+                  'Erro ao definir nova capa:',
+                  error
+                );
+              }
+            });
+
+          } else if (this.selectedImages.length > 0) {
+            this.selectedCoverIndex = 0;
+          }
+        }
+        this.propertyImages = [
+          ...this.propertyImages
+        ];
+
+        this.imagePreviews = [
+          ...this.imagePreviews
+        ];
+
+        this.updateAsidePhotos();
+
+        this.toastService.show(
+          'delete',
+          'Imagem'
         );
       },
-      error: (error) => {
-        console.error('Erro ao remover imagem:', error);
+      error: (error: Error) => {
+        console.error(
+          'Erro ao remover imagem:',
+          error
+        );
+
+        this.toastService.show(
+          'error',
+          'Não foi possível remover a imagem'
+        );
       }
     });
   };
