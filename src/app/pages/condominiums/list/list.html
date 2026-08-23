@@ -176,7 +176,7 @@
                     </td>
                     <td>
                         <div class="row-actions">
-                            <button class="icon-btn" type="button" title="Ver imóveis do condomínio"
+                            <button class="icon-btn" (click)="viewCondProperties(condominium.id)" type="button" title="Ver imóveis do condomínio"
                                 [attr.aria-label]="'Ver imóveis de ' + condominium.nome">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

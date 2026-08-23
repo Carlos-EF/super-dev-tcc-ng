@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
@@ -76,7 +76,9 @@ export class ListCondominiums {
 
   filters: CondominiumFilters = {};
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllCondominiums();
 
     this.getAllCities();
@@ -401,5 +403,17 @@ export class ListCondominiums {
         }
       })
     }
+  };
+
+  
+  viewCondProperties(condId: string): void {
+    this.router.navigate(
+      ['/propertys/list'],
+      {
+        queryParams: {
+          cond: condId
+        }
+      }
+    );
   };
 }

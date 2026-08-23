@@ -101,9 +101,14 @@ export class ListProperty {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const corretor = params['corr'];
+      const condominio = params['cond'];
 
       if (corretor) {
         this.filters.corr = corretor;
+      }
+
+      if (condominio) {
+        this.filters.cond = condominio
       }
 
       this.getAllPropertys();
