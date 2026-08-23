@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyImageRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
 @Component({
@@ -64,6 +64,7 @@ export class EditProperty implements OnDestroy {
 
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
+  propertyImages: PropertyImageResponse[] = [];
   imageError: string = '';
   isUploadingImages: boolean = false;
   isDraggingImages: boolean = false;
@@ -290,6 +291,9 @@ export class EditProperty implements OnDestroy {
             coeficiente: property.terreno?.coeficiente
           });
         }
+
+        this.propertyImages = [...(property.imagens ?? [])]
+        .sort((a, b) => Number(b.principal) - Number(a.principal));
 
         this.isEditMode = true;
       }
@@ -1277,5 +1281,57 @@ export class EditProperty implements OnDestroy {
 
   getAsidePhotos(): string[] {
     return this.imagePreviews.slice(0, 4);
+  };
+
+  setImageAsCover(image: PropertyImageResponse): void {
+    if (image.principal) {
+      return;
+    }
+
+    this.propertyImages = this.propertyImages
+      .map(img => ({
+        ...img,
+        principal: img.id === image.id
+      }))
+      .sort(
+        (a, b) =>
+          Number(b.principal) - Number(a.principal)
+      );
+
+    this.propertyService.editImage(
+      image.id,
+      {
+        principal: true
+      }
+    ).subscribe({
+      error: (error) => {
+
+        console.error(
+          'Erro ao definir imagem como capa:',
+          error
+        );
+
+        this.propertyImages = this.propertyImages
+          .map(img => ({
+            ...img,
+            principal: img.id === image.id
+              ? false
+              : img.principal
+          }));
+      }
+    });
+  };
+
+  removeExistingImage(image: PropertyImageResponse): void {
+    this.propertyService.deleteImage(image.id).subscribe({
+      next: () => {
+        this.propertyImages = this.propertyImages.filter(
+          img => img.id !== image.id
+        );
+      },
+      error: (error) => {
+        console.error('Erro ao remover imagem:', error);
+      }
+    });
   };
 }

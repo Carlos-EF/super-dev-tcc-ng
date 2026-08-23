@@ -192,8 +192,7 @@
                         </label>
                         <div class="tile-group" [class.is-disabled]="isEditMode" role="radiogroup"
                             aria-labelledby="tipo-label">
-                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-ap"
-                                value="Apartamento" />
+                            <input type="radio" formControlName="tipo" id="tipo-ap" value="Apartamento" />
                             <label class="tile" for="tipo-ap">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -205,8 +204,7 @@
                                     Apartamento
                                 </span>
                             </label>
-                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-casa"
-                                value="Casa" />
+                            <input type="radio" formControlName="tipo" id="tipo-casa" value="Casa" />
                             <label class="tile" for="tipo-casa">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -218,8 +216,7 @@
                                     Casa
                                 </span>
                             </label>
-                            <input type="radio" [disabled]="isEditMode" formControlName="tipo" id="tipo-terreno"
-                                value="Terreno" />
+                            <input type="radio" formControlName="tipo" id="tipo-terreno" value="Terreno" />
                             <label class="tile" for="tipo-terreno">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -1229,9 +1226,10 @@
                 </div>
 
                 <div class="dropzone" tabindex="0" role="button" aria-label="Adicionar fotos do imóvel"
-                    [class.dragover]="isDraggingImages" (click)="fileInput.click()" (keydown.enter)="fileInput.click()"
-                    (keydown.space)="fileInput.click()" (dragover)="onImageDragOver($event)"
-                    (dragleave)="onImageDragLeave($event)" (drop)="onImageDrop($event)">
+                    [class.dragover]="isDraggingImages" (click)="fileInput.click(); $event.stopPropagation()"
+                    (keydown.enter)="fileInput.click()" (keydown.space)="fileInput.click()"
+                    (dragover)="onImageDragOver($event)" (dragleave)="onImageDragLeave($event)"
+                    (drop)="onImageDrop($event)">
                     <div class="dz-icon">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1240,7 +1238,6 @@
                             <path d="M8 6l1.2-2h5.6L16 6" />
                         </svg>
                     </div>
-
                     <h4>
                         Arraste as fotos aqui
                     </h4>
@@ -1263,6 +1260,59 @@
                 </span>
                 }
 
+                @if (propertyImages.length > 0) {
+                <div class="photo-grid">
+                    @for (
+                    image of propertyImages;
+                    track image.id;
+                    let i = $index
+                    ) {
+                    <div class="photo" tabindex="0" [class.is-cover]="image.principal"
+                        [style.background-image]="'url(' + image.url + ')'">
+
+                        @if (image.principal) {
+                        <span class="cover-tag">
+                            CAPA
+                        </span>
+                        }
+
+                        <div class="ph-actions">
+
+                            @if (!image.principal) {
+                            <button type="button" class="ph-btn" title="Definir como capa"
+                                (click)="setImageAsCover(image); $event.stopPropagation()">
+
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                    <path
+                                        d="M12 3l2.9 5.9 6.1.9-4.4 4.3 1 6.1L12 17.3 6.4 20.2l1-6.1L3 9.8l6.1-.9L12 3z" />
+
+                                </svg>
+
+                                Capa
+                            </button>
+                            }
+
+                            <button type="button" class="ph-btn rm icon-only" title="Remover foto"
+                                [attr.aria-label]="'Remover foto ' + (i + 1)"
+                                (click)="removeExistingImage(image); $event.stopPropagation()">
+
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round">
+
+                                    <path d="M18 6L6 18" />
+                                    <path d="M6 6l12 12" />
+
+                                </svg>
+
+                            </button>
+
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
                 @if (imagePreviews.length > 0) {
                 <div class="photo-grid">
                     @for (
@@ -1280,7 +1330,8 @@
 
                         <div class="ph-actions">
                             @if (i !== 0) {
-                            <button type="button" class="ph-btn" (click)="setSelectedImageAsCover(i)">
+                            <button type="button" class="ph-btn" title="Definir como capa"
+                                (click)="setSelectedImageAsCover(i); $event.stopPropagation()">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path
@@ -1289,9 +1340,9 @@
                                 Capa
                             </button>
                             }
-
                             <button type="button" class="ph-btn rm icon-only"
-                                [attr.aria-label]="'Remover foto ' + (i + 1)" (click)="removeSelectedImage(i)">
+                                [attr.aria-label]="'Remover foto ' + (i + 1)" title="Remover foto"
+                                (click)="removeSelectedImage(i); $event.stopPropagation()">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2" stroke-linecap="round">
                                     <path d="M18 6L6 18" />
@@ -1303,11 +1354,10 @@
                     }
                 </div>
                 }
-
-                @if (selectedImages.length > 0) {
+                @if (propertyImages.length > 0 || selectedImages.length > 0) {
                 <div class="photo-counter">
-                    {{ selectedImages.length }}
-                    @if (selectedImages.length === 1) {
+                    {{ propertyImages.length + selectedImages.length }}
+                    @if (propertyImages.length + selectedImages.length === 1) {
                     foto selecionada
                     } @else {
                     fotos selecionadas
