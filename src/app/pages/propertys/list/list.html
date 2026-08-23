@@ -31,7 +31,7 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input type="search" id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…"
+                <input (input)="getSearchValue($event)" type="search" id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…"
                     [(ngModel)]="filters.busca">
             </div>
         </div>
@@ -41,16 +41,15 @@
                 Finalidade
             </label>
             <div class="segmented" role="radiogroup" aria-label="Finalidade">
-                <input type="radio" name="f-fin" id="ff-todos" [(ngModel)]="filters.finalidade">
-
+                <input type="radio" name="f-fin" id="ff-todos" (change)="onFinalityChange()" [(ngModel)]="filters.finalidade">
                 <label for="ff-todos">
                     Todos
                 </label>
-                <input type="radio" name="f-fin" id="ff-venda" value="Venda" [(ngModel)]="filters.finalidade">
+                <input type="radio" name="f-fin" id="ff-venda" value="Venda" (change)="onFinalityChange()" [(ngModel)]="filters.finalidade">
                 <label for="ff-venda">
                     Venda
                 </label>
-                <input type="radio" name="f-fin" id="ff-locacao" value="Locação" [(ngModel)]="filters.finalidade">
+                <input type="radio" name="f-fin" id="ff-locacao" value="Locação" (change)="onFinalityChange()" [(ngModel)]="filters.finalidade">
                 <label for="ff-locacao">
                     Locação
                 </label>
@@ -62,7 +61,7 @@
                 Ordenar por
             </label>
             <div class="select-wrap">
-                <select id="f-ordem" [(ngModel)]="filters.ordem">
+                <select id="f-ordem" (change)="onOrderChange()" [(ngModel)]="filters.ordem">
                     <option value="recente-asc">
                         Mais recentes
                     </option>
@@ -119,7 +118,7 @@
             </label>
 
             <div class="select-wrap">
-                <select id="f-tipo" [(ngModel)]="filters.tipo">
+                <select id="f-tipo" (change)="onTypeChange()" [(ngModel)]="filters.tipo">
                     <option [ngValue]="undefined">
                         Todos os tipos
                     </option>
@@ -140,7 +139,7 @@
                 Condomínio
             </label>
             <div class="select-wrap">
-                <select id="f-cond" [(ngModel)]="filters.cond">
+                <select id="f-cond" (change)="onCondChange()" [(ngModel)]="filters.cond">
                     <option value="">
                         Todos
                     </option>
@@ -165,7 +164,7 @@
             </label>
 
             <div class="select-wrap">
-                <select id="f-corretor" [(ngModel)]="filters.corr">
+                <select id="f-corretor" (change)="onCorrChange()" [(ngModel)]="filters.corr">
                     <option value="">
                         Todos
                     </option>
@@ -186,7 +185,7 @@
                 Proprietário
             </label>
             <div class="select-wrap">
-                <select id="f-prop" [(ngModel)]="filters.prop">
+                <select id="f-prop" (change)="onPropChange()" [(ngModel)]="filters.prop">
                     <option value="">
                         Todos
                     </option>
@@ -207,7 +206,7 @@
                 Bairro
             </label>
             <div class="select-wrap">
-                <select id="f-bairro" [(ngModel)]="filters.bairro">
+                <select id="f-bairro" (change)="onDistrictChange()" [(ngModel)]="filters.bairro">
                     <option value="">
                         Todos os bairros
                     </option>
@@ -232,7 +231,7 @@
                     <span class="prefix">
                         R$
                     </span>
-                    <input type="text" id="f-preco-min" class="mono" placeholder="mín" mask="separator.2"
+                    <input (change)="onMinValueChange()" type="text" id="f-preco-min" class="mono" placeholder="mín" mask="separator.2"
                         thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
                         [(ngModel)]="filters.min_preco">
                 </div>
@@ -243,7 +242,7 @@
                     <span class="prefix">
                         R$
                     </span>
-                    <input type="text" id="f-preco-max" class="mono" placeholder="máx" mask="separator.2"
+                    <input (change)="onMaxValueChange()" type="text" id="f-preco-max" class="mono" placeholder="máx" mask="separator.2"
                         thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
                         [(ngModel)]="filters.max_preco">
                 </div>
@@ -255,7 +254,8 @@
                 Quartos
             </label>
             <div class="select-wrap">
-                <select id="f-quartos" [(ngModel)]="filters.qtn_quartos">
+                <select id="f-quartos" (change)="onQntChange()"
+                 [(ngModel)]="filters.qtn_quartos">
                     <option [ngValue]="undefined">
                         Qualquer
                     </option>
@@ -731,7 +731,7 @@
     </div>
     <h4>Nenhum imóvel encontrado</h4>
     <p>Nenhum resultado para os filtros aplicados. Ajuste a busca ou limpe os filtros.</p>
-    <button class="btn btn-ghost" id="btn-limpar-empty">
+    <button class="btn btn-ghost" (click)="clearFilters()" id="btn-limpar-empty">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round">
             <path d="M18 6 6 18M6 6l12 12" />

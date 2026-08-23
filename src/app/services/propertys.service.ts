@@ -17,7 +17,7 @@ export class PropertysService {
     ): Observable<PaginatedPropertyResponse> {
         let params = new HttpParams();
 
-        if (filters?.busca) {
+        if (filters?.busca?.trim()) {
             params = params.set('busca', filters.busca)
         }
         if (filters?.finalidade) {

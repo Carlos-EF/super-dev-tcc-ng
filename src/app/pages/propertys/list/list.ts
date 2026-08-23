@@ -77,11 +77,21 @@ export class ListProperty {
   constructor() {
     this.getAllPropertys();
 
+    this.getAllCondominiums();
+
+    this.getAllBrokers();
+
+    this.getAllOwners();
+
+    this.getAllDisticts();
+
     this.busca.pipe(
       debounceTime(400),
       distinctUntilChanged(),
     ).subscribe(
       resultado => {
+        this.filters.busca = resultado;
+        this.getAllPropertys();
       }
     )
   };
@@ -97,7 +107,6 @@ export class ListProperty {
       }
     })
   };
-
 
   getAllBrokers() {
     this.brokerService.getAllForList().subscribe({
@@ -294,7 +303,6 @@ export class ListProperty {
   };
 
   clearFilters(): void {
-
     this.filters = {
       busca: '',
       finalidade: undefined,
