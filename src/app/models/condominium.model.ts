@@ -29,6 +29,7 @@ export interface CondominiumResponse {
     cidade: string;
     criado_em: Date;
     alterado_em: Date;
+    total_imoveis: number
 }
 
 export interface PaginatedCondominiumResponse {

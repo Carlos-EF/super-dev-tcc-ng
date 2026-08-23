@@ -5,12 +5,11 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
-import { debounceTime, distinctUntilChanged, forkJoin, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 import { SortType } from '../../../types/sort.types';
 import { CondTables } from '../../../types/cond.sort.types';
-import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -27,7 +26,6 @@ export class ListCondominiums {
   private readonly formBuilder = inject(FormBuilder);
   private readonly condominiumService = inject(CondominiumService);
   private readonly cepService = inject(SearchCepService);
-  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
   openModal: boolean = false;
@@ -39,8 +37,6 @@ export class ListCondominiums {
   confirmModal: boolean = false;
 
   busca = new Subject<string>();
-
-  propertyTotals: Record<string, number> = {};
 
   condominiums = model<PaginatedCondominiumResponse>(
     {
