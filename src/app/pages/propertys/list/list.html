@@ -1045,7 +1045,7 @@
                     <div class="property-value-card">
                         <span>Condomínio</span>
                         <strong>
-                            {{ selectedProperty.valor_condominio | currency:'BRL':'symbol':'1.2-2' }}
+                            {{ selectedProperty.valor_condominio | currency:'BRL':'symbol':'1.2-2'}}
                         </strong>
                     </div>
                     }
@@ -1129,7 +1129,7 @@
                 </div>
 
                 <div class="property-responsibles">
-                    @if (selectedProperty.proprietario) {
+                    @if (selectedProperty.proprietario!) {
                     <div class="property-person-card">
                         <div class="property-person-icon">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"

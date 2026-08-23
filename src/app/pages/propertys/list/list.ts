@@ -253,12 +253,12 @@ export class ListProperty {
   openPropertyDetails(property: CompletePropertyResponse): void {
     this.selectedProperty = property;
     this.showPropertyDetailsModal = true;
-  }
+  };
 
   closePropertyDetails(): void {
     this.showPropertyDetailsModal = false;
     this.selectedProperty = null;
-  }
+  };
 
   cancelModal() {
     this.selectedProperty = null;
