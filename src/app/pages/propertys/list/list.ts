@@ -13,13 +13,16 @@ import { PROPERTY_TYPES } from '../../../types/property.types';
 import { NgxMaskDirective } from 'ngx-mask';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list',
   imports: [
     RouterLink,
     FormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    DatePipe,
+    CurrencyPipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
@@ -68,6 +71,7 @@ export class ListProperty {
   };
 
   selectedProperty: CompletePropertyResponse | null = null;
+  showPropertyDetailsModal = false;
 
   confirmModal: boolean = false;
 
@@ -238,11 +242,21 @@ export class ListProperty {
   openConfirmModal(property: CompletePropertyResponse) {
     this.selectedProperty = property;
     this.confirmModal = true;
-  }
+  };
 
   closeConfirmModal() {
     this.confirmModal = false;
 
+    this.selectedProperty = null;
+  };
+
+  openPropertyDetails(property: CompletePropertyResponse): void {
+    this.selectedProperty = property;
+    this.showPropertyDetailsModal = true;
+  }
+
+  closePropertyDetails(): void {
+    this.showPropertyDetailsModal = false;
     this.selectedProperty = null;
   }
 
