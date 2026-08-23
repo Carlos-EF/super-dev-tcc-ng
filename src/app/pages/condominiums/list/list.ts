@@ -62,7 +62,7 @@ export class ListCondominiums {
 
   page = model(1);
 
-  sortCollumns: CondTables = 'nome';
+  sortCollumns: CondTables | null = null;
 
   sortDirection: SortType = 'asc';
 
@@ -73,6 +73,7 @@ export class ListCondominiums {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
   @ViewChild('citySelect') citySelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('propertyCount') propertyCount!: ElementRef<HTMLSelectElement>;
 
   filters: CondominiumFilters = {};
 
@@ -325,6 +326,25 @@ export class ListCondominiums {
     const district = event.target as HTMLSelectElement;
 
     this.filters.bairro = district.value;
+
+    this.page.set(1);
+
+    this.getAllCondominiums()
+  };
+
+  getCountValue(event: Event) {
+    const count = event.target as HTMLSelectElement;
+
+    this.filters.comImoveis = '';
+    this.filters.semImoveis = '';
+
+    if (count.value === 'com_imoveis') {
+      this.filters.comImoveis = count.value;
+    }
+
+    if (count.value === 'sem_imoveis') {
+      this.filters.semImoveis = count.value;
+    }
 
     this.page.set(1);
 

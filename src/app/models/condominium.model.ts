@@ -44,6 +44,8 @@ export interface CondominiumFilters {
     busca?: string;
     cidade?: string;
     bairro?: string;
+    comImoveis?: string;
+    semImoveis?: string;
 }
 
 export interface CitiesResponse {
