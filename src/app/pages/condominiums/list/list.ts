@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
@@ -62,7 +62,7 @@ export class ListCondominiums {
 
   page = model(1);
 
-  sortCollumns: CondTables = 'nome';
+  sortCollumns: CondTables | null = null;
 
   sortDirection: SortType = 'asc';
 
@@ -73,10 +73,13 @@ export class ListCondominiums {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('districtSelect') districtSelect!: ElementRef<HTMLSelectElement>;
   @ViewChild('citySelect') citySelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('propertyCount') propertyCount!: ElementRef<HTMLSelectElement>;
 
   filters: CondominiumFilters = {};
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllCondominiums();
 
     this.getAllCities();
@@ -122,7 +125,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
       }
     })
-  }
+  };
 
   getAllCities() {
     this.condominiumService.getAllCities().subscribe({
@@ -133,7 +136,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todas as cidades:', error);
       }
     })
-  }
+  };
 
   getAllDisticts() {
     this.condominiumService.getAllDistricts().subscribe({
@@ -144,7 +147,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
       }
     })
-  }
+  };
 
   openCreateModal() {
     this.isEditMode = false;
@@ -155,13 +158,13 @@ export class ListCondominiums {
   openConfirmModal(condominium: CondominiumResponse) {
     this.selectedCondominium = condominium;
     this.confirmModal = true;
-  }
+  };
 
   closeConfirmModal() {
     this.confirmModal = false;
 
     this.selectedCondominium = null;
-  }
+  };
 
   cancelModal() {
     this.isEditMode = false;
@@ -295,17 +298,11 @@ export class ListCondominiums {
     })
   }
 
-  sumTotal(id: string) {
-    var total = 0;
-
-    return total;
-  }
-
   sortBy(column: CondTables) {
     if (this.sortCollumns === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      this.sortCollumns = column; 
+      this.sortCollumns = column;
 
       this.sortDirection = 'asc';
     }
@@ -329,6 +326,25 @@ export class ListCondominiums {
     const district = event.target as HTMLSelectElement;
 
     this.filters.bairro = district.value;
+
+    this.page.set(1);
+
+    this.getAllCondominiums()
+  };
+
+  getCountValue(event: Event) {
+    const count = event.target as HTMLSelectElement;
+
+    this.filters.comImoveis = '';
+    this.filters.semImoveis = '';
+
+    if (count.value === 'com_imoveis') {
+      this.filters.comImoveis = count.value;
+    }
+
+    if (count.value === 'sem_imoveis') {
+      this.filters.semImoveis = count.value;
+    }
 
     this.page.set(1);
 
@@ -401,5 +417,16 @@ export class ListCondominiums {
         }
       })
     }
+  };
+
+  viewCondProperties(condId: string): void {
+    this.router.navigate(
+      ['/propertys/list'],
+      {
+        queryParams: {
+          cond: condId
+        }
+      }
+    );
   };
 }

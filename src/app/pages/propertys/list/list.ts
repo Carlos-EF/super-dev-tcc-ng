@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { CompletePropertyResponse, PaginatedPropertyResponse, PropertyFilters } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { ToastService } from '../../../services/toast.service';
@@ -13,13 +13,16 @@ import { PROPERTY_TYPES } from '../../../types/property.types';
 import { NgxMaskDirective } from 'ngx-mask';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-list',
   imports: [
     RouterLink,
     FormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    DatePipe,
+    CurrencyPipe
   ],
   templateUrl: './list.html',
   styleUrl: './list.scss',
@@ -68,23 +71,58 @@ export class ListProperty {
   };
 
   selectedProperty: CompletePropertyResponse | null = null;
+  showPropertyDetailsModal = false;
 
   confirmModal: boolean = false;
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   busca = new Subject<string>();
 
-  constructor() {
+  constructor(
+    private route: ActivatedRoute
+  ) {
     this.getAllPropertys();
+
+    this.getAllCondominiums();
+
+    this.getAllBrokers();
+
+    this.getAllOwners();
+
+    this.getAllDisticts();
 
     this.busca.pipe(
       debounceTime(400),
       distinctUntilChanged(),
     ).subscribe(
       resultado => {
+        this.filters.busca = resultado;
+        this.getAllPropertys();
       }
     )
   };
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const corretor = params['corr'];
+      const condominio = params['cond'];
+      const proprietario = params['prop'];
+
+      if (corretor) {
+        this.filters.corr = corretor;
+      }
+
+      if (condominio) {
+        this.filters.cond = condominio
+      }
+
+      if (proprietario) {
+        this.filters.prop = proprietario
+      }
+
+      this.getAllPropertys();
+    });
+  }
 
   getAllPropertys() {
     this.propertyService.getAll(
@@ -97,7 +135,6 @@ export class ListProperty {
       }
     })
   };
-
 
   getAllBrokers() {
     this.brokerService.getAllForList().subscribe({
@@ -205,13 +242,23 @@ export class ListProperty {
   openConfirmModal(property: CompletePropertyResponse) {
     this.selectedProperty = property;
     this.confirmModal = true;
-  }
+  };
 
   closeConfirmModal() {
     this.confirmModal = false;
 
     this.selectedProperty = null;
-  }
+  };
+
+  openPropertyDetails(property: CompletePropertyResponse): void {
+    this.selectedProperty = property;
+    this.showPropertyDetailsModal = true;
+  };
+
+  closePropertyDetails(): void {
+    this.showPropertyDetailsModal = false;
+    this.selectedProperty = null;
+  };
 
   cancelModal() {
     this.selectedProperty = null;
@@ -294,7 +341,6 @@ export class ListProperty {
   };
 
   clearFilters(): void {
-
     this.filters = {
       busca: '',
       finalidade: undefined,

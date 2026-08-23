@@ -31,8 +31,8 @@
                         <path d="m21 21-4.3-4.3" />
                     </svg>
                 </span>
-                <input type="search" id="f-busca" placeholder="Código, endereço, condomínio, corretor ou proprietário…"
-                    [(ngModel)]="filters.busca">
+                <input (input)="getSearchValue($event)" type="search" id="f-busca"
+                    placeholder="Código, endereço, condomínio, corretor ou proprietário…" [(ngModel)]="filters.busca">
             </div>
         </div>
 
@@ -41,16 +41,18 @@
                 Finalidade
             </label>
             <div class="segmented" role="radiogroup" aria-label="Finalidade">
-                <input type="radio" name="f-fin" id="ff-todos" [(ngModel)]="filters.finalidade">
-
+                <input type="radio" name="f-fin" id="ff-todos" (change)="onFinalityChange()"
+                    [(ngModel)]="filters.finalidade">
                 <label for="ff-todos">
                     Todos
                 </label>
-                <input type="radio" name="f-fin" id="ff-venda" value="Venda" [(ngModel)]="filters.finalidade">
+                <input type="radio" name="f-fin" id="ff-venda" value="Venda" (change)="onFinalityChange()"
+                    [(ngModel)]="filters.finalidade">
                 <label for="ff-venda">
                     Venda
                 </label>
-                <input type="radio" name="f-fin" id="ff-locacao" value="Locação" [(ngModel)]="filters.finalidade">
+                <input type="radio" name="f-fin" id="ff-locacao" value="Locação" (change)="onFinalityChange()"
+                    [(ngModel)]="filters.finalidade">
                 <label for="ff-locacao">
                     Locação
                 </label>
@@ -62,7 +64,7 @@
                 Ordenar por
             </label>
             <div class="select-wrap">
-                <select id="f-ordem" [(ngModel)]="filters.ordem">
+                <select id="f-ordem" (change)="onOrderChange()" [(ngModel)]="filters.ordem">
                     <option value="recente-asc">
                         Mais recentes
                     </option>
@@ -119,7 +121,7 @@
             </label>
 
             <div class="select-wrap">
-                <select id="f-tipo" [(ngModel)]="filters.tipo">
+                <select id="f-tipo" (change)="onTypeChange()" [(ngModel)]="filters.tipo">
                     <option [ngValue]="undefined">
                         Todos os tipos
                     </option>
@@ -140,7 +142,7 @@
                 Condomínio
             </label>
             <div class="select-wrap">
-                <select id="f-cond" [(ngModel)]="filters.cond">
+                <select id="f-cond" (change)="onCondChange()" [(ngModel)]="filters.cond">
                     <option value="">
                         Todos
                     </option>
@@ -165,7 +167,7 @@
             </label>
 
             <div class="select-wrap">
-                <select id="f-corretor" [(ngModel)]="filters.corr">
+                <select id="f-corretor" (change)="onCorrChange()" [(ngModel)]="filters.corr">
                     <option value="">
                         Todos
                     </option>
@@ -186,7 +188,7 @@
                 Proprietário
             </label>
             <div class="select-wrap">
-                <select id="f-prop" [(ngModel)]="filters.prop">
+                <select id="f-prop" (change)="onPropChange()" [(ngModel)]="filters.prop">
                     <option value="">
                         Todos
                     </option>
@@ -207,7 +209,7 @@
                 Bairro
             </label>
             <div class="select-wrap">
-                <select id="f-bairro" [(ngModel)]="filters.bairro">
+                <select id="f-bairro" (change)="onDistrictChange()" [(ngModel)]="filters.bairro">
                     <option value="">
                         Todos os bairros
                     </option>
@@ -232,8 +234,8 @@
                     <span class="prefix">
                         R$
                     </span>
-                    <input type="text" id="f-preco-min" class="mono" placeholder="mín" mask="separator.2"
-                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
+                    <input (change)="onMinValueChange()" type="text" id="f-preco-min" class="mono" placeholder="mín"
+                        mask="separator.2" thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
                         [(ngModel)]="filters.min_preco">
                 </div>
                 <span class="sep">
@@ -243,8 +245,8 @@
                     <span class="prefix">
                         R$
                     </span>
-                    <input type="text" id="f-preco-max" class="mono" placeholder="máx" mask="separator.2"
-                        thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
+                    <input (change)="onMaxValueChange()" type="text" id="f-preco-max" class="mono" placeholder="máx"
+                        mask="separator.2" thousandSeparator="." [typeFromDecimals]="true" inputmode="numeric"
                         [(ngModel)]="filters.max_preco">
                 </div>
             </div>
@@ -255,7 +257,7 @@
                 Quartos
             </label>
             <div class="select-wrap">
-                <select id="f-quartos" [(ngModel)]="filters.qtn_quartos">
+                <select id="f-quartos" (change)="onQntChange()" [(ngModel)]="filters.qtn_quartos">
                     <option [ngValue]="undefined">
                         Qualquer
                     </option>
@@ -408,7 +410,6 @@
             </div>
 
             <div class="pc-addr">
-
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                     stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z" />
@@ -680,7 +681,7 @@
             </div>
 
             <div class="pc-foot">
-                <button type="button" class="btn-details">
+                <button (click)="openPropertyDetails(property)" type="button" class="btn-details">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z" />
@@ -731,7 +732,7 @@
     </div>
     <h4>Nenhum imóvel encontrado</h4>
     <p>Nenhum resultado para os filtros aplicados. Ajuste a busca ou limpe os filtros.</p>
-    <button class="btn btn-ghost" id="btn-limpar-empty">
+    <button class="btn btn-ghost" (click)="clearFilters()" id="btn-limpar-empty">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round">
             <path d="M18 6 6 18M6 6l12 12" />
@@ -853,5 +854,341 @@
             </button>
         </div>
     </div>
+</div>
+}
+
+@if (showPropertyDetailsModal && selectedProperty) {
+<div class="modal-backdrop open property-details-backdrop" (click)="closePropertyDetails()">
+    <section class="modal property-details-modal" role="dialog" aria-modal="true"
+        aria-labelledby="property-details-title" (click)="$event.stopPropagation()">
+        <header class="modal-head property-details-head">
+            <div class="property-modal-title">
+                <div class="property-modal-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 21h18"></path>
+                        <path d="M5 21V9l7-5 7 5v12"></path>
+                        <path d="M9 21v-6h6v6"></path>
+                    </svg>
+                </div>
+                <div>
+                    <span class="property-modal-kicker">
+                        Detalhes do imóvel
+                    </span>
+                    <h3 id="property-details-title">
+                        {{ selectedProperty.codigo }}
+                    </h3>
+                </div>
+            </div>
+
+            <button type="button" class="icon-btn property-modal-close" title="Fechar" aria-label="Fechar detalhes"
+                (click)="closePropertyDetails()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+        </header>
+
+        <div class="modal-body property-details-body">
+            @if (selectedProperty.imagens.length > 0) {
+            <div class="property-gallery">
+                @for (
+                image of selectedProperty.imagens;
+                track image.id;
+                let i = $index
+                ) {
+                <div class="property-gallery-item" [class.property-gallery-main]="image.principal"
+                    [style.background-image]="'url(' + image.url + ')'">
+                    @if (image.principal) {
+                    <span class="property-gallery-cover">
+                        CAPA
+                    </span>
+                    }
+                    @if (image.principal && selectedProperty.imagens.length > 1) {
+                    <span class="property-gallery-count">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <path d="m21 15-5-5L5 21"></path>
+                        </svg>
+                        {{ selectedProperty.imagens.length }} fotos
+                    </span>
+                    }
+                </div>
+                }
+            </div>
+            } @else {
+            <div class="property-gallery-empty">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <path d="m21 15-5-5L5 21"></path>
+                </svg>
+                <span>Este imóvel não possui fotos cadastradas.</span>
+            </div>
+            }
+
+            <section class="property-detail-section">
+                <div class="property-detail-section-head">
+                    <div>
+                        <span class="property-section-label">
+                            Imóvel
+                        </span>
+                        <h4>Informações principais</h4>
+                    </div>
+                    <span class="property-code">
+                        #{{ selectedProperty.codigo }}
+                    </span>
+                </div>
+
+                <div class="property-detail-grid">
+                    <div class="property-detail-item">
+                        <span>Finalidade</span>
+                        <strong [class.detail-sale]="selectedProperty.finalidade === 'Venda'"
+                            [class.detail-rent]="selectedProperty.finalidade === 'Locação'">
+                            {{ selectedProperty.finalidade }}
+                        </strong>
+                    </div>
+
+                    <div class="property-detail-item">
+                        <span>Tipo</span>
+                        <strong>
+                            {{ selectedProperty.tipo }}
+                        </strong>
+                    </div>
+
+                    <div class="property-detail-item">
+                        <span>Em condomínio</span>
+                        <strong>
+                            {{ selectedProperty.em_condominio ? 'Sim' : 'Não' }}
+                        </strong>
+                    </div>
+
+                    @if (selectedProperty.condominio) {
+                    <div class="property-detail-item">
+                        <span>Condomínio</span>
+                        <strong>
+                            {{ selectedProperty.condominio.nome }}
+                        </strong>
+                    </div>
+                    }
+                </div>
+            </section>
+
+            <section class="property-detail-section">
+                <div class="property-detail-section-head">
+                    <div>
+                        <span class="property-section-label">
+                            Localização
+                        </span>
+                        <h4>Endereço</h4>
+                    </div>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+                        <circle cx="12" cy="10" r="2.5"></circle>
+                    </svg>
+                </div>
+
+                <div class="property-address">
+                    <div class="property-address-main">
+                        {{ selectedProperty.logradouro }},
+                        {{ selectedProperty.numero }}
+                    </div>
+
+                    <div class="property-address-secondary">
+                        {{ selectedProperty.bairro }}
+                        ·
+                        {{ selectedProperty.cidade }}
+                        /
+                        {{ selectedProperty.uf }}
+                    </div>
+
+                    @if (selectedProperty.complemento) {
+                    <div class="property-address-complement">
+                        {{ selectedProperty.complemento }}
+                    </div>
+                    }
+
+                    <div class="property-address-cep">
+                        CEP {{ selectedProperty.cep }}
+                    </div>
+                </div>
+            </section>
+
+            <section class="property-detail-section">
+                <div class="property-detail-section-head">
+                    <div>
+                        <span class="property-section-label">
+                            Financeiro
+                        </span>
+
+                        <h4>Valores</h4>
+                    </div>
+                </div>
+
+                <div class="property-financial-grid">
+                    @if (selectedProperty.valor !== null) {
+                    <div class="property-value-card property-value-main">
+                        <span>Valor do imóvel</span>
+                        <strong>
+                            {{ selectedProperty.valor | currency:'BRL':'symbol':'1.2-2' }}
+                        </strong>
+                    </div>
+                    }
+
+                    @if (selectedProperty.valor_condominio !== null) {
+                    <div class="property-value-card">
+                        <span>Condomínio</span>
+                        <strong>
+                            {{ selectedProperty.valor_condominio | currency:'BRL':'symbol':'1.2-2'}}
+                        </strong>
+                    </div>
+                    }
+
+                    @if (selectedProperty.valor_iptu !== null) {
+                    <div class="property-value-card">
+                        <span>IPTU</span>
+                        <strong>
+                            {{ selectedProperty.valor_iptu | currency:'BRL':'symbol':'1.2-2' }}
+                        </strong>
+                    </div>
+                    }
+                </div>
+            </section>
+
+            <section class="property-detail-section">
+                <div class="property-detail-section-head">
+                    <div>
+                        <span class="property-section-label">
+                            Características
+                        </span>
+                        <h4>
+                            {{ selectedProperty.tipo }}
+                        </h4>
+                    </div>
+                </div>
+                @if (selectedProperty.casa) {
+                <div class="property-specific-box">
+                    <div class="property-specific-title">
+                        <span class="property-specific-dot"></span>
+                        Dados da casa
+                    </div>
+                    <div class="property-specific-content">
+                        <span>
+                            <b>Informações específicas</b>
+                            cadastradas para esta casa.
+                        </span>
+                    </div>
+                </div>
+                }
+                @if (selectedProperty.apartamento) {
+                <div class="property-specific-box">
+                    <div class="property-specific-title">
+                        <span class="property-specific-dot"></span>
+                        Dados do apartamento
+                    </div>
+
+                    <div class="property-specific-content">
+                        <span>
+                            <b>Informações específicas</b>
+                            cadastradas para este apartamento.
+                        </span>
+                    </div>
+                </div>
+                }
+                @if (selectedProperty.terreno) {
+                <div class="property-specific-box">
+                    <div class="property-specific-title">
+                        <span class="property-specific-dot"></span>
+                        Dados do terreno
+                    </div>
+                    <div class="property-specific-content">
+                        <span>
+                            <b>Informações específicas</b>
+                            cadastradas para este terreno.
+                        </span>
+                    </div>
+                </div>
+                }
+            </section>
+
+            <section class="property-detail-section">
+                <div class="property-detail-section-head">
+                    <div>
+                        <span class="property-section-label">
+                            Responsáveis
+                        </span>
+
+                        <h4>Contatos vinculados</h4>
+                    </div>
+                </div>
+
+                <div class="property-responsibles">
+                    @if (selectedProperty.proprietario!) {
+                    <div class="property-person-card">
+                        <div class="property-person-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <span>Proprietário</span>
+                            <strong>
+                                {{ selectedProperty.proprietario.nome }}
+                            </strong>
+                        </div>
+                    </div>
+                    }
+
+                    @if (selectedProperty.corretor) {
+                    <div class="property-person-card">
+                        <div class="property-person-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <span>Corretor</span>
+                            <strong>
+                                {{ selectedProperty.corretor.nome }}
+                            </strong>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </section>
+
+            <section class="property-meta">
+                <div>
+                    <span>Cadastrado em</span>
+                    <strong>
+                        {{ selectedProperty.criado_em | date:'dd/MM/yyyy HH:mm' }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Última alteração</span>
+                    <strong>
+                        {{ selectedProperty.alterado_em | date:'dd/MM/yyyy HH:mm' }}
+                    </strong>
+                </div>
+            </section>
+        </div>
+
+        <footer class="modal-foot property-details-foot">
+            <button type="button" class="btn btn-primary" (click)="closePropertyDetails()">
+                Fechar
+            </button>
+        </footer>
+    </section>
 </div>
 }

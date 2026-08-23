@@ -6,8 +6,9 @@ import { BrokerService } from '../../../services/broker.service';
 import { SortType } from '../../../types/sort.types';
 import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, PaginatedBrokerResponse } from '../../../models/broker.model';
 import { BrokerTables } from '../../../types/broker.sort.types';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
+import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-list',
@@ -23,6 +24,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 export class ListBrokers {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
+  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
   confirmModal: boolean = false;
@@ -78,7 +80,9 @@ export class ListBrokers {
     cpf: [null as string | null, [Validators.minLength(14), Validators.maxLength(14)]]
   });
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllBrokers();
   }
 
@@ -318,5 +322,16 @@ export class ListBrokers {
       return parts[0].charAt(0).toUpperCase();
     }
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
+
+  viewBrokerProperties(brokerId: string): void {
+    this.router.navigate(
+      ['/propertys/list'],
+      {
+        queryParams: {
+          corr: brokerId
+        }
+      }
+    );
   };
 }

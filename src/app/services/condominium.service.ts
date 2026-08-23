@@ -16,14 +16,20 @@ export class CondominiumService {
         filters?: CondominiumFilters,
         pagina: number = 1,
         porPagina: number = 10,
-        ordenarPor: CondTables = 'nome',
+        ordenarPor: CondTables | null = null,
         direcao: SortType = 'asc'
     ): Observable<PaginatedCondominiumResponse> {
         let params = new HttpParams()
         .set('pagina', pagina.toString())
         .set('por_pagina',porPagina.toString())
-        .set('ordenar_por', ordenarPor)
         .set('direcao', direcao);
+
+        if (ordenarPor) {
+        params = params.set(
+            'ordenar_por',
+            ordenarPor
+        );
+    }
         
         if (filters?.busca) {
             params = params.set('busca', filters.busca);
@@ -35,6 +41,13 @@ export class CondominiumService {
 
         if (filters?.bairro) {
             params = params.set('bairro', filters.bairro);
+        }
+
+        if (filters?.comImoveis) {
+            params = params.set('com_imoveis', filters.comImoveis);
+        }
+        if (filters?.semImoveis) {
+            params = params.set('sem_imoveis', filters.semImoveis);
         }
 
         return this.httpClient.get<PaginatedCondominiumResponse>(

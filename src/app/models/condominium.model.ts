@@ -29,6 +29,7 @@ export interface CondominiumResponse {
     cidade: string;
     criado_em: Date;
     alterado_em: Date;
+    total_imoveis: number
 }
 
 export interface PaginatedCondominiumResponse {
@@ -43,6 +44,8 @@ export interface CondominiumFilters {
     busca?: string;
     cidade?: string;
     bairro?: string;
+    comImoveis?: string;
+    semImoveis?: string;
 }
 
 export interface CitiesResponse {

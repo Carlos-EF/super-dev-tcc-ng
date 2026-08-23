@@ -17,7 +17,7 @@ export class PropertysService {
     ): Observable<PaginatedPropertyResponse> {
         let params = new HttpParams();
 
-        if (filters?.busca) {
+        if (filters?.busca?.trim()) {
             params = params.set('busca', filters.busca)
         }
         if (filters?.finalidade) {
@@ -230,5 +230,13 @@ export class PropertysService {
         return this.httpClient.get<PropertyImageResponse>(
             urlWithId
         );
+    };
+
+    getTotalCond(
+        id: string
+    ): Observable<number> {
+        const urlForTotal = `${this.url}/total/${id}`;
+
+        return this.httpClient.get<number>(urlForTotal);
     };
 }

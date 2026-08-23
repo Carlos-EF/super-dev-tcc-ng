@@ -10,6 +10,7 @@ import { CONTACT_TYPES, ContactTypes } from '../../../types/contact.types';
 import { CLIENTS_TYPES, ClientsTypes } from '../../../types/clients.types';
 import { NgxMaskDirective } from 'ngx-mask';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list',
@@ -79,7 +80,9 @@ export class ListClients {
     preferencia: [null as string | null, [Validators.maxLength(60)]]
   });
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     this.getAllClients();
   }
 
@@ -415,5 +418,17 @@ export class ListClients {
     this.perPage.set(value); this.page.set(1);
 
     this.getAllClients();
+  };
+
+  
+  viewOwnerProperties(clientId: string): void {
+    this.router.navigate(
+      ['/propertys/list'],
+      {
+        queryParams: {
+          prop: clientId
+        }
+      }
+    );
   };
 }

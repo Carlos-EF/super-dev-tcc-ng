@@ -18,7 +18,7 @@ import { CondominiumService } from '../../../services/condominium.service';
 import { CondominiumResponse, CreateCondominiumRequest } from '../../../models/condominium.model';
 import { ToastService } from '../../../services/toast.service';
 import { CharacteristicField } from '../../../types/field.types';
-import { ApartmentResponse, CompletePropertyResponse, CreateApartmentRequest, CreateHouseRequest, CreateLandRequest, CreatePropertyRequest, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
+import { ApartmentResponse, CompletePropertyResponse, EditApartmentRequest, EditHouseRequest, EditLandRequest, EditPropertyImageRequest, EditPropertyRequest, HouseResponse, LandResponse, PropertyImageResponse, PropertyResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { forkJoin } from 'rxjs';
 @Component({
@@ -62,8 +62,10 @@ export class EditProperty implements OnDestroy {
 
   isEditMode: boolean = false;
 
+  asidePhotos: string[] = [];
   selectedImages: File[] = [];
   imagePreviews: string[] = [];
+  propertyImages: PropertyImageResponse[] = [];
   imageError: string = '';
   isUploadingImages: boolean = false;
   isDraggingImages: boolean = false;
@@ -74,6 +76,8 @@ export class EditProperty implements OnDestroy {
   get selectedFinality(): FinalityTypes | null {
     return this.propertyForm.controls.finalidade.value;
   };
+
+  selectedCoverIndex: number | null = null;
 
   currentStep = 1;
 
@@ -105,7 +109,7 @@ export class EditProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: [null as FurnishedTypes | null],
+    esta_mobiliado: ['Não' as FurnishedTypes],
     mobilia: [[] as FurnitureTypes[]]
   });
 
@@ -117,7 +121,7 @@ export class EditProperty implements OnDestroy {
     garagens: [null as number | null],
     andares: [null as number | null],
     salas: [null as number | null],
-    esta_mobiliado: [null as FurnishedTypes | null],
+    esta_mobiliado: ['Não' as FurnishedTypes],
     mobilia: [[] as FurnitureTypes[]]
   });
 
@@ -179,15 +183,12 @@ export class EditProperty implements OnDestroy {
     this.imagePreviews.forEach(
       preview => URL.revokeObjectURL(preview)
     );
-  }
+  };
 
-  private processImageFiles(
-    files: File[]
-  ): void {
+  private processImageFiles(files: File[]): void {
     this.imageError = '';
 
-    const maxSize =
-      5 * 1024 * 1024;
+    const maxSize = 5 * 1024 * 1024;
 
     const allowedTypes = [
       'image/jpeg',
@@ -195,41 +196,69 @@ export class EditProperty implements OnDestroy {
       'image/webp'
     ];
 
-    for (const file of files) {
-      if (!allowedTypes.includes(file.type)) {
+    const newImages: File[] = [];
+    const newPreviews: string[] = [];
 
+    for (const file of files) {
+
+      if (!allowedTypes.includes(file.type)) {
         this.imageError =
-          `O arquivo "${file.name}" não possui um formato permitido. ` +
-          'Use JPG, PNG ou WebP.';
+          `O arquivo "${file.name}" possui um formato inválido.`;
 
         continue;
       }
 
       if (file.size > maxSize) {
         this.imageError =
-          `O arquivo "${file.name}" ultrapassa o limite de 5 MB.`;
+          `O arquivo "${file.name}" ultrapassa 5 MB.`;
 
         continue;
       }
 
-      const alreadyExists =
-        this.selectedImages.some(
-          existingFile =>
-            existingFile.name === file.name &&
-            existingFile.size === file.size &&
-            existingFile.lastModified === file.lastModified
-        );
+      const exists = this.selectedImages.some(
+        existing =>
+          existing.name === file.name &&
+          existing.size === file.size &&
+          existing.lastModified === file.lastModified
+      );
 
-      if (alreadyExists) {
+      if (exists) {
         continue;
       }
 
-      this.selectedImages.push(file);
+      newImages.push(file);
 
-      this.imagePreviews.push(
+      newPreviews.push(
         URL.createObjectURL(file)
       );
     }
+
+    if (newImages.length === 0) {
+      return;
+    }
+
+    this.selectedImages = [
+      ...this.selectedImages,
+      ...newImages
+    ];
+
+    this.imagePreviews = [
+      ...this.imagePreviews,
+      ...newPreviews
+    ];
+
+    const hasExistingCover = this.propertyImages.some(
+      image => image.principal
+    );
+
+    if (
+      !hasExistingCover &&
+      this.selectedCoverIndex === null
+    ) {
+      this.selectedCoverIndex = 0;
+    }
+
+    this.updateAsidePhotos();
   };
 
   getProperty() {
@@ -290,6 +319,11 @@ export class EditProperty implements OnDestroy {
             coeficiente: property.terreno?.coeficiente
           });
         }
+
+        this.propertyImages = [...(property.imagens ?? [])]
+          .sort((a, b) => Number(b.principal) - Number(a.principal));
+
+        this.updateAsidePhotos();
 
         this.isEditMode = true;
       }
@@ -646,19 +680,16 @@ export class EditProperty implements OnDestroy {
     console.log(form.controls.mobilia.value);
   };
 
-  onImagesSelected(
-    event: Event
-  ): void {
-    const input =
-      event.target as HTMLInputElement;
+  onImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
-    if (!input.files) {
+    if (!input.files || input.files.length === 0) {
       return;
     }
 
-    this.processImageFiles(
-      Array.from(input.files)
-    );
+    const files = Array.from(input.files);
+
+    this.processImageFiles(files);
 
     input.value = '';
   };
@@ -701,55 +732,119 @@ export class EditProperty implements OnDestroy {
     );
   };
 
-  removeSelectedImage(
-    index: number
-  ): void {
-    const preview =
-      this.imagePreviews[index];
-
-    if (preview) {
-      URL.revokeObjectURL(preview);
+  removeSelectedImage(index: number): void {
+    if (
+      index < 0 ||
+      index >= this.selectedImages.length
+    ) {
+      return;
     }
 
-    this.selectedImages.splice(
-      index,
-      1
+    URL.revokeObjectURL(
+      this.imagePreviews[index]
     );
 
-    this.imagePreviews.splice(
-      index,
-      1
+    this.selectedImages = this.selectedImages.filter(
+      (_, i) => i !== index
     );
+
+    this.imagePreviews = this.imagePreviews.filter(
+      (_, i) => i !== index
+    );
+
+    if (this.selectedCoverIndex === index) {
+
+      if (this.selectedImages.length === 0) {
+        this.selectedCoverIndex = null;
+      } else {
+        this.selectedCoverIndex = 0;
+      }
+
+    } else if (
+      this.selectedCoverIndex !== null &&
+      index < this.selectedCoverIndex
+    ) {
+      this.selectedCoverIndex--;
+    }
+
+    const hasExistingCover = this.propertyImages.some(
+      image => image.principal
+    );
+
+    if (
+      !hasExistingCover &&
+      this.selectedImages.length > 0 &&
+      this.selectedCoverIndex === null
+    ) {
+      this.selectedCoverIndex = 0;
+    }
+
+    this.updateAsidePhotos();
   };
 
   setSelectedImageAsCover(
     index: number
   ): void {
-
     if (
       index < 0 ||
-      index >= this.selectedImages.length ||
-      index === 0
+      index >= this.selectedImages.length
     ) {
       return;
     }
 
-    const selectedFile =
-      this.selectedImages[index];
+    this.selectedCoverIndex = index;
 
-    const selectedPreview =
-      this.imagePreviews[index];
-
-    this.selectedImages.splice(index, 1);
-    this.imagePreviews.splice(index, 1);
-
-    this.selectedImages.unshift(
-      selectedFile
+    this.propertyImages = this.propertyImages.map(
+      image => ({
+        ...image,
+        principal: false
+      })
     );
 
-    this.imagePreviews.unshift(
-      selectedPreview
+    this.updateAsidePhotos();
+  };
+
+  setImageAsCover(
+    image: PropertyImageResponse
+  ): void {
+    this.propertyImages = this.propertyImages.map(
+      currentImage => ({
+        ...currentImage,
+        principal: currentImage.id === image.id
+      })
     );
+
+    this.selectedCoverIndex = null;
+
+    this.updateAsidePhotos();
+
+    this.propertyService.editImage(
+      image.id,
+      {
+        principal: true
+      }
+    ).subscribe({
+      next: (updatedImage: PropertyImageResponse) => {
+        this.propertyImages = this.propertyImages.map(
+          currentImage => ({
+            ...currentImage,
+            principal:
+              currentImage.id === updatedImage.id
+          })
+        );
+
+        this.updateAsidePhotos();
+      },
+
+      error: (error: Error) => {
+        console.error(
+          'Erro ao definir imagem como capa:',
+          error
+        );
+
+        this.getProperty();
+      }
+    });
   };
 
   editHouse(): void {
@@ -933,23 +1028,82 @@ export class EditProperty implements OnDestroy {
 
     this.isUploadingImages = true;
 
-    const uploads =
-      this.selectedImages.map(
-        (file, index) =>
+    const existingCover = this.propertyImages.find(
+      image => image.principal
+    );
 
-          this.propertyService.createImages(
-            imovelId,
-            file,
-            index === 0
-          )
-      );
+    const newCoverSelected =
+      this.selectedCoverIndex !== null;
+
+    if (
+      newCoverSelected &&
+      existingCover
+    ) {
+
+      this.propertyService.editImage(
+        existingCover.id,
+        {
+          principal: false
+        }
+      ).subscribe({
+        next: () => {
+          this.propertyImages =
+            this.propertyImages.map(
+              image => ({
+                ...image,
+                principal: false
+              })
+            );
+
+          this.sendSelectedImages(imovelId);
+        },
+        error: (error: Error) => {
+          this.isUploadingImages = false;
+          console.error(
+            'Erro ao remover a capa anterior:',
+            error
+          );
+
+          this.imageError =
+            'Não foi possível alterar a capa da imagem.';
+        }
+      });
+
+      return;
+    }
+
+    this.sendSelectedImages(imovelId);
+  };
+
+  private sendSelectedImages(
+    imovelId: string
+  ): void {
+    const uploads = this.selectedImages.map(
+      (file, index) => {
+        const isCover =
+          this.selectedCoverIndex === index;
+
+        return this.propertyService.createImages(
+          imovelId,
+          file,
+          isCover
+        );
+      }
+    );
 
     forkJoin(uploads).subscribe({
       next: (images: PropertyImageResponse[]) => {
         console.log(
-          'Imagens editadas:',
+          'Imagens enviadas:',
           images
         );
+
+        this.propertyImages = [
+          ...this.propertyImages,
+          ...images
+        ];
+
+        this.updateAsidePhotos();
 
         this.isUploadingImages = false;
 
@@ -964,12 +1118,12 @@ export class EditProperty implements OnDestroy {
         this.isUploadingImages = false;
 
         console.error(
-          'Ocorreu um erro ao enviar as imagens:',
+          'Erro ao enviar imagens:',
           error
         );
 
         this.imageError =
-          'O imóvel foi cadastrado, mas ocorreu um erro ao enviar as imagens.';
+          'O imóvel foi atualizado, mas ocorreu um erro ao enviar as imagens.';
       }
     });
   };
@@ -1276,6 +1430,107 @@ export class EditProperty implements OnDestroy {
   };
 
   getAsidePhotos(): string[] {
-    return this.imagePreviews.slice(0, 4);
+    return [
+      ...this.propertyImages.map(image => image.url),
+      ...this.imagePreviews
+    ];
+  };
+
+  private updateAsidePhotos(): void {
+    const existingPhotos =
+      this.propertyImages
+        .filter(image => !!image.url)
+        .map(image => image.url);
+
+    this.asidePhotos = [
+      ...existingPhotos,
+      ...this.imagePreviews
+    ];
+  };
+
+  removeExistingImage(
+    image: PropertyImageResponse
+  ): void {
+    this.propertyService.deleteImage(image.id).subscribe({
+      next: () => {
+        this.propertyImages = this.propertyImages.filter(
+          currentImage => currentImage.id !== image.id
+        );
+
+        this.imagePreviews = this.imagePreviews.filter(
+          preview => preview !== image.id
+        );
+
+        this.updateAsidePhotos();
+
+        if (image.principal) {
+          if (this.propertyImages.length > 0) {
+
+            const newCover = this.propertyImages[0];
+
+            this.propertyImages = this.propertyImages.map(
+              currentImage => ({
+                ...currentImage,
+                principal: currentImage.id === newCover.id
+              })
+            );
+
+            this.imagePreviews = [
+              ...this.imagePreviews
+            ];
+
+            this.updateAsidePhotos();
+
+            this.propertyService.editImage(
+              newCover.id,
+              {
+                principal: true
+              }
+            ).subscribe({
+              next: () => {
+                console.log(
+                  'Nova capa definida:',
+                  newCover.id
+                );
+              },
+              error: (error) => {
+                console.error(
+                  'Erro ao definir nova capa:',
+                  error
+                );
+              }
+            });
+
+          } else if (this.selectedImages.length > 0) {
+            this.selectedCoverIndex = 0;
+          }
+        }
+        this.propertyImages = [
+          ...this.propertyImages
+        ];
+
+        this.imagePreviews = [
+          ...this.imagePreviews
+        ];
+
+        this.updateAsidePhotos();
+
+        this.toastService.show(
+          'delete',
+          'Imagem'
+        );
+      },
+      error: (error: Error) => {
+        console.error(
+          'Erro ao remover imagem:',
+          error
+        );
+
+        this.toastService.show(
+          'error',
+          'Não foi possível remover a imagem'
+        );
+      }
+    });
   };
 }
