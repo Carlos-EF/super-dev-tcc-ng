@@ -5,11 +5,12 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { ToastService } from '../../../services/toast.service';
 import { CitiesResponse, CondominiumFilters, CondominiumResponse, CreateCondominiumRequest, DistrictsResponse, EditCondominiumRequest, PaginatedCondominiumResponse } from '../../../models/condominium.model';
 import { CondominiumService } from '../../../services/condominium.service';
-import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, forkJoin, Subject } from 'rxjs';
 import { SearchCepService } from '../../../services/search.cep.service';
 import { CepResponse } from '../../../models/cep.model';
 import { SortType } from '../../../types/sort.types';
 import { CondTables } from '../../../types/cond.sort.types';
+import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-condominiums-list',
@@ -26,6 +27,7 @@ export class ListCondominiums {
   private readonly formBuilder = inject(FormBuilder);
   private readonly condominiumService = inject(CondominiumService);
   private readonly cepService = inject(SearchCepService);
+  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
   openModal: boolean = false;
@@ -37,6 +39,8 @@ export class ListCondominiums {
   confirmModal: boolean = false;
 
   busca = new Subject<string>();
+
+  propertyTotals: Record<string, number> = {};
 
   condominiums = model<PaginatedCondominiumResponse>(
     {
@@ -124,7 +128,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todos os condomínios:', error);
       }
     })
-  }
+  };
 
   getAllCities() {
     this.condominiumService.getAllCities().subscribe({
@@ -135,7 +139,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todas as cidades:', error);
       }
     })
-  }
+  };
 
   getAllDisticts() {
     this.condominiumService.getAllDistricts().subscribe({
@@ -146,7 +150,7 @@ export class ListCondominiums {
         return console.log('Ocorreu um erro ao tentar buscar todos os bairros:', error);
       }
     })
-  }
+  };
 
   openCreateModal() {
     this.isEditMode = false;
@@ -157,13 +161,13 @@ export class ListCondominiums {
   openConfirmModal(condominium: CondominiumResponse) {
     this.selectedCondominium = condominium;
     this.confirmModal = true;
-  }
+  };
 
   closeConfirmModal() {
     this.confirmModal = false;
 
     this.selectedCondominium = null;
-  }
+  };
 
   cancelModal() {
     this.isEditMode = false;
@@ -297,17 +301,11 @@ export class ListCondominiums {
     })
   }
 
-  sumTotal(id: string) {
-    var total = 0;
-
-    return total;
-  }
-
   sortBy(column: CondTables) {
     if (this.sortCollumns === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-      this.sortCollumns = column; 
+      this.sortCollumns = column;
 
       this.sortDirection = 'asc';
     }
@@ -405,7 +403,6 @@ export class ListCondominiums {
     }
   };
 
-  
   viewCondProperties(condId: string): void {
     this.router.navigate(
       ['/propertys/list'],

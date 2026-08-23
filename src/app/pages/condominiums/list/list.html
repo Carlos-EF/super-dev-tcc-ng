@@ -163,15 +163,15 @@
                         {{ condominium.cep }}
                     </td>
                     <td class="num">
-                        <span class="count-badge" [class.zero]="sumTotal(condominium.id) === 0" [title]="sumTotal(condominium.id) === 0
+                        <span class="count-badge" [class.zero]="propertyTotals[condominium.id] === 0" [title]="propertyTotals[condominium.id] === 0
                                 ? 'Nenhum imóvel vinculado'
-                                : sumTotal(condominium.id) + ' imóveis vinculados'">
+                                : [propertyTotals[condominium.id]] + ' imóveis vinculados'">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 10.5 12 3l9 7.5" />
                                 <path d="M5 9.5V21h14V9.5" />
                             </svg>
-                            {{ sumTotal(condominium.id) }}
+                            {{ propertyTotals[(condominium.id)]}}
                         </span>
                     </td>
                     <td>
@@ -453,10 +453,10 @@
                         Excluir o condomínio
                         <b>{{ selectedCondominium.nome }}</b>?
                     </p>
-                    @if (sumTotal(selectedCondominium.id) > 0) {
+                    @if (propertyTotals[(selectedCondominium.id)] > 0) {
                     <span class="warn">
-                        {{ sumTotal(selectedCondominium.id) }}
-                        {{ sumTotal(selectedCondominium.id) === 1
+                        {{ propertyTotals[selectedCondominium.id] }}
+                        {{ propertyTotals[selectedCondominium.id] === 1
                         ? ' imóvel vinculado ficará'
                         : ' imóveis vinculados ficarão' }}
                         sem condomínio.

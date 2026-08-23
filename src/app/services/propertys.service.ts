@@ -231,4 +231,12 @@ export class PropertysService {
             urlWithId
         );
     };
+
+    getTotalCond(
+        id: string
+    ): Observable<number> {
+        const urlForTotal = `${this.url}/total/${id}`;
+
+        return this.httpClient.get<number>(urlForTotal);
+    };
 }
