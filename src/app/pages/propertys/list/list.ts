@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, model, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { CompletePropertyResponse, PaginatedPropertyResponse, PropertyFilters } from '../../../models/property.model';
+import { CompletePropertyResponse, PaginatedPropertyResponse, PropertyFilters, PropertyImageResponse } from '../../../models/property.model';
 import { PropertysService } from '../../../services/propertys.service';
 import { ToastService } from '../../../services/toast.service';
 import { CondominiumService } from '../../../services/condominium.service';
@@ -55,6 +55,10 @@ export class ListProperty {
   page = model(1);
 
   showMoreFilters = false;
+
+  currentImageIndex: number = 0;
+  galleryProperty: CompletePropertyResponse | null = null;
+  galleryIndex = 0;
 
   filters: PropertyFilters = {
     busca: '',
@@ -253,6 +257,7 @@ export class ListProperty {
   openPropertyDetails(property: CompletePropertyResponse): void {
     this.selectedProperty = property;
     this.showPropertyDetailsModal = true;
+    this.currentImageIndex = 0;
   };
 
   closePropertyDetails(): void {
@@ -407,5 +412,69 @@ export class ListProperty {
         .replace(/\./g, '')
         .replace(',', '.')
     );
-  }
+  };
+
+  nextImage(): void {
+    const total = this.selectedProperty?.imagens?.length ?? 0;
+
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % total;
+  };
+
+  previousImage(): void {
+    const total = this.selectedProperty?.imagens?.length ?? 0;
+
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + total) % total;
+  };
+
+  openPropertyGallery(
+    property: CompletePropertyResponse,
+    index: number = 0
+  ): void {
+    if (!property.imagens?.length) {
+      return;
+    }
+
+    this.galleryProperty = property;
+    this.galleryIndex = index;
+  };
+
+  closePropertyGallery(): void {
+    this.galleryProperty = null;
+    this.galleryIndex = 0;
+  };
+
+  nextGalleryImage(): void {
+    if (!this.galleryProperty?.imagens?.length) {
+      return;
+    }
+
+    this.galleryIndex =
+      (this.galleryIndex + 1) %
+      this.galleryProperty.imagens.length;
+  };
+
+  previousGalleryImage(): void {
+    if (!this.galleryProperty?.imagens?.length) {
+      return;
+    }
+
+    this.galleryIndex =
+      (this.galleryIndex - 1 +
+        this.galleryProperty.imagens.length) %
+      this.galleryProperty.imagens.length;
+  };
+
+  get currentGalleryImage(): PropertyImageResponse | null {
+    return this.galleryProperty?.imagens?.[this.galleryIndex] ?? null;
+  };
 }

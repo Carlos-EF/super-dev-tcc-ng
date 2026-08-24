@@ -8,7 +8,6 @@ import { BrokerFilters, BrokerResponse, CreateBrokerRequest, EditBrokerRequest, 
 import { BrokerTables } from '../../../types/broker.sort.types';
 import { Router, RouterLink } from '@angular/router';
 import { NgxMaskDirective } from 'ngx-mask';
-import { PropertysService } from '../../../services/propertys.service';
 
 @Component({
   selector: 'app-list',
@@ -24,7 +23,6 @@ import { PropertysService } from '../../../services/propertys.service';
 export class ListBrokers {
   private readonly formBuilder = inject(FormBuilder);
   private readonly brokerService = inject(BrokerService);
-  private readonly propertyService = inject(PropertysService);
   private readonly toastService = inject(ToastService);
 
   confirmModal: boolean = false;
@@ -46,6 +44,7 @@ export class ListBrokers {
   filters: BrokerFilters = {};
 
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('propertyCount') propertyCount!: ElementRef<HTMLSelectElement>;
 
   brokers = model<PaginatedBrokerResponse>(
     {
@@ -259,12 +258,6 @@ export class ListBrokers {
     });
   };
 
-  sumTotal(id: string) {
-    var total = 0;
-
-    return total;
-  };
-
   sortBy(column: BrokerTables) {
     if (this.sortCollumns === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -333,5 +326,24 @@ export class ListBrokers {
         }
       }
     );
+  };
+
+    getCountValue(event: Event) {
+    const count = event.target as HTMLSelectElement;
+
+    this.filters.comImoveis = '';
+    this.filters.semImoveis = '';
+
+    if (count.value === 'com_imoveis') {
+      this.filters.comImoveis = count.value;
+    }
+
+    if (count.value === 'sem_imoveis') {
+      this.filters.semImoveis = count.value;
+    }
+
+    this.page.set(1);
+
+    this.getAllBrokers();
   };
 }

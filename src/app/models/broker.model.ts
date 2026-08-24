@@ -28,7 +28,8 @@ export interface BrokerResponse {
     email: string;
     data_nascimento: string | null;
     rg: string | null;
-    cpf: string | null
+    cpf: string | null;
+    total_imoveis: number;
     criado_em: Date;
     alterado_em: Date;
 }
@@ -44,4 +45,6 @@ export interface PaginatedBrokerResponse {
 
 export interface BrokerFilters {
     busca?: string;
+    comImoveis?: string;
+    semImoveis?: string;
 }

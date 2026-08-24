@@ -20,17 +20,17 @@ export class CondominiumService {
         direcao: SortType = 'asc'
     ): Observable<PaginatedCondominiumResponse> {
         let params = new HttpParams()
-        .set('pagina', pagina.toString())
-        .set('por_pagina',porPagina.toString())
-        .set('direcao', direcao);
+            .set('pagina', pagina.toString())
+            .set('por_pagina', porPagina.toString())
+            .set('direcao', direcao);
 
         if (ordenarPor) {
-        params = params.set(
-            'ordenar_por',
-            ordenarPor
-        );
-    }
-        
+            params = params.set(
+                'ordenar_por',
+                ordenarPor
+            );
+        }
+
         if (filters?.busca) {
             params = params.set('busca', filters.busca);
         }

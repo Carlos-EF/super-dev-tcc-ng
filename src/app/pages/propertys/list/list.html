@@ -288,23 +288,24 @@
 <div class="cards-grid" id="cards-grid" aria-label="Lista de imóveis">
     @for (property of propertys().imoveis ?? []; track property.id) {
     <article class="prop-card">
-        <div class="pc-photo" role="img" [attr.aria-label]="
-                'Foto de ' +
-                property.tipo +
-                ' ' +
-                property.codigo
-            " [style.background-image]="
-                property.imagens?.length
-                    ? 'url(' +
-                      (
-                        property.imagens.find(
-                            image => image.principal
-                        )?.url ??
-                        property.imagens[0]?.url
-                      ) +
-                      ')'
-                    : 'none'
-            ">
+        <div class="pc-photo" role="button" tabindex="0" [attr.aria-label]="
+        property.imagens?.length
+            ? 'Abrir galeria de fotos do imóvel ' + property.codigo
+            : 'Imóvel ' + property.codigo + ' sem fotos'
+    " (click)="openPropertyGallery(property)" (keydown.enter)="openPropertyGallery(property)"
+            (keydown.space)="openPropertyGallery(property); $event.preventDefault()"
+            [class.pc-photo-clickable]="property.imagens?.length" [style.background-image]="
+        property.imagens?.length
+            ? 'url(' +
+              (
+                property.imagens.find(
+                    image => image.principal
+                )?.url ??
+                property.imagens[0]?.url
+              ) +
+              ')'
+            : 'none'
+    ">
             @if (!property.imagens?.length) {
             <div class="pc-photo-empty">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -313,16 +314,19 @@
                     <circle cx="8.5" cy="9" r="1.5" />
                     <path d="m21 15-4.5-4.5L7 20" />
                 </svg>
+
                 <span>
                     Sem fotos
                 </span>
             </div>
             }
+
             <div class="pc-tags">
                 <span class="ptag" [class.venda]="property.finalidade === 'Venda'"
                     [class.locacao]="property.finalidade === 'Locação'">
                     {{ property.finalidade }}
                 </span>
+
                 @if (property.em_condominio) {
                 <span class="ptag ptag-condominio">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -331,10 +335,12 @@
                         <path d="M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
                         <path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1" />
                     </svg>
+
                     Condomínio
                 </span>
                 }
             </div>
+
             @if (property.imagens?.length) {
             <span class="pc-photo-count">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -343,11 +349,11 @@
                     <circle cx="12" cy="13" r="3.5" />
                     <path d="M8 6l1.2-2h5.6L16 6" />
                 </svg>
+
                 {{ property.imagens.length }}
             </span>
             }
         </div>
-
         <div class="pc-body">
             <div class="pc-head">
                 <span class="pc-type-icon">
@@ -641,8 +647,10 @@
                     <span class="pc-person-icon">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="3" />
-                            <path d="M5 20a7 7 0 0 1 14 0" />
+                            <path d="M3 11.5 12 4l9 7.5" />
+                            <path d="M5 10.5V21h14V10.5" />
+                            <circle cx="12" cy="13" r="2" />
+                            <path d="M8.5 21a3.5 3.5 0 0 1 7 0" />
                         </svg>
                     </span>
 
@@ -663,8 +671,10 @@
                     <span class="pc-person-icon">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="3" />
-                            <path d="M5 20a7 7 0 0 1 14 0" />
+                            <rect x="4" y="4" width="16" height="17" rx="2" />
+                            <circle cx="12" cy="10" r="2.5" />
+                            <path d="M8.5 17a3.5 3.5 0 0 1 7 0" />
+                            <path d="M9 4V2.5h6V4" />
                         </svg>
                     </span>
                     <div>
@@ -894,31 +904,68 @@
         <div class="modal-body property-details-body">
             @if (selectedProperty.imagens.length > 0) {
             <div class="property-gallery">
-                @for (
-                image of selectedProperty.imagens;
-                track image.id;
-                let i = $index
-                ) {
-                <div class="property-gallery-item" [class.property-gallery-main]="image.principal"
-                    [style.background-image]="'url(' + image.url + ')'">
-                    @if (image.principal) {
-                    <span class="property-gallery-cover">
-                        CAPA
-                    </span>
-                    }
-                    @if (image.principal && selectedProperty.imagens.length > 1) {
-                    <span class="property-gallery-count">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <path d="m21 15-5-5L5 21"></path>
-                        </svg>
-                        {{ selectedProperty.imagens.length }} fotos
-                    </span>
-                    }
+
+                @if (selectedProperty.imagens.length > 0) {
+
+                <div class="property-gallery-view">
+
+                    <!-- Imagem atual -->
+                    <div class="property-gallery-image" [style.background-image]="
+                    'url(' + selectedProperty.imagens[currentImageIndex].url + ')'
+                ">
+
+                        @if (selectedProperty.imagens[currentImageIndex].principal) {
+                        <span class="property-gallery-cover">
+                            CAPA
+                        </span>
+                        }
+
+                        <!-- Botão anterior -->
+                        @if (selectedProperty.imagens.length > 1) {
+                        <button type="button" class="property-gallery-arrow property-gallery-prev"
+                            aria-label="Imagem anterior" (click)="previousImage()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 18l-6-6 6-6" />
+                            </svg>
+                        </button>
+
+                        <!-- Botão próxima -->
+                        <button type="button" class="property-gallery-arrow property-gallery-next"
+                            aria-label="Próxima imagem" (click)="nextImage()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </button>
+                        }
+
+                        <!-- Contador -->
+                        <span class="property-gallery-counter">
+                            {{ currentImageIndex + 1 }}
+                            /
+                            {{ selectedProperty.imagens.length }}
+                        </span>
+
+                    </div>
+
                 </div>
+
+                } @else {
+
+                <div class="property-gallery-empty">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+
+                    <span>Nenhuma foto cadastrada</span>
+                </div>
+
                 }
+
             </div>
             } @else {
             <div class="property-gallery-empty">
@@ -1190,5 +1237,85 @@
             </button>
         </footer>
     </section>
+</div>
+}
+
+@if (galleryProperty) {
+<div class="gallery-modal-backdrop" (click)="closePropertyGallery()">
+    <div class="gallery-modal" role="dialog" aria-modal="true"
+        [attr.aria-label]="'Galeria do imóvel ' + galleryProperty.codigo" (click)="$event.stopPropagation()">
+        <div class="gallery-modal-head">
+            <div>
+                <h3>
+                    {{ galleryProperty.tipo }}
+                </h3>
+                <span>
+                    Código {{ galleryProperty.codigo }}
+                </span>
+            </div>
+
+            <button type="button" class="gallery-close" aria-label="Fechar galeria" (click)="closePropertyGallery()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M18 6L6 18" />
+                    <path d="M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="gallery-content">
+            @if (currentGalleryImage) {
+            <button type="button" class="gallery-nav gallery-prev" aria-label="Imagem anterior"
+                (click)="previousGalleryImage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </button>
+
+
+            <div class="gallery-image-wrapper">
+                <img class="gallery-image" [src]="currentGalleryImage.url" [alt]="
+                                'Foto ' +
+                                (galleryIndex + 1) +
+                                ' do imóvel ' +
+                                galleryProperty.codigo
+                            " />
+                @if (currentGalleryImage.principal) {
+                <span class="gallery-cover">
+                    CAPA
+                </span>
+                }
+                <span class="gallery-counter">
+                    {{ galleryIndex + 1 }}
+                    /
+                    {{ galleryProperty.imagens.length }}
+                </span>
+            </div>
+
+            <button type="button" class="gallery-nav gallery-next" aria-label="Próxima imagem"
+                (click)="nextGalleryImage()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+            </button>
+            }
+        </div>
+
+        <div class="gallery-thumbnails">
+            @for (
+            image of galleryProperty.imagens;
+            track image.id;
+            let i = $index
+            ) {
+            <button type="button" class="gallery-thumbnail" [class.active]="galleryIndex === i"
+                [class.cover]="image.principal" [attr.aria-label]="'Visualizar imagem ' + (i + 1)"
+                (click)="galleryIndex = i">
+                <img [src]="image.url" [alt]="'Miniatura ' + (i + 1)" />
+            </button>
+            }
+        </div>
+    </div>
 </div>
 }

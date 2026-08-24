@@ -32,10 +32,10 @@
         <div class="field">
             <label for="f-vinculo">Imóveis vinculados</label>
             <div class="select-wrap">
-                <select id="f-vinculo">
+                <select #propertyCount (change)="getCountValue($event)" id="f-vinculo">
                     <option value="">Todos</option>
-                    <option value="com">Com imóveis</option>
-                    <option value="sem">Sem imóveis</option>
+                    <option value="com_imoveis">Com imóveis</option>
+                    <option value="sem_imoveis">Sem imóveis</option>
                 </select>
             </div>
         </div>
@@ -65,9 +65,9 @@
                     <th>
                         <span class="th-plain">Contato</span>
                     </th>
-                    <th class="num"
-                        [attr.aria-sort]=" sortCollumns === 'imoveis' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none' ">
-                        <button (click)="sortBy('imoveis')" class="th-sort"> Imóveis
+                    <th data-sort=" imoveis" class="num">
+                        <button class="th-sort" disabled>
+                            Imóveis
                             <span class="arrow">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -111,14 +111,14 @@
                         </span>
                     </td>
                     <td class="num">
-                        <span class="count-badge" [class.zero]="sumTotal(broker.id) === 0"
-                            [title]="sumTotal(broker.id) === 0 ? 'Nenhum imóvel sob responsabilidade' : sumTotal(broker.id) + ' imóveis sob responsabilidade'">
+                        <span class="count-badge" [class.zero]="broker.total_imoveis === 0"
+                            [title]="broker.total_imoveis === 0 ? 'Nenhum imóvel sob responsabilidade' : broker.total_imoveis + ' imóveis sob responsabilidade'">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 10.5 12 3l9 7.5" />
                                 <path d="M5 9.5V21h14V9.5" />
                             </svg>
-                            {{ sumTotal(broker.id) }}
+                            {{ broker.total_imoveis }}
                         </span>
                     </td>
                     <td>
@@ -406,8 +406,16 @@
                 </div>
                 <div>
                     <p> Excluir o corretor <b>{{ selectedBroker.nome }}</b>? </p>
+                    @if (selectedBroker.total_imoveis != 0) {
+                        @if (selectedBroker.total_imoveis == 1) {
+                            <span class="warn"> {{selectedBroker.total_imoveis}} imóvel ficarão sem corretor responsável.
+                            </span>
+                        } @else if (selectedBroker.total_imoveis > 1) {
+                            <span class="warn"> {{selectedBroker.total_imoveis}} imóveis ficarão sem corretor responsável.
+                            </span>
+                        }
+                    }
                     <span class="warn"> Esta ação não poderá ser desfeita.
-
                     </span>
                 </div>
             </div>
