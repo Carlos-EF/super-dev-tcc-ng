@@ -1,28 +1,285 @@
-<nav class="breadcrumb" aria-label="breadcrumb">
-    <span>Início</span>
-</nav>
-<div>
-    <h1 class="page-title">Início</h1>
-    <p class="page-sub">Visão geral do dia a dia da imobiliária.</p>
-</div>
+<div class="dashboard-page">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+        <span>Início</span>
+    </nav>
 
-<div class="card empty-state">
-    <div class="es-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="8" height="10" rx="1.5" />
-            <rect x="13" y="3" width="8" height="6" rx="1.5" />
-            <rect x="13" y="11" width="8" height="10" rx="1.5" />
-            <rect x="3" y="15" width="8" height="6" rx="1.5" />
-        </svg>
+    <div class="page-head">
+        <div>
+            <h1 class="page-title">
+                Visão geral
+            </h1>
+
+            <p class="page-sub" style="margin-bottom: 12px;">
+                Resumo dos principais indicadores da gestão imobiliária.
+            </p>
+        </div>
     </div>
-    <h4>Página inicial em construção</h4>
-    <p>O painel com indicadores, atividades recentes e atalhos será desenhado em seguida. Enquanto isso, navegue
-        pelas telas prontas.</p>
-    <div class="es-actions">
-        <a class="btn btn-ghost" routerLink="/propertys/list">Imóveis</a>
-        <a class="btn btn-ghost" routerLink="/condominiums/list">Condomínios</a>
-        <a class="btn btn-ghost" routerLink="/clients/list">Clientes</a>
-        <a class="btn btn-ghost" routerLink="/brokers/list">Corretores</a>
-    </div>
+
+    <section class="dashboard-grid">
+        <article class="card metric-card">
+            <span class="metric-label">
+                Imóveis cadastrados
+            </span>
+
+            <div class="metric-value">
+                {{ totalProperties() }}
+            </div>
+
+            <div class="metric-meta">
+                {{ saleProperties() }} à venda ·
+                {{ rentalProperties() }} para locação
+            </div>
+
+            <div class="metric-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="3" width="16" height="18" rx="1.5" />
+                    <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+                </svg>
+            </div>
+
+        </article>
+
+        <article class="card metric-card">
+            <span class="metric-label">
+                Clientes cadastrados
+            </span>
+
+            <div class="metric-value">
+                {{ totalClients() }}
+            </div>
+
+            <div class="metric-meta">
+                Base de relacionamento
+            </div>
+
+            <div class="metric-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="8" r="3.5" />
+                    <path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5" />
+                    <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.7 15.3c1.9.6 3.3 2 3.8 4.7" />
+                </svg>
+            </div>
+
+        </article>
+
+        <article class="card metric-card">
+            <span class="metric-label">
+                Corretores cadastrados
+            </span>
+
+            <div class="metric-value">
+                {{ totalBrokers() }}
+            </div>
+
+            <div class="metric-meta">
+                <span class="status-pill">
+                    <span class="status-dot"></span>
+                    Equipe ativa
+                </span>
+            </div>
+
+            <div class="metric-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="3.5" />
+                    <path d="M5 20c.9-3.4 3.7-5.2 7-5.2s6.1 1.8 7 5.2" />
+                </svg>
+            </div>
+        </article>
+
+        <article class="card metric-card">
+            <span class="metric-label">
+                Imóveis à venda
+            </span>
+
+            <div class="metric-value">
+                {{ saleProperties() }}
+            </div>
+
+            <div class="metric-meta">
+                {{ rentalProperties() }} para locação
+            </div>
+
+            <div class="metric-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19V9l8-5 8 5v10" />
+                    <path d="M8 19v-6h8v6" />
+                    <path d="M6 21h12" />
+                </svg>
+            </div>
+        </article>
+
+        <article class="card chart-card chart-lg">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">
+                        Imóveis cadastrados por tipo
+                    </div>
+
+                    <div class="card-desc">
+                        Distribuição do estoque atual.
+                    </div>
+                </div>
+            </div>
+            @if (
+            propertyTypeStats.apartamento === 0 &&
+            propertyTypeStats.casa === 0 &&
+            propertyTypeStats.terreno === 0
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="3" width="16" height="18" rx="1.5" />
+                        <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum imóvel cadastrado</h4>
+
+                <p>
+                    Não há dados suficientes para exibir a distribuição por tipo.
+                </p>
+            </div>
+            } @else {
+            <div class="chart-wrap">
+                <canvas #propertyTypeChart></canvas>
+            </div>
+
+            <div class="mini-breakdown">
+                <div class="breakdown-item">
+                    <div class="label">Apartamentos</div>
+                    <div class="num">
+                        {{ propertyTypeStats.apartamento }}
+                    </div>
+                </div>
+
+                <div class="breakdown-item">
+                    <div class="label">Casas</div>
+                    <div class="num">
+                        {{ propertyTypeStats.casa }}
+                    </div>
+                </div>
+
+                <div class="breakdown-item">
+                    <div class="label">Terrenos</div>
+                    <div class="num">
+                        {{ propertyTypeStats.terreno }}
+                    </div>
+                </div>
+            </div>
+            }
+        </article>
+
+        <article class="card chart-card chart-lg">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">
+                        Clientes por tipo
+                    </div>
+
+                    <div class="card-desc">
+                        Perfil cadastrado na base de clientes.
+                    </div>
+                </div>
+            </div>
+
+            @if (
+            clientStats.interessado === 0 &&
+            clientStats.locatario === 0 &&
+            clientStats.proprietario === 0
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="8" r="3.5" />
+                        <path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5" />
+                        <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.7 15.3c1.9.6 3.3 2 3.8 4.7" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum cliente cadastrado</h4>
+
+                <p>
+                    Não há dados suficientes para exibir o perfil dos clientes.
+                </p>
+            </div>
+            } @else {
+            <div class="chart-wrap">
+                <canvas #clientTypeChart></canvas>
+            </div>
+
+            <div class="mini-breakdown">
+                <div class="breakdown-item">
+                    <div class="label">Interessados</div>
+                    <div class="num">
+                        {{ clientStats.interessado }}
+                    </div>
+                </div>
+
+                <div class="breakdown-item">
+                    <div class="label">Locatários</div>
+                    <div class="num">
+                        {{ clientStats.locatario }}
+                    </div>
+                </div>
+
+                <div class="breakdown-item">
+                    <div class="label">Proprietários</div>
+                    <div class="num">
+                        {{ clientStats.proprietario }}
+                    </div>
+                </div>
+            </div>
+            }
+        </article>
+
+        <article class="card chart-card chart-full">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">
+                        Diferença de valores dos imóveis por tipo
+                    </div>
+
+                    <div class="card-desc">
+                        Comparação dos imóveis de venda usando
+                        valor mínimo, médio e máximo.
+                    </div>
+                </div>
+            </div>
+
+            @if (
+            !hasPropertyValueStats
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v18" />
+                        <path d="M17 7c0-1.7-2.2-3-5-3S7 5.3 7 7s2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum valor disponível</h4>
+
+                <p>
+                    Não há imóveis de venda com valores cadastrados para esta análise.
+                </p>
+            </div>
+            } @else {
+            <div class="chart-wrap">
+                <canvas #propertyValueChart></canvas>
+            </div>
+
+            <div class="chart-insight">
+                <b>Leitura do gráfico:</b>
+                {{ propertyValueInsight }}
+            </div>
+            }
+        </article>
+    </section>
 </div>
