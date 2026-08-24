@@ -29,6 +29,13 @@ export class BrokerService {
             params = params.set('busca', filters.busca);
         }
 
+        if (filters?.comImoveis) {
+            params = params.set('com_imoveis', filters.comImoveis);
+        }
+        if (filters?.semImoveis) {
+            params = params.set('sem_imoveis', filters.semImoveis);
+        }
+
         return this.httpClient.get<PaginatedBrokerResponse>(
             this.url,
             { params }
