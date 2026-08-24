@@ -7,7 +7,7 @@ import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environments';
 
 export const guestGuard: CanActivateFn = async () => {
-   const supabase: SupabaseClient =
+    const supabase: SupabaseClient =
         createClient(
             environment.supabaseUrl,
             environment.supabaseKey

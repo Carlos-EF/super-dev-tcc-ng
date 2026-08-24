@@ -14,7 +14,6 @@ export const authGuard: CanActivateFn = async () => {
             environment.supabaseKey
         );
 
-
     const router =
         inject(Router);
 
