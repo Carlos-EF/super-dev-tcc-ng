@@ -496,27 +496,17 @@ input {
 .divider {
     display: flex;
     align-items: center;
-
-    gap: 12px;
-
     margin: 23px 0 18px;
-
     color: var(--text-3);
-
     font-size: 10.5px;
-
     text-transform: uppercase;
-    letter-spacing: .08em;
 }
 
 .divider::before,
 .divider::after {
     content: "";
-
     flex: 1;
-
     height: 1px;
-
     background: var(--line);
 }
 
