@@ -894,31 +894,68 @@
         <div class="modal-body property-details-body">
             @if (selectedProperty.imagens.length > 0) {
             <div class="property-gallery">
-                @for (
-                image of selectedProperty.imagens;
-                track image.id;
-                let i = $index
-                ) {
-                <div class="property-gallery-item" [class.property-gallery-main]="image.principal"
-                    [style.background-image]="'url(' + image.url + ')'">
-                    @if (image.principal) {
-                    <span class="property-gallery-cover">
-                        CAPA
-                    </span>
-                    }
-                    @if (image.principal && selectedProperty.imagens.length > 1) {
-                    <span class="property-gallery-count">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <path d="m21 15-5-5L5 21"></path>
-                        </svg>
-                        {{ selectedProperty.imagens.length }} fotos
-                    </span>
-                    }
+
+                @if (selectedProperty.imagens.length > 0) {
+
+                <div class="property-gallery-view">
+
+                    <!-- Imagem atual -->
+                    <div class="property-gallery-image" [style.background-image]="
+                    'url(' + selectedProperty.imagens[currentImageIndex].url + ')'
+                ">
+
+                        @if (selectedProperty.imagens[currentImageIndex].principal) {
+                        <span class="property-gallery-cover">
+                            CAPA
+                        </span>
+                        }
+
+                        <!-- Botão anterior -->
+                        @if (selectedProperty.imagens.length > 1) {
+                        <button type="button" class="property-gallery-arrow property-gallery-prev"
+                            aria-label="Imagem anterior" (click)="previousImage()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 18l-6-6 6-6" />
+                            </svg>
+                        </button>
+
+                        <!-- Botão próxima -->
+                        <button type="button" class="property-gallery-arrow property-gallery-next"
+                            aria-label="Próxima imagem" (click)="nextImage()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </button>
+                        }
+
+                        <!-- Contador -->
+                        <span class="property-gallery-counter">
+                            {{ currentImageIndex + 1 }}
+                            /
+                            {{ selectedProperty.imagens.length }}
+                        </span>
+
+                    </div>
+
                 </div>
+
+                } @else {
+
+                <div class="property-gallery-empty">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <path d="m21 15-5-5L5 21" />
+                    </svg>
+
+                    <span>Nenhuma foto cadastrada</span>
+                </div>
+
                 }
+
             </div>
             } @else {
             <div class="property-gallery-empty">

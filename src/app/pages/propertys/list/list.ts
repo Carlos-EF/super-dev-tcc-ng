@@ -56,6 +56,8 @@ export class ListProperty {
 
   showMoreFilters = false;
 
+  currentImageIndex: number = 0;
+
   filters: PropertyFilters = {
     busca: '',
     finalidade: undefined,
@@ -253,6 +255,7 @@ export class ListProperty {
   openPropertyDetails(property: CompletePropertyResponse): void {
     this.selectedProperty = property;
     this.showPropertyDetailsModal = true;
+    this.currentImageIndex = 0;
   };
 
   closePropertyDetails(): void {
@@ -407,5 +410,27 @@ export class ListProperty {
         .replace(/\./g, '')
         .replace(',', '.')
     );
-  }
+  };
+
+  nextImage(): void {
+    const total = this.selectedProperty?.imagens?.length ?? 0;
+
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentImageIndex =
+      (this.currentImageIndex + 1) % total;
+  };
+
+  previousImage(): void {
+    const total = this.selectedProperty?.imagens?.length ?? 0;
+
+    if (total <= 1) {
+      return;
+    }
+
+    this.currentImageIndex =
+      (this.currentImageIndex - 1 + total) % total;
+  };
 }
