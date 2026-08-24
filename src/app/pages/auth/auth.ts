@@ -31,4 +31,25 @@ export class Auth {
   readonly errorMessage = signal<string | null>(null);
 
   readonly successMessage = signal<string | null>(null);
+
+  readonly loginForm = this.formBuilder.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+  });
+
+  get emailInvalid(): boolean {
+    const control =
+      this.loginForm.controls.email;
+
+    return control.invalid &&
+      (control.touched || control.dirty);
+  };
+
+  get passwordInvalid(): boolean {
+    const control =
+      this.loginForm.controls.password;
+
+    return control.invalid &&
+      (control.touched || control.dirty);
+  };
 }
