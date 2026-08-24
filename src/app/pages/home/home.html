@@ -179,21 +179,36 @@
             <div class="chart-wrap short">
                 <canvas #clientTypeChart></canvas>
             </div>
-            <div class="legend-note">
-                <span class="legend-item">
-                    <span class="legend-dot interested"></span>
-                    Interessado
-                </span>
+            <div class="mini-breakdown">
+                <div class="breakdown-item">
+                    <div class="label">
+                        Interessados
+                    </div>
 
-                <span class="legend-item">
-                    <span class="legend-dot tenant"></span>
-                    Locatário
-                </span>
+                    <div class="num">
+                        {{ clientStats.interessado }}
+                    </div>
+                </div>
 
-                <span class="legend-item">
-                    <span class="legend-dot owner"></span>
-                    Proprietário
-                </span>
+                <div class="breakdown-item">
+                    <div class="label">
+                        Locatários
+                    </div>
+
+                    <div class="num">
+                        {{ clientStats.locatario }}
+                    </div>
+                </div>
+
+                <div class="breakdown-item">
+                    <div class="label">
+                        Proprietários
+                    </div>
+
+                    <div class="num">
+                        {{ clientStats.proprietario }}
+                    </div>
+                </div>
             </div>
         </article>
 

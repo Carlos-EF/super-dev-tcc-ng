@@ -4,9 +4,10 @@ import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { PropertysService } from '../../services/propertys.service';
 import { ClientsService } from '../../services/clients.service';
 import { BrokerService } from '../../services/broker.service';
-import { PropertyTypeStats, PropertyValueStats } from '../../models/home.model';
+import { ClientStats, PropertyTypeStats, PropertyValueStats } from '../../models/home.model';
 import { CompletePropertyResponse, PaginatedPropertyResponse } from '../../models/property.model';
 import { BrokerResponse } from '../../models/broker.model';
+import { ClientResponse } from '../../models/clients.model';
 
 Chart.register(...registerables);
 
@@ -66,6 +67,12 @@ export class Home implements AfterViewInit, OnDestroy {
       }
     };
 
+  clientStats: ClientStats = {
+    interessado: 0,
+    locatario: 0,
+    proprietario: 0
+  };
+
   @ViewChild('propertyTypeChart')
   propertyTypeChartRef?: ElementRef<HTMLCanvasElement>;
 
@@ -90,6 +97,8 @@ export class Home implements AfterViewInit, OnDestroy {
     this.loadProperties();
 
     this.loadBrokers();
+
+    this.loadClients();
   };
 
   constructor() {
@@ -154,7 +163,50 @@ export class Home implements AfterViewInit, OnDestroy {
           );
         }
       });
-  }
+  };
+
+  private loadClients(): void {
+    this.clientsService
+      .getAllForList()
+      .subscribe({
+        next: (clients: ClientResponse[]) => {
+          this.totalClients.set(
+            clients.length
+          );
+
+          this.clientStats = {
+            interessado: clients.filter(
+              client =>
+                client.tipo === 'Interessado'
+            ).length,
+
+            locatario: clients.filter(
+              client =>
+                client.tipo === 'Locatário'
+            ).length,
+
+            proprietario: clients.filter(
+              client =>
+                client.tipo === 'Proprietário'
+            ).length
+
+          };
+
+          console.log(
+            'ESTATÍSTICAS DOS CLIENTES:',
+            this.clientStats
+          );
+
+          this.buildClientTypeChart();
+        },
+        error: (error) => {
+          console.error(
+            'Erro ao carregar clientes:',
+            error
+          );
+        }
+      });
+  };
 
   private calculatePropertyMetrics(
     properties: CompletePropertyResponse[]
@@ -211,7 +263,7 @@ export class Home implements AfterViewInit, OnDestroy {
     this.calculatePropertyValues(
       properties
     );
-  }
+  };
 
   private calculatePropertyValues(
     properties: CompletePropertyResponse[]
@@ -266,7 +318,7 @@ export class Home implements AfterViewInit, OnDestroy {
         max: values[values.length - 1]
       };
     }
-  }
+  };
 
   private buildPropertyTypeChart(): void {
 
@@ -339,7 +391,7 @@ export class Home implements AfterViewInit, OnDestroy {
       this.propertyTypeChartRef.nativeElement,
       config
     );
-  }
+  };
 
   private buildPropertyValueChart(): void {
     if (!this.propertyValueChartRef) {
@@ -468,6 +520,75 @@ export class Home implements AfterViewInit, OnDestroy {
       this.propertyValueChartRef.nativeElement,
       config
     );
+  };
+
+  private buildClientTypeChart(): void {
+    if (!this.clientTypeChartRef) {
+      return;
+    }
+
+    this.clientTypeChart?.destroy();
+
+    const config:
+      ChartConfiguration<'doughnut'> = {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Interessado',
+          'Locatário',
+          'Proprietário'
+        ],
+        datasets: [
+          {
+            data: [
+              this.clientStats.interessado,
+              this.clientStats.locatario,
+              this.clientStats.proprietario
+            ],
+            backgroundColor: [
+              '#E3A857',
+              '#57C690',
+              '#6FA8DC'
+            ],
+            borderColor:
+              '#12161C',
+            borderWidth: 4,
+            hoverOffset: 5
+          }
+        ]
+      },
+
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            display: false
+          },
+
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value =
+                  Number(
+                    context.raw
+                  );
+
+                return ` ${context.label}: ${value}`;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    this.clientTypeChart =
+      new Chart(
+        this.clientTypeChartRef
+          .nativeElement,
+        config
+      );
   };
 
   private formatCurrency(

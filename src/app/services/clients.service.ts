@@ -49,6 +49,12 @@ export class ClientsService {
         return this.httpClient.get<ClientResponse[]>(urlForList);
     }
 
+    getAllForList(): Observable<ClientResponse[]> {
+        const urlForList = `${this.url}/list`;
+
+        return this.httpClient.get<ClientResponse[]>(urlForList);
+    };
+
     delete(id: string): Observable<void> {
         const urlWithId = `${this.url}/${id}`;
 

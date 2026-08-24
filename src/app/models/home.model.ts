@@ -10,3 +10,10 @@ export interface PropertyValueStats {
     average: number | null;
     max: number | null;
 }
+
+export interface ClientStats {
+    interessado: number;
+    locatario: number;
+    proprietario: number;
+
+}
