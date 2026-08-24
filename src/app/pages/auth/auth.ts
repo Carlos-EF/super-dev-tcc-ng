@@ -103,7 +103,7 @@ export class Auth {
       }
 
       await this.router.navigate([
-        '/inicio'
+        '/home'
       ]);
 
     } catch (error: unknown) {
