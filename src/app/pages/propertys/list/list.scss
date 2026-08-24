@@ -1227,12 +1227,13 @@ select {
     font-size: 9.5px;
 }
 
-.pc-person span {
+.pc-person div span {
     display: block;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
     font-size: 10.8px;
     font-weight: 500;
     color: var(--text-2);
