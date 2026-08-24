@@ -40,20 +40,23 @@ export class Home implements OnDestroy {
     outros: 0
   };
 
-  private propertyValueStats: Record<
-    string,
-    PropertyValueStats
-  > = {
+  private propertyValueStats: {
+    Apartamento: PropertyValueStats;
+    Casa: PropertyValueStats;
+    Terreno: PropertyValueStats;
+  } = {
       Apartamento: {
         min: 0,
         average: 0,
         max: 0
       },
+
       Casa: {
         min: 0,
         average: 0,
         max: 0
       },
+
       Terreno: {
         min: 0,
         average: 0,
@@ -193,11 +196,15 @@ export class Home implements OnDestroy {
     properties: CompletePropertyResponse[]
   ): void {
 
-    const propertyTypes = [
-      'Apartamento',
-      'Casa',
+    const propertyTypes: (
+      'Apartamento' |
+      'Casa' |
       'Terreno'
-    ];
+    )[] = [
+        'Apartamento',
+        'Casa',
+        'Terreno'
+      ];
 
     for (const type of propertyTypes) {
       const values = properties
@@ -326,12 +333,16 @@ export class Home implements OnDestroy {
       return;
     }
 
+
+
     this.propertyValueChart?.destroy();
 
     const getStats = (
       type: string
     ) =>
-      this.propertyValueStats[type];
+      this.propertyValueStats.Apartamento;
+      this.propertyValueStats.Casa;
+      this.propertyValueStats.Terreno;
 
     const config:
       ChartConfiguration<'bar'> = {
@@ -472,5 +483,42 @@ export class Home implements OnDestroy {
     return this.formatCurrency(
       value
     );
+  };
+
+  get propertyValueInsight(): string {
+    const apartment =
+      this.propertyValueStats.Apartamento;
+
+    const house =
+      this.propertyValueStats.Casa;
+
+    const land =
+      this.propertyValueStats.Terreno;
+
+    const parts: string[] = [];
+
+    if (apartment.average > 0) {
+      parts.push(
+        `apartamentos apresentam valor médio de aproximadamente ${this.formatCurrency(apartment.average)}`
+      );
+    }
+
+    if (house.average > 0) {
+      parts.push(
+        `casas de ${this.formatCurrency(house.average)}`
+      );
+    }
+
+    if (land.average > 0) {
+      parts.push(
+        `terrenos de ${this.formatCurrency(land.average)}`
+      );
+    }
+
+    if (parts.length === 0) {
+      return 'Ainda não existem dados suficientes de imóveis de venda para montar essa comparação.';
+    }
+
+    return `${parts.join(', ')}. Os imóveis de locação não entram nesta comparação por trabalharem com valor mensal.`;
   };
 }
