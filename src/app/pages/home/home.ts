@@ -67,6 +67,22 @@ export class Home implements AfterViewInit, OnDestroy {
       }
     };
 
+  get hasPropertyValueStats(): boolean {
+    return (
+      this.propertyValueStats.Apartamento.min !== null ||
+      this.propertyValueStats.Apartamento.average !== null ||
+      this.propertyValueStats.Apartamento.max !== null ||
+
+      this.propertyValueStats.Casa.min !== null ||
+      this.propertyValueStats.Casa.average !== null ||
+      this.propertyValueStats.Casa.max !== null ||
+
+      this.propertyValueStats.Terreno.min !== null ||
+      this.propertyValueStats.Terreno.average !== null ||
+      this.propertyValueStats.Terreno.max !== null
+    );
+  }
+
   clientStats: ClientStats = {
     interessado: 0,
     locatario: 0,

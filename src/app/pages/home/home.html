@@ -125,41 +125,54 @@
                 </div>
             </div>
 
+            @if (
+            propertyTypeStats.apartamento === 0 &&
+            propertyTypeStats.casa === 0 &&
+            propertyTypeStats.terreno === 0
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="3" width="16" height="18" rx="1.5" />
+                        <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum imóvel cadastrado</h4>
+
+                <p>
+                    Não há dados suficientes para exibir a distribuição por tipo.
+                </p>
+            </div>
+            } @else {
             <div class="chart-wrap">
                 <canvas #propertyTypeChart></canvas>
             </div>
 
             <div class="mini-breakdown">
                 <div class="breakdown-item">
-                    <div class="label">
-                        Apartamentos
-                    </div>
-
+                    <div class="label">Apartamentos</div>
                     <div class="num">
                         {{ propertyTypeStats.apartamento }}
                     </div>
                 </div>
 
                 <div class="breakdown-item">
-                    <div class="label">
-                        Casas
-                    </div>
-
+                    <div class="label">Casas</div>
                     <div class="num">
                         {{ propertyTypeStats.casa }}
                     </div>
                 </div>
 
                 <div class="breakdown-item">
-                    <div class="label">
-                        Terrenos
-                    </div>
-
+                    <div class="label">Terrenos</div>
                     <div class="num">
                         {{ propertyTypeStats.terreno }}
                     </div>
                 </div>
             </div>
+            }
         </article>
 
         <article class="card chart-card chart-lg">
@@ -175,40 +188,55 @@
                 </div>
             </div>
 
+            @if (
+            clientStats.interessado === 0 &&
+            clientStats.locatario === 0 &&
+            clientStats.proprietario === 0
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="8" r="3.5" />
+                        <path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5" />
+                        <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.7 15.3c1.9.6 3.3 2 3.8 4.7" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum cliente cadastrado</h4>
+
+                <p>
+                    Não há dados suficientes para exibir o perfil dos clientes.
+                </p>
+            </div>
+            } @else {
             <div class="chart-wrap">
                 <canvas #clientTypeChart></canvas>
             </div>
+
             <div class="mini-breakdown">
                 <div class="breakdown-item">
-                    <div class="label">
-                        Interessados
-                    </div>
-
+                    <div class="label">Interessados</div>
                     <div class="num">
                         {{ clientStats.interessado }}
                     </div>
                 </div>
 
                 <div class="breakdown-item">
-                    <div class="label">
-                        Locatários
-                    </div>
-
+                    <div class="label">Locatários</div>
                     <div class="num">
                         {{ clientStats.locatario }}
                     </div>
                 </div>
 
                 <div class="breakdown-item">
-                    <div class="label">
-                        Proprietários
-                    </div>
-
+                    <div class="label">Proprietários</div>
                     <div class="num">
                         {{ clientStats.proprietario }}
                     </div>
                 </div>
             </div>
+            }
         </article>
 
         <article class="card chart-card chart-full">
@@ -223,9 +251,27 @@
                         valor mínimo, médio e máximo.
                     </div>
                 </div>
-
             </div>
 
+            @if (
+            !hasPropertyValueStats
+            ) {
+            <div class="empty-state">
+                <div class="es-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v18" />
+                        <path d="M17 7c0-1.7-2.2-3-5-3S7 5.3 7 7s2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3" />
+                    </svg>
+                </div>
+
+                <h4>Nenhum valor disponível</h4>
+
+                <p>
+                    Não há imóveis de venda com valores cadastrados para esta análise.
+                </p>
+            </div>
+            } @else {
             <div class="chart-wrap">
                 <canvas #propertyValueChart></canvas>
             </div>
@@ -234,6 +280,7 @@
                 <b>Leitura do gráfico:</b>
                 {{ propertyValueInsight }}
             </div>
+            }
         </article>
     </section>
 </div>
