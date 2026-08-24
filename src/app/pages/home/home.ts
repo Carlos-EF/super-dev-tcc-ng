@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { PropertysService } from '../../services/propertys.service';
@@ -13,7 +13,8 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-home',
   imports: [
-
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -27,11 +28,11 @@ export class Home implements AfterViewInit, OnDestroy {
   private clientTypeChart?: Chart;
   private propertyValueChart?: Chart;
 
-  totalProperties = 0;
-  totalClients = 0;
-  totalBrokers = 0;
-  saleProperties = 0;
-  rentalProperties = 0;
+  totalProperties = signal(0);
+  totalClients = signal(0);
+  totalBrokers = signal(0);
+  saleProperties = signal(0);
+  rentalProperties = signal(0);
 
   properties: CompletePropertyResponse[] = [];
 
@@ -106,31 +107,12 @@ export class Home implements AfterViewInit, OnDestroy {
           ...response.imoveis
         ];
 
-        console.table(
-          this.properties.map(property => ({
-            codigo: property.codigo,
-            tipo: property.tipo,
-            finalidade: property.finalidade,
-            valor: property.valor
-          }))
-        );
-
         this.calculatePropertyMetrics(
           this.properties
         );
 
         this.buildPropertyTypeChart();
         this.buildPropertyValueChart();
-
-        console.log(
-          'IMÓVEIS RECEBIDOS:',
-          response
-        );
-
-        console.log(
-          'LISTA DE IMÓVEIS:',
-          response.imoveis
-        );
 
         this.properties = [
           ...response.imoveis
@@ -151,8 +133,20 @@ export class Home implements AfterViewInit, OnDestroy {
       .getAllForList()
       .subscribe({
         next: (brokers: BrokerResponse[]) => {
-          this.totalBrokers = brokers.length;
+
+          console.log('CORRETORES RECEBIDOS:', brokers);
+          console.log('QUANTIDADE DE CORRETORES:', brokers.length);
+
+          this.totalBrokers.set(
+            brokers.length
+          );;
+
+          console.log(
+            'TOTAL NO COMPONENTE:',
+            this.totalBrokers
+          );
         },
+
         error: (error) => {
           console.error(
             'Erro ao carregar corretores:',
@@ -160,34 +154,33 @@ export class Home implements AfterViewInit, OnDestroy {
           );
         }
       });
-  };
+  }
 
   private calculatePropertyMetrics(
     properties: CompletePropertyResponse[]
   ): void {
 
-    this.totalProperties = properties.length;
+    this.totalProperties.set(properties.length);
 
-    this.saleProperties = properties.filter(
-      property => property.finalidade === 'Venda'
-    ).length;
+    this.saleProperties.set(
+      properties.filter(
+        property =>
+          property.finalidade === 'Venda'
+      ).length
+    );
 
-    this.rentalProperties = properties.filter(
-      property => property.finalidade === 'Locação'
-    ).length;
+    this.rentalProperties.set(
+      properties.filter(
+        property =>
+          property.finalidade === 'Locação'
+      ).length
+    );
 
     let apartamento = 0;
     let casa = 0;
     let terreno = 0;
 
     for (const property of properties) {
-      console.log(
-        'IMÓVEL:',
-        property.codigo,
-        'TIPO:',
-        property.tipo
-      );
-
       switch (property.tipo) {
         case 'Apartamento':
           apartamento++;
@@ -217,11 +210,6 @@ export class Home implements AfterViewInit, OnDestroy {
 
     this.calculatePropertyValues(
       properties
-    );
-
-    console.log(
-      'ESTATÍSTICAS DOS TIPOS:',
-      this.propertyTypeStats
     );
   }
 
@@ -300,30 +288,18 @@ export class Home implements AfterViewInit, OnDestroy {
       this.propertyTypeStats.terreno
     ];
 
-    console.log(
-      'DADOS DO GRÁFICO:',
-      {
-        labels,
-        data
-      }
-    );
-
     const config: ChartConfiguration<'doughnut'> = {
       type: 'doughnut',
-
       data: {
         labels,
-
         datasets: [
           {
             data,
-
             backgroundColor: [
               '#E3A857',
               '#57C690',
               '#6FA8DC'
             ],
-
             borderColor: '#12161C',
             borderWidth: 4,
             hoverOffset: 5
@@ -334,13 +310,10 @@ export class Home implements AfterViewInit, OnDestroy {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-
         cutout: '68%',
-
         plugins: {
           legend: {
             position: 'bottom',
-
             labels: {
               usePointStyle: true,
               pointStyle: 'circle',
@@ -351,11 +324,9 @@ export class Home implements AfterViewInit, OnDestroy {
           tooltip: {
             callbacks: {
               label: (context) => {
-
                 const value = Number(
                   context.raw
                 );
-
                 return `${context.label}: ${value}`;
               }
             }
