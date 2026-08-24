@@ -67,6 +67,22 @@ export class Home implements AfterViewInit, OnDestroy {
       }
     };
 
+  get hasPropertyTypeStats(): boolean {
+    return (
+      this.propertyTypeStats.apartamento > 0 ||
+      this.propertyTypeStats.casa > 0 ||
+      this.propertyTypeStats.terreno > 0
+    );
+  };
+
+  get hasClientStats(): boolean {
+    return (
+      this.clientStats.interessado > 0 ||
+      this.clientStats.locatario > 0 ||
+      this.clientStats.proprietario > 0
+    );
+  };
+
   get hasPropertyValueStats(): boolean {
     return (
       this.propertyValueStats.Apartamento.min !== null ||
@@ -81,6 +97,22 @@ export class Home implements AfterViewInit, OnDestroy {
       this.propertyValueStats.Terreno.average !== null ||
       this.propertyValueStats.Terreno.max !== null
     );
+  }
+
+  private updateCharts(): void {
+    setTimeout(() => {
+      if (this.hasPropertyTypeStats) {
+        this.buildPropertyTypeChart();
+      }
+
+      if (this.hasClientStats) {
+        this.buildClientTypeChart();
+      }
+
+      if (this.hasPropertyValueStats) {
+        this.buildPropertyValueChart();
+      }
+    });
   }
 
   clientStats: ClientStats = {
@@ -136,8 +168,7 @@ export class Home implements AfterViewInit, OnDestroy {
           this.properties
         );
 
-        this.buildPropertyTypeChart();
-        this.buildPropertyValueChart();
+        this.updateCharts();
 
         this.properties = [
           ...response.imoveis
@@ -158,18 +189,9 @@ export class Home implements AfterViewInit, OnDestroy {
       .getAllForList()
       .subscribe({
         next: (brokers: BrokerResponse[]) => {
-
-          console.log('CORRETORES RECEBIDOS:', brokers);
-          console.log('QUANTIDADE DE CORRETORES:', brokers.length);
-
           this.totalBrokers.set(
             brokers.length
           );;
-
-          console.log(
-            'TOTAL NO COMPONENTE:',
-            this.totalBrokers
-          );
         },
 
         error: (error) => {
@@ -208,12 +230,7 @@ export class Home implements AfterViewInit, OnDestroy {
 
           };
 
-          console.log(
-            'ESTATÍSTICAS DOS CLIENTES:',
-            this.clientStats
-          );
-
-          this.buildClientTypeChart();
+          this.updateCharts();
         },
         error: (error) => {
           console.error(
