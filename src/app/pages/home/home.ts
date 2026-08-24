@@ -141,6 +141,7 @@ export class Home implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.loadDashboard();
   };
+
   private loadDashboard(): void {
     this.loadProperties();
 
@@ -151,7 +152,6 @@ export class Home implements AfterViewInit, OnDestroy {
 
   constructor() {
   };
-
 
   private loadProperties(): void {
     this.propertyService.getAll(
@@ -182,7 +182,7 @@ export class Home implements AfterViewInit, OnDestroy {
         );
       }
     });
-  }
+  };
 
   private loadBrokers(): void {
     this.brokerService
