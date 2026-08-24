@@ -6,12 +6,17 @@ import { ListClients } from './pages/clients/list/list';
 import { ListProperty } from './pages/propertys/list/list';
 import { CreateProperty } from './pages/propertys/create/create';
 import { EditProperty } from './pages/propertys/edit/edit';
+import { Auth } from './pages/auth/auth';
 
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'login',
         pathMatch: 'full'
+    },
+    {
+        path: 'login',
+        component: Auth
     },
     {
         path: 'home',
