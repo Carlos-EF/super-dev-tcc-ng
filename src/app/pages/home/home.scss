@@ -137,11 +137,11 @@
 }
 
 .chart-lg {
-    grid-column: span 7;
+    grid-column: span 6;
 }
 
 .chart-md {
-    grid-column: span 5;
+    grid-column: span 6;
 }
 
 .chart-full {
@@ -185,44 +185,31 @@
 
 .mini-breakdown {
     display: grid;
-
     grid-template-columns:
         repeat(3, 1fr);
-
     gap: 8px;
-
     margin-top: 12px;
 }
 
 .breakdown-item {
     padding: 10px;
-
     border: 1px solid var(--line);
-
     background: var(--bg2);
-
     border-radius: 8px;
 }
 
 .breakdown-item .label {
     color: var(--text-3);
-
     font-size: 10.5px;
-
     text-transform: uppercase;
-
     letter-spacing: .06em;
 }
 
 .breakdown-item .num {
     margin-top: 4px;
-
     font-family: var(--font-mono);
-
     font-size: 15px;
-
     font-weight: 600;
-
     color: var(--text);
 }
 
