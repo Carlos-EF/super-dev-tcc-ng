@@ -204,7 +204,8 @@ input:disabled::placeholder {
 
 .shell {
     display: flex;
-    min-height: calc(100vh - 58px)
+    min-height: calc(100vh - 58px);
+    align-items: stretch;
 }
 
 .empty-state {
