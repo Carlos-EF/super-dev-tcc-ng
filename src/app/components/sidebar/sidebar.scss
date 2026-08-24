@@ -1,10 +1,12 @@
 .sidebar {
     width: 220px;
-    height: 100vh;
+    height: 100%;
     flex-shrink: 0;
     border-right: 1px solid var(--line);
     background: var(--bg1);
     padding: 20px 12px;
+    align-self: stretch;
+    position: static;
 }
 
 .nav-sub:hover {

@@ -1,11 +1,13 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseClient, createClient, User } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environments';
 
 @Component({
   selector: 'app-topbar',
-  imports: [],
+  imports: [
+    RouterLink
+  ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss',
 })
