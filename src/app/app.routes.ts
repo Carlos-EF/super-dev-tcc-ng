@@ -52,7 +52,7 @@ export const routes: Routes = [
                 component: CreateProperty
             },
             {
-                path: 'propertys/:id/edit',
+                path: 'propertys/edit/:id',
                 component: EditProperty
             }
         ]
