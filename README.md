@@ -1,59 +1,84 @@
+# Super Dev TCC — Feliks
+
+Aplicação web para apoiar a gestão de uma operação imobiliária, reunindo em um único painel informações sobre imóveis, clientes, corretores e condomínios. O front-end foi desenvolvido com Angular e integra uma API HTTP para os dados do sistema e o Supabase para autenticação.
+
+## Funcionalidades
+
+- **Dashboard:** visão geral de imóveis, clientes e corretores, com indicadores e gráficos.
+- **Imóveis:** consulta, filtros e ordenação; criação, edição e remoção de imóveis; suporte a casas, apartamentos e terrenos; gerenciamento de imagens.
+- **Clientes:** consulta e gerenciamento de clientes, incluindo a classificação por perfil.
+- **Corretores:** consulta e gerenciamento dos corretores.
+- **Condomínios:** consulta e gerenciamento dos condomínios.
+- **Autenticação:** login com e-mail e senha pelo Supabase Auth e proteção das rotas internas.
+
+## Tecnologias
+
+- [Angular 22](https://angular.dev/) e TypeScript
+- SCSS para estilos
+- Angular Router e Reactive Forms
+- [Supabase JavaScript Client](https://supabase.com/docs/reference/javascript) para autenticação
+- [Chart.js](https://www.chartjs.org/) para os gráficos do dashboard
+- RxJS, `ngx-mask` e Angular HttpClient
+
+## Pré-requisitos
+
+- Node.js e npm instalados.
+- Acesso a um projeto Supabase configurado para autenticação.
+- A API HTTP utilizada pelo front-end em execução e acessível pelo navegador. Por padrão, o endereço configurado é `http://localhost:8000`.
+
+## Como executar localmente
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/Carlos-EF/super-dev-tcc-ng.git
+   cd super-dev-tcc-ng
+   ```
+
+2. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+3. Configure as integrações no arquivo `src/environments/environments.ts`:
+
+   - `apiUrl`: URL base da API HTTP. O valor inicial é `http://localhost:8000`.
+   - `supabaseUrl`: URL do seu projeto Supabase.
+   - `supabaseKey`: chave pública (publishable/anon) apropriada para uso no cliente.
+
+   A API deve estar em execução e o projeto Supabase deve estar configurado para permitir a autenticação usada pela aplicação. Não coloque chaves secretas ou a chave `service_role` do Supabase no código do front-end.
+
+4. Inicie o servidor de desenvolvimento:
+
+   ```bash
+   npm start
+   ```
+
+5. Abra [http://localhost:4200](http://localhost:4200) no navegador.
+
+O servidor de desenvolvimento recarrega a aplicação quando os arquivos-fonte são alterados.
+
+## Organização do projeto
+
+```text
+src/
+├── app/
+│   ├── components/   # Componentes compartilhados, como sidebar, topbar e toast
+│   ├── core/         # Recursos centrais, incluindo guards de autenticação
+│   ├── models/       # Interfaces e modelos TypeScript
+│   ├── pages/        # Páginas de login, dashboard e áreas de gestão
+│   └── services/     # Comunicação HTTP com a API
+├── assets/           # Recursos estáticos
+└── environments/    # Configuração dos serviços externos
+```
+
+## Observações
+
+- O front-end consome a API configurada em `apiUrl`; iniciar apenas o Angular não inicia essa API.
+- Ajuste as configurações de ambiente para os serviços que serão usados no seu ambiente local.
+
+---
+
+Desenvolvido como projeto acadêmico (TCC).
 # Tcc
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.3.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
