@@ -1,4 +1,6 @@
-# Super Dev TCC — Feliks
+# Super Dev TCC — Feliks 
+
+![IMAGEM](src/assets/feliks.png)
 
 Aplicação web para apoiar a gestão de uma operação imobiliária, reunindo em um único painel informações sobre imóveis, clientes, corretores e condomínios. O front-end foi desenvolvido com Angular e integra uma API HTTP para os dados do sistema e o Supabase para autenticação.
 
